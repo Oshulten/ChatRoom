@@ -18,7 +18,7 @@ interface StringDataCellProps {
 }
 
 export function StringDataCell({ value, onChange, validationPattern, validationError, placeholder }: StringDataCellProps) {
-    const [inputIsValid, setInputIsValid] = useState(false);
+    const [inputIsValid, setInputIsValid] = useState(validateWithPattern(value, validationPattern));
 
     validationError ??= "(Sorry, something is wrong with the input!)";
     placeholder ??= "Enter text...";
