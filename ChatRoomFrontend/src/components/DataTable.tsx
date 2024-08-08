@@ -80,6 +80,10 @@ export function UserTable() {
         };
     }
 
+    if (users.length == 0) {
+        return <h2>No users, sorry!</h2>
+    }
+
     return (
         <>
             <div className="overflow-x-auto">
