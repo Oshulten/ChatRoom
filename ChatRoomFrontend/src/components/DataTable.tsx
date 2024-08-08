@@ -16,13 +16,15 @@ interface StringDataCellProps {
     validationPattern?: string,
     placeholder?: string,
     validationError?: string,
+    disabled?: boolean
 }
 
-export function StringDataCell({ value, onChange, validationPattern, validationError, placeholder }: StringDataCellProps) {
+export function StringDataCell({ value, onChange, validationPattern, validationError, placeholder, disabled }: StringDataCellProps) {
     const [inputIsValid, setInputIsValid] = useState(validateWithPattern(value, validationPattern));
 
     validationError ??= "(Sorry, something is wrong with the input!)";
     placeholder ??= "Enter text...";
+    disabled ??= false;
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         const currentInputIsValid = validateWithPattern(e.target.value, validationPattern);
@@ -37,29 +39,31 @@ export function StringDataCell({ value, onChange, validationPattern, validationE
         required
         placeholder={placeholder}
         onChange={(e) => handleChange(e)}
+        disabled={disabled}
         className={`input input-bordered w-full max-w-xs ${!inputIsValid ? "input-error" : "input-success"}`}>
     </ input >
 
     return inputElement;
 }
 
-// interface UserDataRowProps {
-// }
-
 export function UserDataRow() {
     const [users, setUsers] = useState<User[]>([{
         id: "1",
-        alias: "Adam"
+        alias: "Adam",
+        password: "apa",
     },
     {
         id: "2",
-        alias: "Bertha"
-    }]);
+        alias: "Bertha",
+        password: "***-",
+    }
+    ]);
 
     const reconstructUser = (user: User, key: string, value: string): User | undefined => {
         switch (key) {
             case "id": return { ...user, id: value };
             case "alias": return { ...user, alias: value };
+            case "password": return { ...user, password: value };
         }
     }
 
@@ -84,25 +88,25 @@ export function UserDataRow() {
                         <tr>
                             <th>Id</th>
                             <th>Alias</th>
+                            <th>Password</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <StringDataCell value={users[0].id} onChange={handleChange("id", users[0].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
-                            </td>
-                            <td>
-                                <StringDataCell value={users[0].alias} onChange={handleChange("alias", users[0].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <StringDataCell value={users[1].id} onChange={handleChange("id", users[1].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
-                            </td>
-                            <td>
-                                <StringDataCell value={users[1].alias} onChange={handleChange("alias", users[1].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
-                            </td>
-                        </tr>
+                        {users.map((user, index) => {
+                            return (
+                                <tr key={user.id}>
+                                    <td key={"id"}>
+                                        <StringDataCell value={users[index].id} disabled={true} onChange={handleChange("id", users[index].id)}></StringDataCell>
+                                    </td>
+                                    <td key={"alias"}>
+                                        <StringDataCell value={users[index].alias} onChange={handleChange("alias", users[index].id)}></StringDataCell>
+                                    </td>
+                                    <td key={"password"}>
+                                        <StringDataCell value={users[index].password} onChange={handleChange("password", users[index].id)}></StringDataCell>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
