@@ -13,7 +13,7 @@ function validateWithPattern(text: string, pattern?: string) {
 }
 
 interface StringDataCellProps {
-    initialValue: string,
+    value: string,
     onChange: (value?: string) => void;
     validationPattern?: string,
     placeholder?: string,
