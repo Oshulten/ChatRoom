@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { lengthPattern } from '../utilities/regexPatterns';
 
 function validateWithPattern(text: string, pattern?: string) {
     if (pattern) {
@@ -38,4 +39,20 @@ export function StringDataCell({ value, onChange, validationPattern, validationE
     </ input >
 
     return inputElement;
+}
+
+// interface UserDataRowProps {
+// }
+
+export function UserDataRow() {
+    const [user, setUser] = useState({
+        id: "1",
+        alias: "Adam"
+    });
+
+    return (<StringDataCell value={user.id} onChange={(newValue) => {
+        setUser({ ...user, id: newValue });
+        console.log("New value: " + newValue);
+    }
+    } validationPattern={lengthPattern(0, 4)}></StringDataCell>)
 }
