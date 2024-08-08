@@ -116,14 +116,14 @@ export function UserTable() {
                     </thead>
                     <tbody>
                         {users.map((user, index) => {
-                            return <UserRow
+                            const userEntries = Object.entries(user);
+                            return (<UserRow
                                 key={user.id}
                                 user={user}
-                                handleChanges={[
-                                    handleChange("id", users[index].id),
-                                    handleChange("alias", users[index].id),
-                                    handleChange("password", users[index].id)]}></UserRow>
-                        })}
+                                handleChanges={userEntries.map(([key]) => handleChange(key, users[index].id))}>
+                            </UserRow>)
+                        })
+                        }
                     </tbody>
                 </table>
             </div>
