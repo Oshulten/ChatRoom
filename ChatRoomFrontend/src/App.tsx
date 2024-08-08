@@ -1,11 +1,11 @@
 import React from 'react'
 import './App.css'
-import StringDataCell, { characterLengthPattern } from './components/DataTable'
+import { StringDataCell, lengthPattern, maxLengthPattern } from './components/DataTable'
 
 function App() {
   return (
     <>
-      <StringDataCell initialValue="123" validationPattern={characterLengthPattern(2, 4)}></StringDataCell>
+      <StringDataCell initialValue="123" validationPattern={lengthPattern(0, 4)}></StringDataCell>
     </>
   )
 }
