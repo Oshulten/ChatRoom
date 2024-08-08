@@ -11,16 +11,12 @@ export default function StringDataCell({ initialValue, validationPattern = undef
     const [inputIsValid, setInputIsValid] = useState(false);
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        validate(e);
+        setInputIsValid(validate(e));
     }
 
     function validate(e: React.ChangeEvent<HTMLInputElement>) {
-        const rawValue = e.target.value;
-        console.log("---");
-        console.log(`Raw value: ${rawValue}`);
-        if (validationPattern) {
-            setInputIsValid(rawValue.match(validationPattern) != undefined);
-        }
+        if (validationPattern) return e.target.value.match(validationPattern) != undefined;
+        return true;
     }
 
     return <input
