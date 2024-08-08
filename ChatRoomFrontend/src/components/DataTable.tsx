@@ -90,13 +90,35 @@ export function UserTable() {
 
                 const json = await response.json() as User[];
                 setUsers(json);
-                console.log(json);
             } catch (error) {
                 console.error((error as Error).message);
             }
         }
         fetchAllUsers();
     }, []);
+
+    useEffect(() => {
+        const patchUser = async (user: User) => {
+            const url = `http://localhost:5055/api/Users/${user.id}`;
+            try {
+                const response = await fetch(url, {
+                    method: "PATCH",
+                    body: JSON.stringify(user),
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error((error as Error).message);
+            }
+        }
+        users.forEach((user) => {
+            patchUser(user);
+        })
+    }, [users]);
 
     const reconstructUser = (user: User, key: string, value: string): User | undefined => {
         switch (key) {
