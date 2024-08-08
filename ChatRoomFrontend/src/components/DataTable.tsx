@@ -15,14 +15,16 @@ function validateWithPattern(text: string, pattern?: string) {
 interface StringDataCellProps {
     initialValue: string,
     validationPattern?: string,
-    placeholder: string,
-    validationError: string,
+    placeholder?: string,
+    validationError?: string,
 }
 
-
-export function StringDataCell({ initialValue, validationPattern = undefined, validationError = "(Sorry, something is wrong with the input!)", placeholder = "Enter text..." }: StringDataCellProps) {
+export function StringDataCell({ initialValue, validationPattern, validationError, placeholder }: StringDataCellProps) {
     const [inputIsValid, setInputIsValid] = useState(false);
     const [value, setValue] = useState(initialValue);
+
+    validationError ??= "(Sorry, something is wrong with the input!)";
+    placeholder ??= "Enter text...";
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         setInputIsValid(validateWithPattern(e.target.value, validationPattern));
@@ -39,23 +41,5 @@ export function StringDataCell({ initialValue, validationPattern = undefined, va
         className={`input input-bordered w-full max-w-xs ${!inputIsValid ? "input-error" : "input-success"}`}>
     </ input >
 
-    if (!inputIsValid) {
-        return (
-            <div className="tooltip tooltip-open tooltip-bottom" data-tip={validationError}>
-                {inputElement}
-            </div>
-        )
-    }
     return inputElement;
 }
-
-
-// interface IntegerDataCellProps {
-//     initialValue: number,
-//     validationPattern?: string,
-//     placeholder?: string
-// };
-
-// export function IntegerDataCell({ initialValue, validationPattern = undefined, placeholder = "Enter text..." }: IntegerDataCellProps) {
-//     return <></>;
-// }

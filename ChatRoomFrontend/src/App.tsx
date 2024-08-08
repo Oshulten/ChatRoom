@@ -1,6 +1,6 @@
 import React from 'react'
 import './App.css'
-import { StringDataCell, lengthPattern, maxLengthPattern } from './components/DataTable'
+import { StringDataCell, lengthPattern } from './components/DataTable'
 
 function App() {
   return (
