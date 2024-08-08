@@ -1,13 +1,11 @@
-import React from 'react';
+import React from 'react'
 import './App.css'
+import StringDataCell from './components/DataTable'
 
 function App() {
   return (
     <>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-      <button className="btn btn-secondary">Secondary</button>
+      <StringDataCell initialValue="123" validationPattern="^apa$"></StringDataCell>
     </>
   )
 }
