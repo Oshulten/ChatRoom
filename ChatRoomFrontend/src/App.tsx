@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import './App.css'
-import { StringDataCell, lengthPattern } from './components/DataTable'
+import { StringDataCell } from './components/DataTable'
+import { lengthPattern } from './utilities/regexPatterns';
+
 
 function App() {
   const [value, setValue] = useState("123");
