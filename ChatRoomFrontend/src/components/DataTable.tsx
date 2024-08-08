@@ -66,17 +66,18 @@ export function UserRow({ user, handleChanges }: UserRowProps) {
 }
 
 export function UserTable() {
-    const [users, setUsers] = useState<User[]>([{
-        id: "1",
-        alias: "Adam",
-        password: "apa",
-    },
-    {
-        id: "2",
-        alias: "Bertha",
-        password: "***-",
-    }
-    ]);
+    const [users, setUsers] = useState<User[]>([]);
+    // const [users, setUsers] = useState<User[]>([{
+    //     id: "1",
+    //     alias: "Adam",
+    //     password: "apa",
+    // },
+    // {
+    //     id: "2",
+    //     alias: "Bertha",
+    //     password: "***-",
+    // }
+    // ]);
 
     useEffect(() => {
         const fetchAllUsers = async () => {

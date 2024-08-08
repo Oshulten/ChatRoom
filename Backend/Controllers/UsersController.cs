@@ -38,18 +38,18 @@ public class UsersController(ChatroomDatabaseContext db) : ControllerBase
         return entities;
     }
 
-    // [HttpPatch("{id}")]
-    // public IActionResult PatchById(Guid id, DefaultDataType patchObject, CustomDatabaseContext db)
-    // {
-    //     DefaultDataType? entity = db.DefaultDataTable.FirstOrDefault(data => data.Id == id);
-    //     if (entity is null)
-    //     {
-    //         return NotFound();
-    //     }
-    //     entity.Patch(patchObject);
-    //     db.SaveChanges();
-    //     return Ok();
-    // }
+    [HttpPatch("{id}")]
+    public IActionResult PatchById(Guid id, Member patchObject)
+    {
+        Member? entity = db.Users.FirstOrDefault(data => data.Id == id);
+        if (entity is null)
+        {
+            return NotFound();
+        }
+        entity.Patch(patchObject);
+        db.SaveChanges();
+        return Ok();
+    }
 
     // [HttpPost]
     // public IActionResult Post(DefaultDataTypeView dto, CustomDatabaseContext db)
