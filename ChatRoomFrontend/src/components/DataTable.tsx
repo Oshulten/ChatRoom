@@ -69,32 +69,17 @@ export function UserDataRow() {
         };
     }
 
-    const handleChangeIdFirst = (newValue: string) => {
-        const newUser: User = { ...users[0], id: newValue };
-        const newUsers = [newUser, ...users.slice(1, 2)];
-        setUsers(newUsers);
-        console.log(newUsers);
-    }
-
-    const handleChangeAliasFirst = (newValue: string) => {
-        const newUser: User = { ...users[0], alias: newValue };
-        const newUsers = [newUser, ...users.slice(1, 2)];
-        setUsers(newUsers);
-        console.log(newUsers);
-    }
-
-    const handleChangeIdSecond = (newValue: string) => {
-        const newUser: User = { ...users[1], id: newValue };
-        const newUsers = [...users.slice(0, 1), newUser];
-        setUsers(newUsers);
-        console.log(newUsers);
-    }
-
-    const handleChangeAliasSecond = (newValue: string) => {
-        const newUser: User = { ...users[1], alias: newValue };
-        const newUsers = [...users.slice(0, 1), newUser];
-        setUsers(newUsers);
-        console.log(newUsers);
+    const handleChangeAlias = (id: string) => {
+        return (newValue: string) => {
+            const user = users.find(user => user.id == id);
+            if (user == undefined) {
+                throw new Error(`User id ${id} cannot be found in state`);
+            }
+            const userIndex = users.indexOf(user);
+            const newUser: User = { ...user, alias: newValue };
+            const newUsers = [...users.slice(0, userIndex), newUser, ...users.slice(userIndex + 1)];
+            setUsers(newUsers);
+        };
     }
 
     return (
@@ -113,7 +98,7 @@ export function UserDataRow() {
                                 <StringDataCell value={users[0].id} onChange={handleChangeId(users[0].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                             </td>
                             <td>
-                                <StringDataCell value={users[0].alias} onChange={handleChangeAliasFirst} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                                <StringDataCell value={users[0].alias} onChange={handleChangeAlias(users[0].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                             </td>
                         </tr>
                         <tr>
@@ -121,7 +106,7 @@ export function UserDataRow() {
                                 <StringDataCell value={users[1].id} onChange={handleChangeId(users[1].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                             </td>
                             <td>
-                                <StringDataCell value={users[1].alias} onChange={handleChangeAliasSecond} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                                <StringDataCell value={users[1].alias} onChange={handleChangeAlias(users[1].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                             </td>
                         </tr>
                     </tbody>
