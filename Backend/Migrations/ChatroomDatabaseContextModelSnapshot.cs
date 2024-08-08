@@ -9,30 +9,31 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Backend.Migrations
 {
-    [DbContext(typeof(CustomDatabaseContext))]
-    partial class CustomDatabaseContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ChatroomDatabaseContext))]
+    partial class ChatroomDatabaseContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
 
-            modelBuilder.Entity("Backend.Models.DefaultDataType", b =>
+            modelBuilder.Entity("Backend.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Value1")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.Property<string>("Value2")
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("DefaultDataTable");
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }

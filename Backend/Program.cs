@@ -2,12 +2,12 @@ using NSwag.AspNetCore;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
-const string applicationTitle = "CustomAPI";
+const string applicationTitle = "ChatroomApi";
 const string version = "v1";
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<CustomDatabaseContext>(options => options.UseSqlite(applicationTitle));
+builder.Services.AddDbContext<ChatroomDatabaseContext>(options => options.UseSqlite(applicationTitle));
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
