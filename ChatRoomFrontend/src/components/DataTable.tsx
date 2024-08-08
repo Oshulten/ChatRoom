@@ -69,6 +69,20 @@ export function UserDataRow() {
         console.log(newUsers);
     }
 
+    const handleChangeIdSecond = (newValue: string) => {
+        const newUser: User = { ...users[1], id: newValue };
+        const newUsers = [...users.slice(0, 1), newUser];
+        setUsers(newUsers);
+        console.log(newUsers);
+    }
+
+    const handleChangeAliasSecond = (newValue: string) => {
+        const newUser: User = { ...users[1], alias: newValue };
+        const newUsers = [...users.slice(0, 1), newUser];
+        setUsers(newUsers);
+        console.log(newUsers);
+    }
+
     return (
         <div className="overflow-x-auto">
             <table className="table table-xs">
@@ -87,14 +101,14 @@ export function UserDataRow() {
                             <StringDataCell value={users[0].alias} onChange={handleChangeAliasFirst} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                         </td>
                     </tr>
-                    {/* <tr>
+                    <tr>
                         <td>
                             <StringDataCell value={users[1].id} onChange={handleChangeIdSecond} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                         </td>
                         <td>
                             <StringDataCell value={users[1].alias} onChange={handleChangeAliasSecond} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                         </td>
-                    </tr> */}
+                    </tr>
                 </tbody>
             </table>
         </div>
