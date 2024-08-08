@@ -50,9 +50,38 @@ export function UserDataRow() {
         alias: "Adam"
     });
 
-    return (<StringDataCell value={user.id} onChange={(newValue) => {
-        setUser({ ...user, id: newValue });
-        console.log("New value: " + newValue);
+    const handleChangeId = (newValue: string) => {
+        const newUser = { ...user, id: newValue };
+        setUser(newUser);
+        console.log(newUser);
     }
-    } validationPattern={lengthPattern(0, 4)}></StringDataCell>)
+
+    const handleChangeAlias = (newValue: string) => {
+        const newUser = { ...user, alias: newValue };
+        setUser(newUser);
+        console.log(newUser);
+    }
+
+    return (
+        <div className="overflow-x-auto">
+            <table className="table table-xs">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Alias</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <StringDataCell value={user.id} onChange={handleChangeId} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                        </td>
+                        <td>
+                            <StringDataCell value={user.alias} onChange={handleChangeAlias} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    )
 }
