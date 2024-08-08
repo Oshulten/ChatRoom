@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import User from '../models/User';
 
 function validateWithPattern(text: string, pattern?: string) {
@@ -77,6 +77,25 @@ export function UserTable() {
         password: "***-",
     }
     ]);
+
+    useEffect(() => {
+        const fetchAllUsers = async () => {
+            const url = "http://localhost:5055/api/Users";
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+
+                const json = await response.json() as User[];
+                setUsers(json);
+                console.log(json);
+            } catch (error) {
+                console.error((error as Error).message);
+            }
+        }
+        fetchAllUsers();
+    }, []);
 
     const reconstructUser = (user: User, key: string, value: string): User | undefined => {
         switch (key) {
