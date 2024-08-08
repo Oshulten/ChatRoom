@@ -56,6 +56,19 @@ export function UserDataRow() {
         alias: "Bertha"
     }]);
 
+    const handleChangeId = (id: string) => {
+        return (newValue: string) => {
+            const user = users.find(user => user.id == id);
+            if (user == undefined) {
+                throw new Error(`User id ${id} cannot be found in state`);
+            }
+            const userIndex = users.indexOf(user);
+            const newUser: User = { ...user, id: newValue };
+            const newUsers = [...users.slice(0, userIndex), newUser, ...users.slice(userIndex + 1)];
+            setUsers(newUsers);
+        };
+    }
+
     const handleChangeIdFirst = (newValue: string) => {
         const newUser: User = { ...users[0], id: newValue };
         const newUsers = [newUser, ...users.slice(1, 2)];
