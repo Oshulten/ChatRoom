@@ -110,7 +110,7 @@ export function UserDataRow() {
                     <tbody>
                         <tr>
                             <td>
-                                <StringDataCell value={users[0].id} onChange={handleChangeIdFirst} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                                <StringDataCell value={users[0].id} onChange={handleChangeId(users[0].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                             </td>
                             <td>
                                 <StringDataCell value={users[0].alias} onChange={handleChangeAliasFirst} validationPattern={lengthPattern(0, 4)}></StringDataCell>
@@ -118,7 +118,7 @@ export function UserDataRow() {
                         </tr>
                         <tr>
                             <td>
-                                <StringDataCell value={users[1].id} onChange={handleChangeIdSecond} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                                <StringDataCell value={users[1].id} onChange={handleChangeId(users[1].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                             </td>
                             <td>
                                 <StringDataCell value={users[1].alias} onChange={handleChangeAliasSecond} validationPattern={lengthPattern(0, 4)}></StringDataCell>
