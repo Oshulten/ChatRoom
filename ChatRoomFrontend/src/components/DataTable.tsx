@@ -56,28 +56,22 @@ export function UserDataRow() {
         alias: "Bertha"
     }]);
 
-    const handleChangeId = (id: string) => {
-        return (newValue: string) => {
-            const user = users.find(user => user.id == id);
-            if (user == undefined) {
-                throw new Error(`User id ${id} cannot be found in state`);
-            }
-            const userIndex = users.indexOf(user);
-            const newUser: User = { ...user, id: newValue };
-            const newUsers = [...users.slice(0, userIndex), newUser, ...users.slice(userIndex + 1)];
-            setUsers(newUsers);
-        };
+    const reconstructUser = (user: User, key: string, value: string): User | undefined => {
+        switch (key) {
+            case "id": return { ...user, id: value };
+            case "alias": return { ...user, alias: value };
+        }
     }
 
-    const handleChangeAlias = (id: string) => {
+    const handleChange = (key: string, id: string) => {
         return (newValue: string) => {
             const user = users.find(user => user.id == id);
             if (user == undefined) {
                 throw new Error(`User id ${id} cannot be found in state`);
             }
             const userIndex = users.indexOf(user);
-            const newUser: User = { ...user, alias: newValue };
-            const newUsers = [...users.slice(0, userIndex), newUser, ...users.slice(userIndex + 1)];
+            const newUser = reconstructUser(user, key, newValue);
+            const newUsers = [...users.slice(0, userIndex), newUser!, ...users.slice(userIndex + 1)];
             setUsers(newUsers);
         };
     }
@@ -95,18 +89,18 @@ export function UserDataRow() {
                     <tbody>
                         <tr>
                             <td>
-                                <StringDataCell value={users[0].id} onChange={handleChangeId(users[0].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                                <StringDataCell value={users[0].id} onChange={handleChange("id", users[0].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                             </td>
                             <td>
-                                <StringDataCell value={users[0].alias} onChange={handleChangeAlias(users[0].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                                <StringDataCell value={users[0].alias} onChange={handleChange("alias", users[0].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <StringDataCell value={users[1].id} onChange={handleChangeId(users[1].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                                <StringDataCell value={users[1].id} onChange={handleChange("id", users[1].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                             </td>
                             <td>
-                                <StringDataCell value={users[1].alias} onChange={handleChangeAlias(users[1].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                                <StringDataCell value={users[1].alias} onChange={handleChange("alias", users[1].id)} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                             </td>
                         </tr>
                     </tbody>
