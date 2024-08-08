@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { lengthPattern } from '../utilities/regexPatterns';
+import User from '../models/User';
 
 function validateWithPattern(text: string, pattern?: string) {
     if (pattern) {
@@ -45,21 +46,23 @@ export function StringDataCell({ value, onChange, validationPattern, validationE
 // }
 
 export function UserDataRow() {
-    const [user, setUser] = useState({
+    const [users, setUsers] = useState<User[]>([{
         id: "1",
         alias: "Adam"
-    });
+    }]);
 
-    const handleChangeId = (newValue: string) => {
-        const newUser = { ...user, id: newValue };
-        setUser(newUser);
-        console.log(newUser);
+    const handleChangeIdFirst = (newValue: string) => {
+        const newUser: User = { ...users[0], id: newValue };
+        const newUsers = [newUser];
+        setUsers(newUsers);
+        console.log(newUsers);
     }
 
-    const handleChangeAlias = (newValue: string) => {
-        const newUser = { ...user, alias: newValue };
-        setUser(newUser);
-        console.log(newUser);
+    const handleChangeAliasFirst = (newValue: string) => {
+        const newUser: User = { ...users[0], alias: newValue };
+        const newUsers = [newUser];
+        setUsers(newUsers);
+        console.log(newUsers);
     }
 
     return (
@@ -74,10 +77,10 @@ export function UserDataRow() {
                 <tbody>
                     <tr>
                         <td>
-                            <StringDataCell value={user.id} onChange={handleChangeId} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                            <StringDataCell value={users[0].id} onChange={handleChangeIdFirst} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                         </td>
                         <td>
-                            <StringDataCell value={user.alias} onChange={handleChangeAlias} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                            <StringDataCell value={users[0].alias} onChange={handleChangeAliasFirst} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                         </td>
                     </tr>
                 </tbody>
