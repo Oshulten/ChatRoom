@@ -49,18 +49,22 @@ export function UserDataRow() {
     const [users, setUsers] = useState<User[]>([{
         id: "1",
         alias: "Adam"
+    },
+    {
+        id: "2",
+        alias: "Bertha"
     }]);
 
     const handleChangeIdFirst = (newValue: string) => {
         const newUser: User = { ...users[0], id: newValue };
-        const newUsers = [newUser];
+        const newUsers = [newUser, ...users.slice(1, 2)];
         setUsers(newUsers);
         console.log(newUsers);
     }
 
     const handleChangeAliasFirst = (newValue: string) => {
         const newUser: User = { ...users[0], alias: newValue };
-        const newUsers = [newUser];
+        const newUsers = [newUser, ...users.slice(1, 2)];
         setUsers(newUsers);
         console.log(newUsers);
     }
@@ -83,6 +87,14 @@ export function UserDataRow() {
                             <StringDataCell value={users[0].alias} onChange={handleChangeAliasFirst} validationPattern={lengthPattern(0, 4)}></StringDataCell>
                         </td>
                     </tr>
+                    {/* <tr>
+                        <td>
+                            <StringDataCell value={users[1].id} onChange={handleChangeIdSecond} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                        </td>
+                        <td>
+                            <StringDataCell value={users[1].alias} onChange={handleChangeAliasSecond} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                        </td>
+                    </tr> */}
                 </tbody>
             </table>
         </div>
