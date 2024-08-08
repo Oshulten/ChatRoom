@@ -46,7 +46,7 @@ export function StringDataCell({ value, onChange, validationPattern, validationE
     return inputElement;
 }
 
-export function UserDataRow() {
+export function UserTable() {
     const [users, setUsers] = useState<User[]>([{
         id: "1",
         alias: "Adam",

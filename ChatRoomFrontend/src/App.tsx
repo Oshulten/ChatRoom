@@ -1,12 +1,12 @@
 import React from 'react'
 import './App.css'
-import { UserDataRow } from './components/DataTable'
+import { UserTable } from './components/DataTable'
 
 
 function App() {
   return (
     <>
-      <UserDataRow></UserDataRow>
+      <UserTable></UserTable>
     </>
   )
 }
