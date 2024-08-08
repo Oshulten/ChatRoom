@@ -7,6 +7,9 @@ interface StringDataCellProps {
     placeholder?: string
 }
 
+const characterLengthPattern = (min: number, max: number) => `^.{${min},${max}}$`;
+export { characterLengthPattern };
+
 export default function StringDataCell({ initialValue, validationPattern = undefined, placeholder: placeholder = "Enter text..." }: StringDataCellProps) {
     const [inputIsValid, setInputIsValid] = useState(false);
 
