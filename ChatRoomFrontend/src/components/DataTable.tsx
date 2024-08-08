@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
-import { lengthPattern } from '../utilities/regexPatterns';
 import User from '../models/User';
-import { prettyJson } from '../utilities/prettyJson';
 
 function validateWithPattern(text: string, pattern?: string) {
     if (pattern) {
