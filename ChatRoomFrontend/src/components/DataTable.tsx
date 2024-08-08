@@ -84,33 +84,36 @@ export function UserDataRow() {
     }
 
     return (
-        <div className="overflow-x-auto">
-            <table className="table table-xs">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Alias</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <StringDataCell value={users[0].id} onChange={handleChangeIdFirst} validationPattern={lengthPattern(0, 4)}></StringDataCell>
-                        </td>
-                        <td>
-                            <StringDataCell value={users[0].alias} onChange={handleChangeAliasFirst} validationPattern={lengthPattern(0, 4)}></StringDataCell>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <StringDataCell value={users[1].id} onChange={handleChangeIdSecond} validationPattern={lengthPattern(0, 4)}></StringDataCell>
-                        </td>
-                        <td>
-                            <StringDataCell value={users[1].alias} onChange={handleChangeAliasSecond} validationPattern={lengthPattern(0, 4)}></StringDataCell>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <>
+            <div className="overflow-x-auto">
+                <table className="table table-xs">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Alias</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <StringDataCell value={users[0].id} onChange={handleChangeIdFirst} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                            </td>
+                            <td>
+                                <StringDataCell value={users[0].alias} onChange={handleChangeAliasFirst} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <StringDataCell value={users[1].id} onChange={handleChangeIdSecond} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                            </td>
+                            <td>
+                                <StringDataCell value={users[1].alias} onChange={handleChangeAliasSecond} validationPattern={lengthPattern(0, 4)}></StringDataCell>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>{JSON.stringify(users)}</p>
+        </>
     )
 }
