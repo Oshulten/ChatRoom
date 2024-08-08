@@ -14,7 +14,7 @@ function validateWithPattern(text: string, pattern?: string) {
 
 interface StringDataCellProps {
     value: string,
-    onChange: (value?: string) => void;
+    onChange: (value: string) => void;
     validationPattern?: string,
     placeholder?: string,
     validationError?: string,
