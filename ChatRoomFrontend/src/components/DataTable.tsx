@@ -46,6 +46,29 @@ export function StringDataCell({ value, onChange, validationPattern, validationE
     return inputElement;
 }
 
+interface UserRowProps {
+    user: User,
+    handleChangeId: (newValue: string) => void,
+    handleChangeAlias: (newValue: string) => void,
+    handleChangePassword: (newValue: string) => void,
+}
+
+export function UserRow({ user, handleChangeId, handleChangeAlias, handleChangePassword }: UserRowProps) {
+    return (
+        <tr key={user.id}>
+            <td key={"id"}>
+                <StringDataCell value={user.id} disabled={true} onChange={handleChangeId}></StringDataCell>
+            </td>
+            <td key={"alias"}>
+                <StringDataCell value={user.alias} onChange={handleChangeAlias}></StringDataCell>
+            </td>
+            <td key={"password"}>
+                <StringDataCell value={user.password} onChange={handleChangePassword}></StringDataCell>
+            </td>
+        </tr>
+    );
+}
+
 export function UserTable() {
     const [users, setUsers] = useState<User[]>([{
         id: "1",
@@ -97,19 +120,12 @@ export function UserTable() {
                     </thead>
                     <tbody>
                         {users.map((user, index) => {
-                            return (
-                                <tr key={user.id}>
-                                    <td key={"id"}>
-                                        <StringDataCell value={users[index].id} disabled={true} onChange={handleChange("id", users[index].id)}></StringDataCell>
-                                    </td>
-                                    <td key={"alias"}>
-                                        <StringDataCell value={users[index].alias} onChange={handleChange("alias", users[index].id)}></StringDataCell>
-                                    </td>
-                                    <td key={"password"}>
-                                        <StringDataCell value={users[index].password} onChange={handleChange("password", users[index].id)}></StringDataCell>
-                                    </td>
-                                </tr>
-                            );
+                            return <UserRow
+                                key={user.id}
+                                user={user}
+                                handleChangeId={handleChange("id", users[index].id)}
+                                handleChangeAlias={handleChange("alias", users[index].id)}
+                                handleChangePassword={handleChange("password", users[index].id)}></UserRow>
                         })}
                     </tbody>
                 </table>
