@@ -48,22 +48,20 @@ export function StringDataCell({ value, onChange, validationPattern, validationE
 
 interface UserRowProps {
     user: User,
-    handleChangeId: (newValue: string) => void,
-    handleChangeAlias: (newValue: string) => void,
-    handleChangePassword: (newValue: string) => void,
+    handleChanges: ((newValue: string) => void)[]
 }
 
-export function UserRow({ user, handleChangeId, handleChangeAlias, handleChangePassword }: UserRowProps) {
+export function UserRow({ user, handleChanges }: UserRowProps) {
     return (
         <tr key={user.id}>
             <td key={"id"}>
-                <StringDataCell value={user.id} disabled={true} onChange={handleChangeId}></StringDataCell>
+                <StringDataCell value={user.id} disabled={true} onChange={handleChanges[0]}></StringDataCell>
             </td>
             <td key={"alias"}>
-                <StringDataCell value={user.alias} onChange={handleChangeAlias}></StringDataCell>
+                <StringDataCell value={user.alias} onChange={handleChanges[1]}></StringDataCell>
             </td>
             <td key={"password"}>
-                <StringDataCell value={user.password} onChange={handleChangePassword}></StringDataCell>
+                <StringDataCell value={user.password} onChange={handleChanges[2]}></StringDataCell>
             </td>
         </tr>
     );
@@ -121,9 +119,10 @@ export function UserTable() {
                             return <UserRow
                                 key={user.id}
                                 user={user}
-                                handleChangeId={handleChange("id", users[index].id)}
-                                handleChangeAlias={handleChange("alias", users[index].id)}
-                                handleChangePassword={handleChange("password", users[index].id)}></UserRow>
+                                handleChanges={[
+                                    handleChange("id", users[index].id),
+                                    handleChange("alias", users[index].id),
+                                    handleChange("password", users[index].id)]}></UserRow>
                         })}
                     </tbody>
                 </table>
