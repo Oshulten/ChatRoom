@@ -113,9 +113,7 @@ export function UserTable() {
                 <table className="table table-xs">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Alias</th>
-                            <th>Password</th>
+                            {Object.keys(users[0]).map((name) => (<th key={name}>{name}</th>))}
                         </tr>
                     </thead>
                     <tbody>
