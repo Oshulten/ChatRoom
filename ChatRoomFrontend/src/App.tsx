@@ -1,11 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './App.css'
 import { StringDataCell, lengthPattern } from './components/DataTable'
 
 function App() {
+  const [value, setValue] = useState("123");
   return (
     <>
-      <StringDataCell initialValue="123" validationPattern={lengthPattern(0, 4)}></StringDataCell>
+      <StringDataCell initialValue={value} onChange={(newValue) => {
+        if (newValue) setValue(newValue);
+        console.log("New value: " + newValue);
+      }
+      } validationPattern={lengthPattern(0, 4)}></StringDataCell>
     </>
   )
 }

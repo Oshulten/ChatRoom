@@ -14,26 +14,27 @@ function validateWithPattern(text: string, pattern?: string) {
 
 interface StringDataCellProps {
     initialValue: string,
+    onChange: (value?: string) => void;
     validationPattern?: string,
     placeholder?: string,
     validationError?: string,
 }
 
-export function StringDataCell({ initialValue, validationPattern, validationError, placeholder }: StringDataCellProps) {
+export function StringDataCell({ value, onChange, validationPattern, validationError, placeholder }: StringDataCellProps) {
     const [inputIsValid, setInputIsValid] = useState(false);
-    const [value, setValue] = useState(initialValue);
 
     validationError ??= "(Sorry, something is wrong with the input!)";
     placeholder ??= "Enter text...";
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setInputIsValid(validateWithPattern(e.target.value, validationPattern));
-        setValue(e.target.value);
+        const currentInputIsValid = validateWithPattern(e.target.value, validationPattern);
+        const currentValue = e.target.value;
+        setInputIsValid(currentInputIsValid);
+        onChange(currentValue);
     }
 
     const inputElement = <input
         type="text"
-        defaultValue={initialValue}
         value={value}
         required
         placeholder={placeholder}
