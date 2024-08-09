@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
 import PrimitiveDataTable from './components/dataTable'
-import ChatUser from './types/chatUser'
+// import ChatUser from './types/chatUser'
 // import ChatMessage from './types/chatMessage'
 import ChatSpace from './types/chatSpace'
 
