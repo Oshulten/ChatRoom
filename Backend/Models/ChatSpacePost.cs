@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace Backend.Models
 {
-    public record ChatUserPatch
+    public record ChatSpacePost
     (
         [Length(Validation.AliasMinLength, Validation.AliasMinLength)]
-        string? Alias,
-
+        string Alias,
         [Length(Validation.PasswordMinLength, Validation.PasswordMinLength)]
-        string? Password,
-
-        bool? Admin
+        string Password
     );
 }

@@ -9,17 +9,14 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class UsersController(ChatroomDatabaseContext db) : ControllerBase
 {
-    private readonly string _deleteAllKey = "clear-all";
-
     [HttpGet("{id}")]
-    public ActionResult<ChatUser> GetById(Guid id)
+    public ChatUser GetById(Guid id)
     {
-        ChatUser? entity = db.ChatUsers.FirstOrDefault(data => data.Id == id);
-        return entity is not null ? Ok(entity) : NotFound();
+        return db.ChatUsers.FirstOrDefault(data => data.Id == id)!;
     }
 
     [HttpGet]
-    public ActionResult<List<ChatUser>> GetAll()
+    public List<ChatUser> GetAll()
     {
         if (!db.ChatUsers.Any())
         {
@@ -28,6 +25,14 @@ public class UsersController(ChatroomDatabaseContext db) : ControllerBase
         db.SaveChanges();
         return db.ChatUsers.ToList()!;
     }
+
+    [HttpGet("after-date/{date}")]
+    public IEnumerable<ChatUser> GetAfterDate(DateTime date)
+    {
+        return db.ChatUsers.Where(user => user.JoinedAt.CompareTo(date) > 0)
+                           .OrderBy(user => user.JoinedAt);
+    }
+
 
     [HttpPatch("{id}")]
     public IActionResult PatchById(Guid id, ChatUserPatch patchObject)

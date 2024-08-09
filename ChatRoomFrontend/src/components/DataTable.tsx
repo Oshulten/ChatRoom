@@ -30,8 +30,8 @@ export default function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint
 
         case "failure":
             return <>
-                <h2 className="text-red-900 text-3xl">Server is asleep...</h2>
-                <p className="text-red-500">Terrible sorry! We hope you have wonderful day despite this.</p>
+                <h2 className="text-red-500 text-3xl">Server is asleep...</h2>
+                <p className="text-red-900">Terrible sorry! We hope you have wonderful day despite this.</p>
             </>
 
         case "success":

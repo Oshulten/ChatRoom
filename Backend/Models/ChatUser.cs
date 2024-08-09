@@ -5,19 +5,9 @@ namespace Backend.Models
     public class ChatUser(string alias, string password, bool admin, DateTime joinedAt)
     {
         public Guid Id { get; init; } = Guid.NewGuid();
-
-        [Required]
-        [Length(3, 25)]
         public string Alias { get; set; } = alias;
-
-        [Required]
-        [Length(8, 25)]
         public string Password { get; set; } = password;
-
-        [Required]
         public DateTime JoinedAt { get; set; } = joinedAt;
-
-        [Required]
         public bool Admin { get; set; } = admin;
 
         // An explicit parameterless constructor is required for database creation
