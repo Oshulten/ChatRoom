@@ -136,8 +136,9 @@ export function PrimitiveDataTable() {
                     </tr>
                 </thead>
                 <tbody>
-                    <PrimitiveDataRow<SampleEntity> key={entities[0].id} entity={entities[0]} handleChange={handleChangeFactory(entities[0].id)} />
-                    <PrimitiveDataRow<SampleEntity> key={entities[1].id} entity={entities[1]} handleChange={handleChangeFactory(entities[1].id)} />
+                    {entities.map(entity => {
+                        return <PrimitiveDataRow<SampleEntity> key={entity.id} entity={entity} handleChange={handleChangeFactory(entity.id)} />
+                    })}
                 </tbody>
             </table>
         </div>
