@@ -91,31 +91,31 @@ export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
     </>)
 }
 
+export function PrimitiveDataTable<T extends GenericIdEntity>() {
+    const [entities, setEntities] = useState<T[]>([]);
 
-interface SampleEntity extends GenericIdEntity {
-    numberValue: number,
-    booleanValue: boolean,
-    stringValue: string
-}
-
-export function PrimitiveDataTable() {
-    const [entities, setEntities] = useState<SampleEntity[]>([
-        {
-            id: "1",
-            numberValue: 3,
-            booleanValue: false,
-            stringValue: "fdsjaklö"
-        },
-        {
-            id: "2",
-            numberValue: 3,
-            booleanValue: false,
-            stringValue: "fdsjaklö"
+    useEffect(() => {
+        console.log("fetching users");
+        const fetchAllEntities = async () => {
+            const url = "http://localhost:5055/api/Users";
+            try {
+                console.log("fetching users");
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+                const json = await response.json() as T[];
+                console.log(json);
+                setEntities(json);
+            } catch (error) {
+                console.error((error as Error).message);
+            }
         }
-    ])
+        fetchAllEntities();
+    }, []);
 
     function handleChangeFactory(entityId: string) {
-        return (newEntity: SampleEntity) => {
+        return (newEntity: T) => {
             console.log(`New entity: ${JSON.stringify(newEntity)} at id ${entityId}`);
             const entity = entities.find(entity => entity.id == entityId);
             if (entity == undefined) {
@@ -125,6 +125,10 @@ export function PrimitiveDataTable() {
             const newEntities = [...entities.slice(0, entityIndex), newEntity!, ...entities.slice(entityIndex + 1)];
             setEntities(newEntities);
         }
+    }
+
+    if (entities.length == 0) {
+        return <p>Sorry, no content!</p>
     }
 
     return (<>
@@ -137,7 +141,7 @@ export function PrimitiveDataTable() {
                 </thead>
                 <tbody>
                     {entities.map(entity => {
-                        return <PrimitiveDataRow<SampleEntity> key={entity.id} entity={entity} handleChange={handleChangeFactory(entity.id)} />
+                        return <PrimitiveDataRow<T> key={entity.id} entity={entity} handleChange={handleChangeFactory(entity.id)} />
                     })}
                 </tbody>
             </table>
