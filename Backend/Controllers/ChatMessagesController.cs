@@ -27,5 +27,14 @@ namespace Backend.Controllers
             return db.ChatMessages.Where(message => message.PostedAt.CompareTo(date) > 0)
                                   .OrderBy(message => message.PostedAt);
         }
+
+        [HttpPost]
+        public ActionResult Post(ChatMessagePost post)
+        {
+            var message = (ChatMessage)post;
+            db.ChatMessages.Add(message);
+            db.SaveChanges();
+            return CreatedAtAction(nameof(GetById), new { id = message.Id }, null);
+        }
     }
 }

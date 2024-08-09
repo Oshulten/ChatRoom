@@ -8,9 +8,9 @@ namespace Backend.Models
 {
     public record ChatMessagePost
     (
-        Guid UserId,
-        [Length(Validation.ContentMinLength, Validation.ContentMinLength)]
+        [Length(Validation.ContentMinLength, Validation.ContentMaxLength)]
         string Content,
-        Guid ChatSpace
+        Guid ChatSpace,
+        Guid ChatUser
     );
 }
