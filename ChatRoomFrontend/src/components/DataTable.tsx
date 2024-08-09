@@ -105,6 +105,12 @@ export function PrimitiveDataTable() {
             numberValue: 3,
             booleanValue: false,
             stringValue: "fdsjaklö"
+        },
+        {
+            id: "2",
+            numberValue: 3,
+            booleanValue: false,
+            stringValue: "fdsjaklö"
         }
     ])
 
@@ -131,6 +137,7 @@ export function PrimitiveDataTable() {
                 </thead>
                 <tbody>
                     <PrimitiveDataRow<SampleEntity> key={entities[0].id} entity={entities[0]} handleChange={handleChangeFactory(entities[0].id)} />
+                    <PrimitiveDataRow<SampleEntity> key={entities[1].id} entity={entities[1]} handleChange={handleChangeFactory(entities[1].id)} />
                 </tbody>
             </table>
         </div>
