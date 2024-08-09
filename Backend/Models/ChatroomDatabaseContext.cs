@@ -8,7 +8,7 @@ namespace Backend.Models
 {
     public class ChatroomDatabaseContext : DbContext
     {
-        public DbSet<Member> Users { get; set; }
+        public DbSet<ChatUser> ChatUsers { get; set; }
         public string DbPath { get; }
         private string _databaseFileName = "chatroom.db";
 

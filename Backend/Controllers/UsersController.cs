@@ -5,13 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers;
 
-/* 
-To copy-paste this class for use with another database table
-- Rename the class name manually
-- Search and replace "DefaultTypeDto" with '{table-data-type}Dto'
-- Search and replace "DefaultData" with '{new-table-name}'
-*/
-
 [ApiController]
 [Route("api/[controller]")]
 public class UsersController(ChatroomDatabaseContext db) : ControllerBase
@@ -20,28 +13,28 @@ public class UsersController(ChatroomDatabaseContext db) : ControllerBase
     private readonly ChatroomDatabaseContext _db = db;
 
     [HttpGet("{id}")]
-    public ActionResult<Member> GetById(Guid id)
+    public ActionResult<ChatUser> GetById(Guid id)
     {
-        Member? entity = _db.Users.FirstOrDefault(data => data.Id == id);
+        ChatUser? entity = _db.ChatUsers.FirstOrDefault(data => data.Id == id);
         return entity is not null ? Ok(entity) : NotFound();
     }
 
     [HttpGet]
-    public ActionResult<List<Member>> GetAll()
+    public ActionResult<List<ChatUser>> GetAll()
     {
-        if (!_db.Users.Any())
+        if (!_db.ChatUsers.Any())
         {
-            _db.Users!.AddRange(Member.SeedData());
+            _db.ChatUsers!.AddRange(ChatUser.SeedData());
         }
         _db.SaveChanges();
-        var entities = _db.Users.ToList()!;
+        var entities = _db.ChatUsers.ToList()!;
         return entities;
     }
 
     [HttpPatch("{id}")]
-    public IActionResult PatchById(Guid id, Member patchObject)
+    public IActionResult PatchById(Guid id, ChatUser patchObject)
     {
-        Member? entity = db.Users.FirstOrDefault(data => data.Id == id);
+        ChatUser? entity = db.ChatUsers.FirstOrDefault(data => data.Id == id);
         if (entity is null)
         {
             return NotFound();
