@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import User from '../models/User';
+import User from '../types/user';
 import { castStringToPrimitive } from '../utilities/casting';
 import type { PrimitiveType } from '../utilities/casting';
-import { preProcessFile } from 'typescript';
+import { GenericIdEntity } from '../types/genericIdEntity';
 
 function validateWithPattern(text: string, pattern?: string) {
     if (pattern) {
@@ -93,31 +93,19 @@ export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
     </>)
 }
 
-interface Identifiable {
-    id: string
+
+interface PrimitiveDataRowProps<T> {
+    entity: T,
+    handleChange: (newValue: T) => void
 }
 
-interface SampleEntity extends Identifiable {
-    numberValue: number,
-    booleanValue: boolean,
-    stringValue: string
-}
-
-
-export function PrimitiveDataRow<T extends Identifiable>() {
-    const [entity, setEntity] = useState<SampleEntity>({
-        id: "3153",
-        numberValue: 125,
-        booleanValue: true,
-        stringValue: "monkey"
-    });
-
-    function handleChangeFactory(propertyKey: keyof SampleEntity) {
+export function PrimitiveDataRow<T extends GenericIdEntity>({ entity, handleChange }: PrimitiveDataRowProps<T>) {
+    function handleChangeFactory(propertyKey: keyof T) {
         type BlankSlate = {
             [key: string]: PrimitiveType
         }
         return (newPropertyValue: PrimitiveType) => {
-            const filledSlate = Object.entries({ ...entity }).reduce((accumulator, [key, value]) => {
+            const filledSlate = Object.entries({ ...entity } as BlankSlate).reduce((accumulator, [key, value]) => {
                 if (propertyKey == key) {
                     accumulator[key] = newPropertyValue;
                     return accumulator;
@@ -125,8 +113,8 @@ export function PrimitiveDataRow<T extends Identifiable>() {
                 accumulator[key] = value;
                 return accumulator;
             }, {} as BlankSlate);
-            const newEntity = (filledSlate as unknown) as SampleEntity;
-            setEntity(newEntity);
+            const newEntity = (filledSlate as unknown) as T;
+            handleChange(newEntity);
         }
     }
 
