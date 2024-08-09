@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import './App.css'
-import { UserTable, GenericCell } from './components/DataTable'
+import { UserTable, PrimitiveDataCell, PrimitiveDataRow } from './components/DataTable'
 import { PrimitiveType } from './utilities/casting';
 
 
@@ -12,12 +12,14 @@ function App() {
   return (
     <>
       <UserTable></UserTable>
-      <GenericCell value={booleanState} onChange={(value) => {
+      {/* <PrimitiveDataCell value={booleanState} onChange={(value) => {
         setBooleanState(value);
-        console.log("boolean value: "+value)}} />
-      <GenericCell value={numberState} onChange={(value) => setNumberState(value)} />
-      <GenericCell value={stringState} onChange={(value) => setStringState(value)} />
-      <p>{JSON.stringify({ booleanState: booleanState, numberState: numberState, stringState: stringState })}</p>
+        console.log("boolean value: " + value)
+      }} />
+      <PrimitiveDataCell value={numberState} onChange={(value) => setNumberState(value)} />
+      <PrimitiveDataCell value={stringState} onChange={(value) => setStringState(value)} />
+      <p>{JSON.stringify({ booleanState: booleanState, numberState: numberState, stringState: stringState })}</p> */}
+      <PrimitiveDataRow />
     </>
   )
 }

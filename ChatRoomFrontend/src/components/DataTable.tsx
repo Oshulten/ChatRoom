@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import User from '../models/User';
-import { castStringToPrimitive, castToTypeInfo } from '../utilities/casting';
+import { castStringToPrimitive } from '../utilities/casting';
 import type { PrimitiveType } from '../utilities/casting';
+import { preProcessFile } from 'typescript';
 
 function validateWithPattern(text: string, pattern?: string) {
     if (pattern) {
@@ -51,7 +52,7 @@ interface GenericCellProps {
     onChange: (value: PrimitiveType) => void
 }
 
-export function GenericCell({ value, onChange }: GenericCellProps) {
+export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
     function handleChange(currentString: string) {
         console.log("handleChangeInCell: " + currentString);
         onChange(castStringToPrimitive(currentString, value));
@@ -91,6 +92,74 @@ export function GenericCell({ value, onChange }: GenericCellProps) {
         {/* <p>{typeof (castStringToPrimitive(String(value), value))}</p> */}
     </>)
 }
+
+interface Identifiable {
+    id: string
+}
+
+interface SampleEntity extends Identifiable {
+    numberValue: number,
+    booleanValue: boolean,
+    stringValue: string
+}
+
+
+export function PrimitiveDataRow<T extends Identifiable>() {
+    const [entity, setEntity] = useState<SampleEntity>({
+        id: "3153",
+        numberValue: 125,
+        booleanValue: true,
+        stringValue: "monkey"
+    });
+
+    function handleChangeFactory(propertyKey: keyof SampleEntity) {
+        type BlankSlate = {
+            [key: string]: PrimitiveType
+        }
+        return (newPropertyValue: PrimitiveType) => {
+            const filledSlate = Object.entries({ ...entity }).reduce((accumulator, [key, value]) => {
+                if (propertyKey == key) {
+                    accumulator[key] = newPropertyValue;
+                    return accumulator;
+                }
+                accumulator[key] = value;
+                return accumulator;
+            }, {} as BlankSlate);
+            const newEntity = (filledSlate as unknown) as SampleEntity;
+            setEntity(newEntity);
+        }
+    }
+
+    return (
+        <div className="overflow-x-auto">
+            <table className="table table-xs">
+                <thead>
+                    <tr>
+                        {Object.keys(entity).map((name) => (<th key={name}>{name}</th>))}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr key={entity.id}>
+                        <td key={"id"}>
+                            <PrimitiveDataCell value={entity.id} onChange={handleChangeFactory("id")}></PrimitiveDataCell>
+                        </td>
+                        <td key={"alias"}>
+                            <PrimitiveDataCell value={entity.numberValue} onChange={handleChangeFactory("numberValue")}></PrimitiveDataCell>
+                        </td>
+                        <td key={"password"}>
+                            <PrimitiveDataCell value={entity.booleanValue} onChange={handleChangeFactory("booleanValue")}></PrimitiveDataCell>
+                        </td>
+                        <td key={"string"}>
+                            <PrimitiveDataCell value={entity.stringValue} onChange={handleChangeFactory("stringValue")}></PrimitiveDataCell>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    );
+}
+
+
 
 interface UserRowProps {
     user: User,
