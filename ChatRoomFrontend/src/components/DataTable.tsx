@@ -10,7 +10,7 @@ interface PrimitiveDataTableProps {
 }
 
 export default function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId }: PrimitiveDataTableProps) {
-    const [entities, setEntities, status] = useConnectToDbTable<T>(endpoint);
+    const [entities, setEntities, status, validities] = useConnectToDbTable<T>(endpoint);
 
     function handleChangeFactory(entityId: string) {
         return (newEntity: T) => {
@@ -49,23 +49,33 @@ export default function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint
                         </thead>
                         <tbody>
                             {entities.map(entity => {
-                                return <PrimitiveDataRow<T> showId={showId} key={entity.id} entity={entity} handleChange={handleChangeFactory(entity.id)} />
+                                return <PrimitiveDataRow<T>
+                                    showId={showId}
+                                    key={entity.id}
+                                    entity={entity}
+                                    handleChange={handleChangeFactory(entity.id)}
+                                    validities={validities[entity.id]} />
                             })}
                         </tbody>
                     </table>
                 </div>
-                <p>{JSON.stringify(entities)}</p>
+                <p>{JSON.stringify(validities)}</p>
             </>)
     }
+}
+
+interface CellValidities {
+    [key: string]: string
 }
 
 interface PrimitiveDataRowProps<T> {
     entity: T,
     showId: boolean,
-    handleChange: (newValue: T) => void
+    handleChange: (newValue: T) => void,
+    validities: CellValidities
 }
 
-function PrimitiveDataRow<T extends GenericIdEntity>({ entity, showId, handleChange }: PrimitiveDataRowProps<T>) {
+function PrimitiveDataRow<T extends GenericIdEntity>({ entity, showId, handleChange, validities }: PrimitiveDataRowProps<T>) {
     function handleChangeFactory(propertyKey: keyof T) {
         type BlankSlate = {
             [key: string]: PrimitiveType
@@ -89,9 +99,15 @@ function PrimitiveDataRow<T extends GenericIdEntity>({ entity, showId, handleCha
         <tr key={entity.id}>
             {Object.keys(entity).map((key) => {
                 if (key == "id" && !showId) return;
+                console.log(`Validity at ${entity.id} with key ${key}: ${JSON.stringify(validities[key])}`)
                 return (
                     <td key={key}>
-                        <PrimitiveDataCell key={key} value={entity[key]} onChange={handleChangeFactory(key)} disabled={key == "id"} />
+                        <PrimitiveDataCell
+                            validity={validities[key]}
+                            key={key}
+                            value={entity[key]}
+                            onChange={handleChangeFactory(key)}
+                            disabled={key == "id"} />
                     </td>
                 )
             })}
@@ -103,18 +119,19 @@ interface PrimitiveDataCellProps {
     value: PrimitiveType,
     disabled: boolean,
     onChange: (value: PrimitiveType) => void
+    validity: string
 }
 
-function PrimitiveDataCell({ value, onChange, disabled }: PrimitiveDataCellProps) {
+function PrimitiveDataCell({ value, onChange, disabled, validity }: PrimitiveDataCellProps) {
     const handleChange = (currentString: string) => onChange(castStringToPrimitive(currentString, value));
 
     let inputElement;
-
+    const validityModifier = validity !== "" ? "input-error" : "input-success";
     if (typeof (value) === "string") {
         inputElement =
             <input
                 type="text"
-                className={`input input-bordered w-full max-w-xs`}
+                className={`input input-bordered w-full max-w-xs ${validityModifier}`}
                 value={value.toString()}
                 onChange={(e) => handleChange(e.target.value)}
                 disabled={disabled} />
@@ -123,7 +140,7 @@ function PrimitiveDataCell({ value, onChange, disabled }: PrimitiveDataCellProps
     if (typeof (value) === "boolean") {
         inputElement =
             <select
-                className="select select-bordered w-full max-w-xs"
+                className={`select select-bordered w-full max-w-xs ${validityModifier}`}
                 onChange={(e) => handleChange(e.target.value)}
                 defaultValue={value.toString()}
                 disabled={disabled}>
@@ -136,7 +153,7 @@ function PrimitiveDataCell({ value, onChange, disabled }: PrimitiveDataCellProps
         inputElement =
             <input
                 type="number"
-                className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+                className={`${validityModifier} bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                 value={value.toString()}
                 disabled={disabled}
                 onChange={(e) => handleChange(e.target.value)} />

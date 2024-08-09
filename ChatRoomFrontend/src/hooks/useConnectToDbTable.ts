@@ -3,9 +3,31 @@ import { GenericIdEntity } from "../types/genericIdEntity";
 
 type FetchStatus = "fetching" | "success" | "failure";
 
-export default function useConnectToDbTable<T extends GenericIdEntity>(endpointUrl: string): [T[], React.Dispatch<React.SetStateAction<T[]>>, FetchStatus] {
+interface DataValidity {
+    [id: string]: {
+        [key: string]: string
+    }
+}
+
+//Todo: Change structure of data validity object such that only invalid keys on invalid entities exist
+//Currently, all entities are present with all keys, but empty strings if everything is valid
+
+export default function useConnectToDbTable<T extends GenericIdEntity>(endpointUrl: string): [T[], React.Dispatch<React.SetStateAction<T[]>>, FetchStatus, DataValidity] {
     const [entities, setEntities] = useState<T[]>([]);
     const [status, setStatus] = useState<FetchStatus>("fetching");
+    const [dataValidity, setDataValidity] = useState<DataValidity>({});
+
+    function emptyDataValidity(entities: T[]) {
+        const newValidities: DataValidity = {};
+        entities.forEach(entity => {
+            newValidities[entity.id] = {};
+            Object.keys(entities[0]).forEach(key => {
+                newValidities[entity.id][key] = "";
+            })
+        });
+        console.log(JSON.stringify(newValidities));
+        return newValidities;
+    }
 
     useEffect(() => {
         const fetchAllEntities = async () => {
@@ -18,6 +40,7 @@ export default function useConnectToDbTable<T extends GenericIdEntity>(endpointU
                 const json = await response.json() as T[];
                 setEntities(json);
                 setStatus("success");
+                setDataValidity(emptyDataValidity(json));
             } catch (error) {
                 console.error(`Something went wrong on the backend ${(error as Error).message}`);
                 setStatus("failure");
@@ -27,27 +50,39 @@ export default function useConnectToDbTable<T extends GenericIdEntity>(endpointU
     }, []);
 
     useEffect(() => {
-        const patchEntity = async (entity: T) => {
-            const url = `${endpointUrl}/${entity.id}`;
-            try {
-                const response = await fetch(url, {
-                    method: "PATCH",
-                    body: JSON.stringify(entity),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
+        const patchEntities = async () => {
+            const newValidities = emptyDataValidity(entities);
+
+            entities.forEach(async entity => {
+                const url = `${endpointUrl}/${entity.id}`;
+                try {
+                    const response = await fetch(url, {
+                        method: "PATCH",
+                        body: JSON.stringify(entity),
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    });
+                    if (!response.ok) {
+                        const sampleEntity = entities[0];
+                        const content = await response.json();
+                        Object.keys(sampleEntity).forEach(key => {
+                            const capitalizedKey = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+                            if (content.errors[capitalizedKey]) {
+                                console.log(`Entity ${entity.id} is invalid at ${key} for reason '${content.errors[capitalizedKey]}'`)
+                                newValidities[entity.id][key] = content.errors[capitalizedKey];
+                            }
+                        });
+                        throw new Error(`Response status: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error(`Patch error: ${(error as Error).message}`);
                 }
-            } catch (error) {
-                console.error((error as Error).message);
-            }
+                setDataValidity(newValidities);
+            })
         }
-        entities.forEach(entity => {
-            patchEntity(entity);
-        })
+        patchEntities();
     }, [entities]);
 
-    return [entities, setEntities, status];
+    return [entities, setEntities, status, dataValidity];
 }

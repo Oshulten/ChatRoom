@@ -1,12 +1,12 @@
 import React from 'react'
 import './App.css'
 import PrimitiveDataTable from './components/dataTable'
-import User from './types/user'
+import ChatUser from './types/chatUser'
 
 function App() {
   return (
     <>
-      <PrimitiveDataTable<User> endpoint="http://localhost:5055/api/Users" showId={true} />
+      <PrimitiveDataTable<ChatUser> endpoint="http://localhost:5055/api/Users" showId={true} />
     </>
   )
 }
