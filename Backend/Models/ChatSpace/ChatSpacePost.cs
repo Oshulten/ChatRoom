@@ -8,9 +8,12 @@ namespace Backend.Models
 {
     public record ChatSpacePost
     (
-        [Length(Validation.AliasMinLength, Validation.AliasMinLength)]
+        [Length(Validation.AliasMinLength, Validation.AliasMaxLength)]
         string Alias,
-        [Length(Validation.PasswordMinLength, Validation.PasswordMinLength)]
-        string Password
+
+        [Length(Validation.PasswordMinLength, Validation.PasswordMaxLength)]
+        string Password,
+
+        Guid[] UserIds
     );
 }

@@ -16,5 +16,9 @@ namespace Backend.Models
         public Guid[] UserIds { get; set; } = userIds;
 
         public ChatSpace() : this("An empty room", "allAreWelcome", [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()]) { }
+
+        public static explicit operator ChatSpace(ChatSpacePost post) => new(
+            post.Alias, post.Password, post.UserIds
+        );
     }
 }

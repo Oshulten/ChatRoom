@@ -18,5 +18,14 @@ namespace Backend.Controllers
         {
             return db.ChatSpaces;
         }
+
+        [HttpPost]
+        public ActionResult Post(ChatSpacePost post)
+        {
+            var space = (ChatSpace)post;
+            db.ChatSpaces.Add(space);
+            db.SaveChanges();
+            return CreatedAtAction(nameof(GetById), new { id = space.Id }, null);
+        }
     }
 }
