@@ -54,9 +54,9 @@ interface GenericCellProps<T extends GenericCellType> {
 export function GenericCell<T extends GenericCellType>({ value, onChange }: GenericCellProps<T>) {
     const [stringRepresentation, setStringRepresentation] = useState(String(value));
 
-    castToType(String(value));
+    castToTypeInfo(String(value));
 
-    function castToType(valueStringRepresentation: string): string {
+    function castToTypeInfo(valueStringRepresentation: string): string {
         const instanceWrapper = Object(value);
         let instanceOfClass;
         if (instanceWrapper instanceof Object) {
@@ -78,6 +78,15 @@ export function GenericCell<T extends GenericCellType>({ value, onChange }: Gene
         return (`typeof(value) = ${typeof (value)}, instanceof ${instanceOfClass}`);
     }
 
+    function castStringToPrimitive(valueStringRepresentation: string): number | string | boolean {
+        switch (typeof (value)) {
+            case "number": return Number(valueStringRepresentation).valueOf();
+            case "string": return String(valueStringRepresentation).valueOf();
+            case "boolean": return Boolean(valueStringRepresentation).valueOf();
+            default: return Object(stringRepresentation).valueOf();
+        }
+    }
+
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         const currentStringValue = e.target.value;
         setStringRepresentation(currentStringValue);
@@ -94,7 +103,8 @@ export function GenericCell<T extends GenericCellType>({ value, onChange }: Gene
 
     return (<>
         {inputElement}
-        <p>{castToType(String(value))}</p>
+        <p>{castToTypeInfo(String(value))}</p>
+        <p>{typeof (castStringToPrimitive(String(value)))}</p>
     </>)
 }
 
