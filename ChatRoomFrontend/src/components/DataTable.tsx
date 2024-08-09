@@ -49,10 +49,11 @@ export function StringDataCell({ value, onChange, validationPattern, validationE
 
 interface GenericCellProps {
     value: PrimitiveType,
+    disabled: boolean,
     onChange: (value: PrimitiveType) => void
 }
 
-export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
+export function PrimitiveDataCell({ value, onChange, disabled }: GenericCellProps) {
     const handleChange = (currentString: string) => onChange(castStringToPrimitive(currentString, value));
 
     let inputElement;
@@ -63,7 +64,8 @@ export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
                 type="text"
                 className={`input input-bordered w-full max-w-xs`}
                 value={value.toString()}
-                onChange={(e) => handleChange(e.target.value)} />
+                onChange={(e) => handleChange(e.target.value)}
+                disabled={disabled} />
     }
 
     if (typeof (value) === "boolean") {
@@ -71,7 +73,8 @@ export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
             <select
                 className="select select-bordered w-full max-w-xs"
                 onChange={(e) => handleChange(e.target.value)}
-                defaultValue={value.toString()}>
+                defaultValue={value.toString()}
+                disabled={disabled}>
                 <option value="true">True</option>
                 <option value="false">False</option>
             </select>
@@ -83,6 +86,7 @@ export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
                 type="number"
                 className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
                 value={value.toString()}
+                disabled={disabled}
                 onChange={(e) => handleChange(e.target.value)} />
     }
 
@@ -135,8 +139,8 @@ export function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId
             return <span className="loading loading-spinner loading-lg"></span>;
         case "server failure":
             return <>
-                <h2 className="text-red-900 text-3xl">Server failure</h2>
-                <p>We´re terrible sorry! Hope you have wonderful day despite this.</p>
+                <h2 className="text-red-900 text-3xl">Server is asleep</h2>
+                <p className="text-red-500">Terrible sorry! We hope you have wonderful day despite this.</p>
             </>
         case "success":
             return (<>
@@ -174,6 +178,7 @@ export function PrimitiveDataRow<T extends GenericIdEntity>({ entity, showId, ha
         type BlankSlate = {
             [key: string]: PrimitiveType
         }
+
         return (newPropertyValue: PrimitiveType) => {
             const filledSlate = Object.entries({ ...entity } as BlankSlate).reduce((accumulator, [key, value]) => {
                 if (propertyKey == key) {
@@ -194,11 +199,12 @@ export function PrimitiveDataRow<T extends GenericIdEntity>({ entity, showId, ha
                 if (key == "id" && !showId) return;
                 return (
                     <td key={key}>
-                        <PrimitiveDataCell key={key} value={entity[key]} onChange={handleChangeFactory(key)}></PrimitiveDataCell>
+                        <PrimitiveDataCell key={key} value={entity[key]} onChange={handleChangeFactory(key)} disabled={key == "id"} />
                     </td>
                 )
             })}
-        </tr>)
+        </tr>
+    )
 }
 
 interface UserRowProps {

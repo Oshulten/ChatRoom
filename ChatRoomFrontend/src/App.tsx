@@ -8,7 +8,7 @@ import User from './types/user'
 function App() {
   return (
     <>
-      <PrimitiveDataTable<User> endpoint="http://localhost:5055/api/Users" showId={false} />
+      <PrimitiveDataTable<User> endpoint="http://localhost:5055/api/Users" showId={true} />
     </>
   )
 }
