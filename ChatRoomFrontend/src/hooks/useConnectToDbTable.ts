@@ -3,7 +3,7 @@ import { GenericIdEntity } from "../types/genericIdEntity";
 
 type FetchStatus = "fetching" | "success" | "failure";
 
-export default function useFetchAllEntities<T extends GenericIdEntity>(endpointUrl: string): [T[], React.Dispatch<React.SetStateAction<T[]>>, FetchStatus] {
+export default function useConnectToDbTable<T extends GenericIdEntity>(endpointUrl: string): [T[], React.Dispatch<React.SetStateAction<T[]>>, FetchStatus] {
     const [entities, setEntities] = useState<T[]>([]);
     const [status, setStatus] = useState<FetchStatus>("fetching");
 
@@ -25,6 +25,29 @@ export default function useFetchAllEntities<T extends GenericIdEntity>(endpointU
         }
         fetchAllEntities();
     }, []);
+
+    useEffect(() => {
+        const patchEntity = async (entity: T) => {
+            const url = `${endpointUrl}/${entity.id}`;
+            try {
+                const response = await fetch(url, {
+                    method: "PATCH",
+                    body: JSON.stringify(entity),
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error((error as Error).message);
+            }
+        }
+        entities.forEach(entity => {
+            patchEntity(entity);
+        })
+    }, [entities]);
 
     return [entities, setEntities, status];
 }

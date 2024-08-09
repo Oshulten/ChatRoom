@@ -3,7 +3,7 @@ import User from '../types/user';
 import { castStringToPrimitive } from '../utilities/casting';
 import type { PrimitiveType } from '../utilities/casting';
 import { GenericIdEntity } from '../types/genericIdEntity';
-import useFetchAllEntities from '../hooks/useFetchAllEntities';
+import useConnectToDbTable from '../hooks/useConnectToDbTable';
 
 function validateWithPattern(text: string, pattern?: string) {
     if (pattern) {
@@ -100,30 +100,7 @@ interface PrimitiveDataTableProps {
 }
 
 export function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId }: PrimitiveDataTableProps) {
-    const [entities, setEntities, status] = useFetchAllEntities<T>(endpoint);
-
-    useEffect(() => {
-        const patchEntity = async (entity: T) => {
-            const url = `${endpoint}/${entity.id}`;
-            try {
-                const response = await fetch(url, {
-                    method: "PATCH",
-                    body: JSON.stringify(entity),
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-            } catch (error) {
-                console.error((error as Error).message);
-            }
-        }
-        entities.forEach(entity => {
-            patchEntity(entity);
-        })
-    }, [entities]);
+    const [entities, setEntities, status] = useConnectToDbTable<T>(endpoint);
 
     function handleChangeFactory(entityId: string) {
         return (newEntity: T) => {
