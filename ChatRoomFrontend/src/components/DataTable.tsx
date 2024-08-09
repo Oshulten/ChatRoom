@@ -30,7 +30,7 @@ export default function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint
 
         case "failure":
             return <>
-                <h2 className="text-red-900 text-3xl">Server is asleep</h2>
+                <h2 className="text-red-900 text-3xl">Server is asleep...</h2>
                 <p className="text-red-500">Terrible sorry! We hope you have wonderful day despite this.</p>
             </>
 
@@ -90,6 +90,7 @@ function PrimitiveDataRow<T extends GenericIdEntity>({ entity, showId, handleCha
                 accumulator[key] = value;
                 return accumulator;
             }, {} as BlankSlate);
+
             const newEntity = (filledSlate as unknown) as T;
             handleChange(newEntity);
         }
@@ -99,7 +100,6 @@ function PrimitiveDataRow<T extends GenericIdEntity>({ entity, showId, handleCha
         <tr key={entity.id}>
             {Object.keys(entity).map((key) => {
                 if (key == "id" && !showId) return;
-                console.log(`Validity at ${entity.id} with key ${key}: ${JSON.stringify(validities[key])}`)
                 return (
                     <td key={key}>
                         <PrimitiveDataCell
@@ -126,7 +126,7 @@ function PrimitiveDataCell({ value, onChange, disabled, validity }: PrimitiveDat
     const handleChange = (currentString: string) => onChange(castStringToPrimitive(currentString, value));
 
     let inputElement;
-    const validityModifier = validity !== "" ? "input-error" : "input-success";
+    const validityModifier = validity == "" ? "input-success" : "input-error";
     if (typeof (value) === "string") {
         inputElement =
             <input

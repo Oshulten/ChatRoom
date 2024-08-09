@@ -25,7 +25,6 @@ export default function useConnectToDbTable<T extends GenericIdEntity>(endpointU
                 newValidities[entity.id][key] = "";
             })
         });
-        console.log(JSON.stringify(newValidities));
         return newValidities;
     }
 
@@ -51,7 +50,7 @@ export default function useConnectToDbTable<T extends GenericIdEntity>(endpointU
 
     useEffect(() => {
         const patchEntities = async () => {
-            const newValidities = emptyDataValidity(entities);
+            const newValidities = { ...dataValidity }
 
             entities.forEach(async entity => {
                 const url = `${endpointUrl}/${entity.id}`;
@@ -62,18 +61,24 @@ export default function useConnectToDbTable<T extends GenericIdEntity>(endpointU
                         headers: {
                             "Content-Type": "application/json",
                         },
+
                     });
                     if (!response.ok) {
-                        const sampleEntity = entities[0];
                         const content = await response.json();
-                        Object.keys(sampleEntity).forEach(key => {
+                        Object.keys(entities[0]).forEach(key => {
                             const capitalizedKey = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
                             if (content.errors[capitalizedKey]) {
-                                console.log(`Entity ${entity.id} is invalid at ${key} for reason '${content.errors[capitalizedKey]}'`)
-                                newValidities[entity.id][key] = content.errors[capitalizedKey];
+                                newValidities[entity.id][key] = content.errors[capitalizedKey][0];
+                            }
+                            else {
+                                newValidities[entity.id][key] = "";
                             }
                         });
                         throw new Error(`Response status: ${response.status}`);
+                    } else {
+                        Object.keys(entities[0]).forEach(key => {
+                            newValidities[entity.id][key] = "";
+                        });
                     }
                 } catch (error) {
                     console.error(`Patch error: ${(error as Error).message}`);
