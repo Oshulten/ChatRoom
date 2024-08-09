@@ -144,7 +144,11 @@ export function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId
                     <table className="table table-xs">
                         <thead>
                             <tr>
-                                {Object.keys(entities[0]).map((name) => (<th key={name}>{name}</th>))}
+                                {Object.keys(entities[0]).map((key) => {
+                                    if (!showId && key == "id") return;
+                                    return (<th key={key}>{key}</th>)
+                                }
+                                )}
                             </tr>
                         </thead>
                         <tbody>
@@ -187,6 +191,7 @@ export function PrimitiveDataRow<T extends GenericIdEntity>({ entity, showId, ha
     return (
         <tr key={entity.id}>
             {Object.keys(entity).map((key) => {
+                if (key == "id" && !showId) return;
                 return (
                     <td key={key}>
                         <PrimitiveDataCell key={key} value={entity[key]} onChange={handleChangeFactory(key)}></PrimitiveDataCell>
