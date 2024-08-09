@@ -86,21 +86,22 @@ export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
                 onChange={(e) => handleChange(e.target.value)} />
     }
 
-    return (<>
-        {inputElement}
-    </>)
+    return inputElement;
 }
 
-export function PrimitiveDataTable<T extends GenericIdEntity>() {
+interface PrimitiveDataTableProps {
+    endpoint: string,
+    showId: boolean
+}
+
+export function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId }: PrimitiveDataTableProps) {
     const [entities, setEntities] = useState<T[]>([]);
 
     useEffect(() => {
-        console.log("fetching users");
-        const fetchAllEntities = async () => {
-            const url = "http://localhost:5055/api/Users";
+        const fetchAllEntities = async (endpointUrl: string) => {
             try {
                 console.log("fetching users");
-                const response = await fetch(url);
+                const response = await fetch(endpointUrl);
                 if (!response.ok) {
                     throw new Error(`Response status: ${response.status}`);
                 }
@@ -111,7 +112,7 @@ export function PrimitiveDataTable<T extends GenericIdEntity>() {
                 console.error((error as Error).message);
             }
         }
-        fetchAllEntities();
+        fetchAllEntities(endpoint);
     }, []);
 
     function handleChangeFactory(entityId: string) {
@@ -141,7 +142,7 @@ export function PrimitiveDataTable<T extends GenericIdEntity>() {
                 </thead>
                 <tbody>
                     {entities.map(entity => {
-                        return <PrimitiveDataRow<T> key={entity.id} entity={entity} handleChange={handleChangeFactory(entity.id)} />
+                        return <PrimitiveDataRow<T> showId={showId} key={entity.id} entity={entity} handleChange={handleChangeFactory(entity.id)} />
                     })}
                 </tbody>
             </table>
@@ -152,10 +153,11 @@ export function PrimitiveDataTable<T extends GenericIdEntity>() {
 
 interface PrimitiveDataRowProps<T> {
     entity: T,
+    showId: boolean,
     handleChange: (newValue: T) => void
 }
 
-export function PrimitiveDataRow<T extends GenericIdEntity>({ entity, handleChange }: PrimitiveDataRowProps<T>) {
+export function PrimitiveDataRow<T extends GenericIdEntity>({ entity, showId, handleChange }: PrimitiveDataRowProps<T>) {
     function handleChangeFactory(propertyKey: keyof T) {
         type BlankSlate = {
             [key: string]: PrimitiveType
@@ -177,6 +179,7 @@ export function PrimitiveDataRow<T extends GenericIdEntity>({ entity, handleChan
     return (
         <tr key={entity.id}>
             {Object.keys(entity).map((key) => {
+                if (!showId && key == "id") return;
                 return (
                     <td key={key}>
                         <PrimitiveDataCell key={key} value={entity[key]} onChange={handleChangeFactory(key)}></PrimitiveDataCell>
