@@ -3,6 +3,7 @@ import User from '../types/user';
 import { castStringToPrimitive } from '../utilities/casting';
 import type { PrimitiveType } from '../utilities/casting';
 import { GenericIdEntity } from '../types/genericIdEntity';
+import useFetchAllEntities from '../hooks/useFetchAllEntities';
 
 function validateWithPattern(text: string, pattern?: string) {
     if (pattern) {
@@ -98,30 +99,8 @@ interface PrimitiveDataTableProps {
     showId: boolean
 }
 
-type PrimitiveDataTableState = "success" | "fetching" | "server failure";
-
 export function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId }: PrimitiveDataTableProps) {
-    const [entities, setEntities] = useState<T[]>([]);
-    const [status, setStatus] = useState<PrimitiveDataTableState>("fetching")
-
-    useEffect(() => {
-        const fetchAllEntities = async (endpointUrl: string) => {
-            setStatus("fetching");
-            try {
-                const response = await fetch(endpointUrl);
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-                const json = await response.json() as T[];
-                setEntities(json);
-                setStatus("success");
-            } catch (error) {
-                console.error(`Something went wrong on the backend ${(error as Error).message}`);
-                setStatus("server failure");
-            }
-        }
-        fetchAllEntities(endpoint);
-    }, []);
+    const [entities, setEntities, status] = useFetchAllEntities<T>(endpoint);
 
     function handleChangeFactory(entityId: string) {
         return (newEntity: T) => {
@@ -137,7 +116,7 @@ export function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId
     switch (status) {
         case "fetching":
             return <span className="loading loading-spinner loading-lg"></span>;
-        case "server failure":
+        case "failure":
             return <>
                 <h2 className="text-red-900 text-3xl">Server is asleep</h2>
                 <p className="text-red-500">Terrible sorry! We hope you have wonderful day despite this.</p>
