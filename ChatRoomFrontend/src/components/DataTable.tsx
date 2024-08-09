@@ -59,7 +59,6 @@ export default function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint
                         </tbody>
                     </table>
                 </div>
-                <p>{JSON.stringify(validities)}</p>
             </>)
     }
 }
