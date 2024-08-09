@@ -44,23 +44,23 @@ export function StringDataCell({ value, onChange, validationPattern, validationE
     return inputElement;
 }
 
-interface GenericCellProps<T extends object> {
+type GenericCellType = object | boolean | number | string | Date;
+
+interface GenericCellProps<T extends GenericCellType> {
     value: T,
     onChange: (value: T) => void
 }
 
-export function GenericCell<T extends object>({ value, onChange }: GenericCellProps<T>) {
+export function GenericCell<T extends GenericCellType>({ value, onChange }: GenericCellProps<T>) {
     const [stringRepresentation, setStringRepresentation] = useState(String(value));
 
     castToType(String(value));
 
     function castToType(valueStringRepresentation: string): string {
         const instanceWrapper = Object(value);
-        console.log(`typeof(value) = ${typeof (value)}`);
         let instanceOfClass;
         if (instanceWrapper instanceof Object) {
             instanceOfClass = "Object";
-            return Object(valueStringRepresentation);
         }
         if (instanceWrapper instanceof Array) {
             instanceOfClass = "Array";

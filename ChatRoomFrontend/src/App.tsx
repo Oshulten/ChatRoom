@@ -7,6 +7,7 @@ function App() {
   return (
     <>
       <UserTable></UserTable>
+      <GenericCell value={Boolean(true)} onChange={() => undefined} />
       <GenericCell value={true} onChange={() => undefined} />
       <GenericCell value={3.5} onChange={() => undefined} />
       <GenericCell value={"my string"} onChange={() => undefined} />
