@@ -53,12 +53,10 @@ interface GenericCellProps {
 }
 
 export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
-    function handleChange(currentString: string) {
-        console.log("handleChangeInCell: " + currentString);
-        onChange(castStringToPrimitive(currentString, value));
-    }
+    const handleChange = (currentString: string) => onChange(castStringToPrimitive(currentString, value));
 
     let inputElement;
+
     if (typeof (value) === "string") {
         inputElement =
             <input
@@ -67,6 +65,7 @@ export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
                 value={value.toString()}
                 onChange={(e) => handleChange(e.target.value)} />
     }
+
     if (typeof (value) === "boolean") {
         inputElement =
             <select
@@ -77,6 +76,7 @@ export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
                 <option value="false">False</option>
             </select>
     }
+
     if (typeof (value) === "number") {
         inputElement =
             <input
@@ -88,8 +88,6 @@ export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
 
     return (<>
         {inputElement}
-        {/* <p>{castToTypeInfo(value)}</p> */}
-        {/* <p>{typeof (castStringToPrimitive(String(value), value))}</p> */}
     </>)
 }
 
@@ -101,7 +99,7 @@ interface SampleEntity extends GenericIdEntity {
 }
 
 export function PrimitiveDataTable() {
-    const [entities, setEntites] = useState<SampleEntity[]>([
+    const [entities, setEntities] = useState<SampleEntity[]>([
         {
             id: "1",
             numberValue: 3,
@@ -110,13 +108,34 @@ export function PrimitiveDataTable() {
         }
     ])
 
-    function handleChangeFactory() {
-        return (newValue: SampleEntity) => {
-            return undefined;
+    function handleChangeFactory(entityId: string) {
+        return (newEntity: SampleEntity) => {
+            console.log(`New entity: ${JSON.stringify(newEntity)} at id ${entityId}`);
+            const entity = entities.find(entity => entity.id == entityId);
+            if (entity == undefined) {
+                throw new Error(`Entity id ${entityId} cannot be found in state`);
+            }
+            const entityIndex = entities.indexOf(entity);
+            const newEntities = [...entities.slice(0, entityIndex), newEntity!, ...entities.slice(entityIndex + 1)];
+            setEntities(newEntities);
         }
     }
 
-    return <PrimitiveDataRow<SampleEntity> entity={entities[0]} handleChange={handleChangeFactory()} />
+    return (<>
+        <div className="overflow-x-auto">
+            <table className="table table-xs">
+                <thead>
+                    <tr>
+                        {Object.keys(entities[0]).map((name) => (<th key={name}>{name}</th>))}
+                    </tr>
+                </thead>
+                <tbody>
+                    <PrimitiveDataRow<SampleEntity> key={entities[0].id} entity={entities[0]} handleChange={handleChangeFactory(entities[0].id)} />
+                </tbody>
+            </table>
+        </div>
+        <p>{JSON.stringify(entities)}</p>
+    </>)
 }
 
 interface PrimitiveDataRowProps<T> {
@@ -144,27 +163,15 @@ export function PrimitiveDataRow<T extends GenericIdEntity>({ entity, handleChan
     }
 
     return (
-        <div className="overflow-x-auto">
-            <table className="table table-xs">
-                <thead>
-                    <tr>
-                        {Object.keys(entity).map((name) => (<th key={name}>{name}</th>))}
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr key={entity.id}>
-                        {Object.keys(entity).map((key) => {
-                            return (
-                                <td key={"id"}>
-                                    <PrimitiveDataCell value={entity[key]} onChange={handleChangeFactory(key)}></PrimitiveDataCell>
-                                </td>
-                            )
-                        })}
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    );
+        <tr key={entity.id}>
+            {Object.keys(entity).map((key) => {
+                return (
+                    <td key={key}>
+                        <PrimitiveDataCell key={key} value={entity[key]} onChange={handleChangeFactory(key)}></PrimitiveDataCell>
+                    </td>
+                )
+            })}
+        </tr>)
 }
 
 interface UserRowProps {
