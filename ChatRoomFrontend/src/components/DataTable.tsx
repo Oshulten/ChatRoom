@@ -102,6 +102,29 @@ interface PrimitiveDataTableProps {
 export function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId }: PrimitiveDataTableProps) {
     const [entities, setEntities, status] = useFetchAllEntities<T>(endpoint);
 
+    useEffect(() => {
+        const patchEntity = async (entity: T) => {
+            const url = `${endpoint}/${entity.id}`;
+            try {
+                const response = await fetch(url, {
+                    method: "PATCH",
+                    body: JSON.stringify(entity),
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error((error as Error).message);
+            }
+        }
+        entities.forEach(entity => {
+            patchEntity(entity);
+        })
+    }, [entities]);
+
     function handleChangeFactory(entityId: string) {
         return (newEntity: T) => {
             const entity = entities.find(entity => entity.id == entityId);
@@ -113,14 +136,17 @@ export function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId
             setEntities(newEntities);
         }
     }
+
     switch (status) {
         case "fetching":
             return <span className="loading loading-spinner loading-lg"></span>;
+
         case "failure":
             return <>
                 <h2 className="text-red-900 text-3xl">Server is asleep</h2>
                 <p className="text-red-500">Terrible sorry! We hope you have wonderful day despite this.</p>
             </>
+
         case "success":
             return (<>
                 <div className="overflow-x-auto">
