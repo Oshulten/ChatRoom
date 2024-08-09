@@ -94,22 +94,26 @@ interface PrimitiveDataTableProps {
     showId: boolean
 }
 
+type PrimitiveDataTableState = "success" | "fetching" | "server failure";
+
 export function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId }: PrimitiveDataTableProps) {
     const [entities, setEntities] = useState<T[]>([]);
+    const [status, setStatus] = useState<PrimitiveDataTableState>("fetching")
 
     useEffect(() => {
         const fetchAllEntities = async (endpointUrl: string) => {
+            setStatus("fetching");
             try {
-                console.log("fetching users");
                 const response = await fetch(endpointUrl);
                 if (!response.ok) {
                     throw new Error(`Response status: ${response.status}`);
                 }
                 const json = await response.json() as T[];
-                console.log(json);
                 setEntities(json);
+                setStatus("success");
             } catch (error) {
-                console.error((error as Error).message);
+                console.error(`Something went wrong on the backend ${(error as Error).message}`);
+                setStatus("server failure");
             }
         }
         fetchAllEntities(endpoint);
@@ -117,7 +121,6 @@ export function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId
 
     function handleChangeFactory(entityId: string) {
         return (newEntity: T) => {
-            console.log(`New entity: ${JSON.stringify(newEntity)} at id ${entityId}`);
             const entity = entities.find(entity => entity.id == entityId);
             if (entity == undefined) {
                 throw new Error(`Entity id ${entityId} cannot be found in state`);
@@ -127,28 +130,33 @@ export function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId
             setEntities(newEntities);
         }
     }
-
-    if (entities.length == 0) {
-        return <p>Sorry, no content!</p>
+    switch (status) {
+        case "fetching":
+            return <span className="loading loading-spinner loading-lg"></span>;
+        case "server failure":
+            return <>
+                <h2 className="text-red-900 text-3xl">Server failure</h2>
+                <p>We´re terrible sorry! Hope you have wonderful day despite this.</p>
+            </>
+        case "success":
+            return (<>
+                <div className="overflow-x-auto">
+                    <table className="table table-xs">
+                        <thead>
+                            <tr>
+                                {Object.keys(entities[0]).map((name) => (<th key={name}>{name}</th>))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {entities.map(entity => {
+                                return <PrimitiveDataRow<T> showId={showId} key={entity.id} entity={entity} handleChange={handleChangeFactory(entity.id)} />
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+                <p>{JSON.stringify(entities)}</p>
+            </>)
     }
-
-    return (<>
-        <div className="overflow-x-auto">
-            <table className="table table-xs">
-                <thead>
-                    <tr>
-                        {Object.keys(entities[0]).map((name) => (<th key={name}>{name}</th>))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {entities.map(entity => {
-                        return <PrimitiveDataRow<T> showId={showId} key={entity.id} entity={entity} handleChange={handleChangeFactory(entity.id)} />
-                    })}
-                </tbody>
-            </table>
-        </div>
-        <p>{JSON.stringify(entities)}</p>
-    </>)
 }
 
 interface PrimitiveDataRowProps<T> {
@@ -179,7 +187,6 @@ export function PrimitiveDataRow<T extends GenericIdEntity>({ entity, showId, ha
     return (
         <tr key={entity.id}>
             {Object.keys(entity).map((key) => {
-                if (!showId && key == "id") return;
                 return (
                     <td key={key}>
                         <PrimitiveDataCell key={key} value={entity[key]} onChange={handleChangeFactory(key)}></PrimitiveDataCell>
