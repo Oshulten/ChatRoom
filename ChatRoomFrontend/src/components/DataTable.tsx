@@ -94,6 +94,31 @@ export function PrimitiveDataCell({ value, onChange }: GenericCellProps) {
 }
 
 
+interface SampleEntity extends GenericIdEntity {
+    numberValue: number,
+    booleanValue: boolean,
+    stringValue: string
+}
+
+export function PrimitiveDataTable() {
+    const [entities, setEntites] = useState<SampleEntity[]>([
+        {
+            id: "1",
+            numberValue: 3,
+            booleanValue: false,
+            stringValue: "fdsjaklö"
+        }
+    ])
+
+    function handleChangeFactory() {
+        return (newValue: SampleEntity) => {
+            return undefined;
+        }
+    }
+
+    return <PrimitiveDataRow<SampleEntity> entity={entities[0]} handleChange={handleChangeFactory()} />
+}
+
 interface PrimitiveDataRowProps<T> {
     entity: T,
     handleChange: (newValue: T) => void
@@ -128,26 +153,19 @@ export function PrimitiveDataRow<T extends GenericIdEntity>({ entity, handleChan
                 </thead>
                 <tbody>
                     <tr key={entity.id}>
-                        <td key={"id"}>
-                            <PrimitiveDataCell value={entity.id} onChange={handleChangeFactory("id")}></PrimitiveDataCell>
-                        </td>
-                        <td key={"alias"}>
-                            <PrimitiveDataCell value={entity.numberValue} onChange={handleChangeFactory("numberValue")}></PrimitiveDataCell>
-                        </td>
-                        <td key={"password"}>
-                            <PrimitiveDataCell value={entity.booleanValue} onChange={handleChangeFactory("booleanValue")}></PrimitiveDataCell>
-                        </td>
-                        <td key={"string"}>
-                            <PrimitiveDataCell value={entity.stringValue} onChange={handleChangeFactory("stringValue")}></PrimitiveDataCell>
-                        </td>
+                        {Object.keys(entity).map((key) => {
+                            return (
+                                <td key={"id"}>
+                                    <PrimitiveDataCell value={entity[key]} onChange={handleChangeFactory(key)}></PrimitiveDataCell>
+                                </td>
+                            )
+                        })}
                     </tr>
                 </tbody>
             </table>
         </div>
     );
 }
-
-
 
 interface UserRowProps {
     user: User,

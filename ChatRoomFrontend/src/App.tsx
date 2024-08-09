@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import './App.css'
 import { PrimitiveDataRow } from './components/dataTable'
-import { GenericIdEntity } from './types/identifiable';
+import { GenericIdEntity } from './types/genericIdEntity';
 
 interface SampleEntity extends GenericIdEntity {
   numberValue: number,
