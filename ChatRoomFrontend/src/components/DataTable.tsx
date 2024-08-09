@@ -44,6 +44,60 @@ export function StringDataCell({ value, onChange, validationPattern, validationE
     return inputElement;
 }
 
+interface GenericCellProps<T extends object> {
+    value: T,
+    onChange: (value: T) => void
+}
+
+export function GenericCell<T extends object>({ value, onChange }: GenericCellProps<T>) {
+    const [stringRepresentation, setStringRepresentation] = useState(String(value));
+
+    castToType(String(value));
+
+    function castToType(valueStringRepresentation: string): string {
+        const instanceWrapper = Object(value);
+        console.log(`typeof(value) = ${typeof (value)}`);
+        let instanceOfClass;
+        if (instanceWrapper instanceof Object) {
+            instanceOfClass = "Object";
+            return Object(valueStringRepresentation);
+        }
+        if (instanceWrapper instanceof Array) {
+            instanceOfClass = "Array";
+        }
+        if (instanceWrapper instanceof Boolean) {
+            instanceOfClass = "Boolean";
+        }
+        if (instanceWrapper instanceof Number) {
+            instanceOfClass = "Number";
+        }
+        if (instanceWrapper instanceof Date) {
+            instanceOfClass = "Date";
+        }
+        console.log(`instanceof ${instanceOfClass}`);
+        return (`typeof(value) = ${typeof (value)}, instanceof ${instanceOfClass}`);
+    }
+
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const currentStringValue = e.target.value;
+        setStringRepresentation(currentStringValue);
+        onChange(value);
+    }
+
+    const inputElement = <input
+        type="text"
+        value={String(value)}
+        required
+        onChange={(e) => handleChange(e)}
+        className={`input input-bordered w-full max-w-xs`}>
+    </ input >
+
+    return (<>
+        {inputElement}
+        <p>{castToType(String(value))}</p>
+    </>)
+}
+
 interface UserRowProps {
     user: User,
     handleChanges: ((newValue: string) => void)[]
@@ -167,7 +221,6 @@ export function UserTable() {
                     </tbody>
                 </table>
             </div>
-            <p>{JSON.stringify(users)}</p>
         </>
     )
 }
