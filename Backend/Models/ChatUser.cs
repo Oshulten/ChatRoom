@@ -2,33 +2,40 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Models
 {
-    public class ChatUser(string alias, string password, DateTime joinedAt)
+    public class ChatUser(string alias, string password, bool admin, DateTime joinedAt)
     {
         public Guid Id { get; init; } = Guid.NewGuid();
+
         [Required]
-        [Length(3, 25, ErrorMessage = "Alias needs to be between 3 and 25 characters long")]
+        [Length(3, 25)]
         public string Alias { get; set; } = alias;
+
         [Required]
-        [Length(8, 25, ErrorMessage = "Password needs to be between 8 and 25 characters long")]
+        [Length(8, 25)]
         public string Password { get; set; } = password;
-        [Required(ErrorMessage = "JoinedAt date is required")]
+
+        [Required]
         public DateTime JoinedAt { get; set; } = joinedAt;
 
-        // An explicit parameterless constructor is required for database creation
-        public ChatUser() : this("John Doe", "Password", DateTime.Now) { }
+        [Required]
+        public bool Admin { get; set; } = admin;
 
-        public void Patch(ChatUser patchObject)
+        // An explicit parameterless constructor is required for database creation
+        public ChatUser() : this("John Doe", "Password", false, DateTime.Now) { }
+
+        public void Patch(ChatUserPatch patchObject)
         {
-            Alias = patchObject.Alias;
-            Password = patchObject.Password;
+            Alias = patchObject.Alias ?? Alias;
+            Password = patchObject.Password ?? Password;
+            Admin = patchObject.Admin ?? Admin;
         }
 
         public static List<ChatUser> SeedData()
         {
             return [
-                new ChatUser("Arnold", "MyNicePassword", DateTime.Now),
-                new ChatUser("Catherine", "TheGreat", DateTime.Now),
-                new ChatUser("TopGun91", "Join---us", DateTime.Now),
+                new ChatUser("Arnold", "MyNicePassword", false, DateTime.Now),
+                new ChatUser("Catherine", "TheGreat", false, DateTime.Now),
+                new ChatUser("TopGun91", "Join---us", true, DateTime.Now),
             ];
         }
     }

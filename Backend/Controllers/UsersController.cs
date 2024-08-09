@@ -10,35 +10,35 @@ namespace Backend.Controllers;
 public class UsersController(ChatroomDatabaseContext db) : ControllerBase
 {
     private readonly string _deleteAllKey = "clear-all";
-    private readonly ChatroomDatabaseContext _db = db;
 
     [HttpGet("{id}")]
     public ActionResult<ChatUser> GetById(Guid id)
     {
-        ChatUser? entity = _db.ChatUsers.FirstOrDefault(data => data.Id == id);
+        ChatUser? entity = db.ChatUsers.FirstOrDefault(data => data.Id == id);
         return entity is not null ? Ok(entity) : NotFound();
     }
 
     [HttpGet]
     public ActionResult<List<ChatUser>> GetAll()
     {
-        if (!_db.ChatUsers.Any())
+        if (!db.ChatUsers.Any())
         {
-            _db.ChatUsers!.AddRange(ChatUser.SeedData());
+            db.ChatUsers!.AddRange(ChatUser.SeedData());
         }
-        _db.SaveChanges();
-        var entities = _db.ChatUsers.ToList()!;
-        return entities;
+        db.SaveChanges();
+        return db.ChatUsers.ToList()!;
     }
 
     [HttpPatch("{id}")]
-    public IActionResult PatchById(Guid id, ChatUser patchObject)
+    public IActionResult PatchById(Guid id, ChatUserPatch patchObject)
     {
         ChatUser? entity = db.ChatUsers.FirstOrDefault(data => data.Id == id);
+
         if (entity is null)
         {
             return NotFound();
         }
+
         entity.Patch(patchObject);
         db.SaveChanges();
         return Ok();
