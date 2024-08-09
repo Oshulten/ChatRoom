@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import User from '../models/User';
+import { castStringToPrimitive, castToTypeInfo } from '../utilities/casting';
+import type { PrimitiveType } from '../utilities/casting';
 
 function validateWithPattern(text: string, pattern?: string) {
     if (pattern) {
@@ -44,67 +46,49 @@ export function StringDataCell({ value, onChange, validationPattern, validationE
     return inputElement;
 }
 
-type GenericCellType = object | boolean | number | string | Date;
-
-interface GenericCellProps<T extends GenericCellType> {
-    value: T,
-    onChange: (value: T) => void
+interface GenericCellProps {
+    value: PrimitiveType,
+    onChange: (value: PrimitiveType) => void
 }
 
-export function GenericCell<T extends GenericCellType>({ value, onChange }: GenericCellProps<T>) {
-    const [stringRepresentation, setStringRepresentation] = useState(String(value));
-
-    castToTypeInfo(String(value));
-
-    function castToTypeInfo(valueStringRepresentation: string): string {
-        const instanceWrapper = Object(value);
-        let instanceOfClass;
-        if (instanceWrapper instanceof Object) {
-            instanceOfClass = "Object";
-        }
-        if (instanceWrapper instanceof Array) {
-            instanceOfClass = "Array";
-        }
-        if (instanceWrapper instanceof Boolean) {
-            instanceOfClass = "Boolean";
-        }
-        if (instanceWrapper instanceof Number) {
-            instanceOfClass = "Number";
-        }
-        if (instanceWrapper instanceof Date) {
-            instanceOfClass = "Date";
-        }
-        console.log(`instanceof ${instanceOfClass}`);
-        return (`typeof(value) = ${typeof (value)}, instanceof ${instanceOfClass}`);
+export function GenericCell({ value, onChange }: GenericCellProps) {
+    function handleChange(currentString: string) {
+        console.log("handleChangeInCell: " + currentString);
+        onChange(castStringToPrimitive(currentString, value));
     }
 
-    function castStringToPrimitive(valueStringRepresentation: string): number | string | boolean {
-        switch (typeof (value)) {
-            case "number": return Number(valueStringRepresentation).valueOf();
-            case "string": return String(valueStringRepresentation).valueOf();
-            case "boolean": return Boolean(valueStringRepresentation).valueOf();
-            default: return Object(stringRepresentation).valueOf();
-        }
+    let inputElement;
+    if (typeof (value) === "string") {
+        inputElement =
+            <input
+                type="text"
+                className={`input input-bordered w-full max-w-xs`}
+                value={value.toString()}
+                onChange={(e) => handleChange(e.target.value)} />
     }
-
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const currentStringValue = e.target.value;
-        setStringRepresentation(currentStringValue);
-        onChange(value);
+    if (typeof (value) === "boolean") {
+        inputElement =
+            <select
+                className="select select-bordered w-full max-w-xs"
+                onChange={(e) => handleChange(e.target.value)}
+                defaultValue={value.toString()}>
+                <option value="true">True</option>
+                <option value="false">False</option>
+            </select>
     }
-
-    const inputElement = <input
-        type="text"
-        value={String(value)}
-        required
-        onChange={(e) => handleChange(e)}
-        className={`input input-bordered w-full max-w-xs`}>
-    </ input >
+    if (typeof (value) === "number") {
+        inputElement =
+            <input
+                type="number"
+                className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500`}
+                value={value.toString()}
+                onChange={(e) => handleChange(e.target.value)} />
+    }
 
     return (<>
         {inputElement}
-        <p>{castToTypeInfo(String(value))}</p>
-        <p>{typeof (castStringToPrimitive(String(value)))}</p>
+        {/* <p>{castToTypeInfo(value)}</p> */}
+        {/* <p>{typeof (castStringToPrimitive(String(value), value))}</p> */}
     </>)
 }
 
