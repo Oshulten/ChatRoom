@@ -5,7 +5,7 @@ namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ChatSpaces(ChatroomDatabaseContext db) : ControllerBase
+    public class ChatSpacesController(ChatroomDatabaseContext db) : ControllerBase
     {
         [HttpGet("{id}")]
         public ChatSpace GetById(Guid id)
