@@ -17,7 +17,7 @@ class ComplexComponent {
     }
 }
 
-export class ComplexClass {
+export default class ComplexClass {
     id: string;
     listOfDates: Date[];
     dictionaryOfDictionaries: Dictionary<Dictionary<ComplexComponent>>;

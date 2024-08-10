@@ -2,11 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './App.css'
 import { ChatUserClass } from './types/chatUser';
 import ObjectInspector from './components/objectInspector';
-import { ComplexClass } from './types/complexClass';
-// import PrimitiveDataTable from './components/dataTable'
-// import ChatUser from './types/chatUser'
-// import ChatMessage from './types/chatMessage'
-// import ChatSpace from './types/chatSpace'
+import ComplexClass from './types/complexClass';
 
 const baseUrl = "http://localhost:5055/api";
 
