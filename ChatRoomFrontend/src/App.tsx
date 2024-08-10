@@ -29,7 +29,19 @@ function App() {
   if (entity) {
     return (
       <>
+        <ObjectInspectorTable subject={[1, 2, 3, 4]} subjectKey="literal array" />
+        <br />
+        <ObjectInspectorTable subject={
+          [
+            false,
+            "blue",
+            3,
+            ChatUserClass.fromProperties("McGregor", "1337", new Date(), true),
+            (argument: string) => console.log(argument)
+          ]} subjectKey="literal array with mixed types" />
+        <br />
         <ObjectInspectorTable subject={entity} subjectKey="fetched entity" />
+
       </>
     )
   }

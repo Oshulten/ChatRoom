@@ -13,6 +13,10 @@ export class ChatUserClass {
     joinedAt: Date;
     admin: boolean;
 
+    static fromProperties(alias: string, password: string, joinedAt: Date, admin: boolean) {
+        return new ChatUserClass({ alias, password, joinedAt, admin });
+    }
+
     constructor(fromObject: object) {
         const errorMessage = ["property '", "' is missing in deserialized object"];
         if ("alias" in fromObject) this.alias = fromObject.alias as string;
