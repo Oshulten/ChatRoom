@@ -6,10 +6,11 @@ import useConnectToDbTable from '../hooks/useConnectToDbTable';
 
 interface PrimitiveDataTableProps {
     endpoint: string,
-    showId: boolean
+    showId: boolean,
+    label: string
 }
 
-export default function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId }: PrimitiveDataTableProps) {
+export default function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint, showId, label }: PrimitiveDataTableProps) {
     const [entities, setEntities, status, validities] = useConnectToDbTable<T>(endpoint);
 
     function handleChangeFactory(entityId: string) {
@@ -23,19 +24,21 @@ export default function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint
             setEntities(newEntities);
         }
     }
-
+    let content;
     switch (status) {
         case "fetching":
-            return <span className="loading loading-spinner loading-lg"></span>;
+            content = <span className="loading loading-spinner loading-lg"></span>;
+            break;
 
         case "failure":
-            return <>
+            content = <>
                 <h2 className="text-red-500 text-3xl">Server is asleep...</h2>
                 <p className="text-red-900">Terrible sorry! We hope you have wonderful day despite this.</p>
-            </>
+            </>;
+            break;
 
         case "success":
-            return (<>
+            content = (<>
                 <div className="overflow-x-auto">
                     <table className="table table-xs">
                         <thead>
@@ -59,8 +62,15 @@ export default function PrimitiveDataTable<T extends GenericIdEntity>({ endpoint
                         </tbody>
                     </table>
                 </div>
-            </>)
+            </>);
+            break;
     }
+    return (
+        <>
+            <h2>{label}</h2>
+            {content}
+        </>
+    )
 }
 
 interface CellValidities {
