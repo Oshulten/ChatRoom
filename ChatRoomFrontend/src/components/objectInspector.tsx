@@ -1,4 +1,4 @@
-import React from 'react'
+/* eslint-disable react/react-in-jsx-scope */
 import { typeCheck } from '../utilities/typeCheck'
 import { Primitive } from '../types/primitiveTypes'
 

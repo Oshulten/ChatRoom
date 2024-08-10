@@ -1,46 +1,47 @@
-import React, { useEffect, useState } from 'react'
+/* eslint-disable react/react-in-jsx-scope */
+import { useRef, useState } from 'react';
 import './App.css'
-import { ChatUserClass } from './types/chatUser';
-import ObjectInspector from './components/objectInspector';
-import ComplexClass from './types/complexClass';
-
-const baseUrl = "http://localhost:5055/api";
+import DataTablesLayout from './components/dataTablesLayout';
+import ObjectInspectorLayout from './components/objectInspectorLayout';
 
 //Todo: No more than one table can be used at the same time
 //Todo: Single tables don't work if there are no rows in that table on the server
 
-function App() {
-  const [entity, setEntity] = useState<ComplexClass>();
+type Tabs = "dataTables" | "objectInspector";
 
-  useEffect(() => {
-    async function getNow() {
-      const response = await fetch(`${baseUrl}/Playground/complex-class`);
-      const complexClass = new ComplexClass(await response.json());
-      setEntity(complexClass);
+export default function App() {
+  const [activeTab, setActiveTab] = useState<Tabs>("dataTables");
+  const tabDataTables = useRef<HTMLAnchorElement | null>(null);
+  const tabObjectInspector = useRef<HTMLAnchorElement | null>(null);
+
+  const handleClick = (newActiveTab: Tabs) => {
+    if (activeTab != newActiveTab) {
+      setActiveTab(newActiveTab);
+      switch (newActiveTab) {
+        case "dataTables":
+          tabDataTables.current!.classList.add("tab-active");
+          tabObjectInspector.current!.classList.remove("tab-active");
+          break;
+        case "objectInspector":
+          tabObjectInspector.current!.classList.add("tab-active");
+          tabDataTables.current!.classList.remove("tab-active");
+          break;
+      }
     }
-    getNow();
-  }, []);
-
-  if (entity) {
-    return (
-      <>
-        <ObjectInspector subject={[1, 2, 3, 4]} subjectKey="literal array" />
-        <br />
-        <ObjectInspector subject={
-          [
-            false,
-            "blue",
-            3,
-            ChatUserClass.fromProperties("McGregor", "1337", new Date(), true),
-            (argument: string) => console.log(argument)
-          ]} subjectKey="literal array with mixed types" />
-        <br />
-        <ObjectInspector subject={entity} subjectKey="fetched entity" />
-
-      </>
-    )
   }
-  return <p>Fetching...</p>
-}
 
-export default App
+  return (
+    <div className="flex-row">
+      <div role="tablist" className="tabs tabs-boxed sticky -top-0 z-10">
+        <a ref={tabDataTables} role="tab" onClick={() => handleClick("dataTables")} className="tab tab-active">Live Database Table</a>
+        <a ref={tabObjectInspector} role="tab" onClick={() => handleClick("objectInspector")} className="tab">Object Inspector</a>
+      </div>
+      <br />
+      <br />
+      <div className="-z-20">
+        <ObjectInspectorLayout visible={activeTab == "objectInspector"} />
+        <DataTablesLayout visible={activeTab == "dataTables"} />
+      </div>
+    </div>
+  );
+}
