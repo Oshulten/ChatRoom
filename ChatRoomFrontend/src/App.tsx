@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './App.css'
 import { ChatUserClass } from './types/chatUser';
-import { ObjectInspectorTable } from './components/objectInspector';
-import { typeCheck } from './utilities/typeCheck';
+import ObjectInspector from './components/objectInspector';
 import { ComplexClass } from './types/complexClass';
 // import PrimitiveDataTable from './components/dataTable'
 // import ChatUser from './types/chatUser'
@@ -29,9 +28,9 @@ function App() {
   if (entity) {
     return (
       <>
-        <ObjectInspectorTable subject={[1, 2, 3, 4]} subjectKey="literal array" />
+        <ObjectInspector subject={[1, 2, 3, 4]} subjectKey="literal array" />
         <br />
-        <ObjectInspectorTable subject={
+        <ObjectInspector subject={
           [
             false,
             "blue",
@@ -40,7 +39,7 @@ function App() {
             (argument: string) => console.log(argument)
           ]} subjectKey="literal array with mixed types" />
         <br />
-        <ObjectInspectorTable subject={entity} subjectKey="fetched entity" />
+        <ObjectInspector subject={entity} subjectKey="fetched entity" />
 
       </>
     )
