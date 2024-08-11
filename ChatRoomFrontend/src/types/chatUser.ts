@@ -1,3 +1,4 @@
+import { InteractiveDataCellSupportedTypes } from "../components/dataTable2";
 import { GenericIdEntity } from "./genericIdEntity";
 
 export default interface ChatUser extends GenericIdEntity {
@@ -7,12 +8,13 @@ export default interface ChatUser extends GenericIdEntity {
     admin: boolean
 }
 
-export class ChatUserClass {
+export class ChatUserClass implements GenericIdEntity {
     id: string;
     alias: string;
     password: string;
     joinedAt: Date;
     admin: boolean;
+    [key: string]: InteractiveDataCellSupportedTypes;
 
     static fromProperties(id: string, alias: string, password: string, joinedAt: Date, admin: boolean) {
         return new ChatUserClass({ id, alias, password, joinedAt, admin });

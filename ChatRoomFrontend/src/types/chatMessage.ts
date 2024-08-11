@@ -1,3 +1,4 @@
+import { InteractiveDataCellSupportedTypes } from "../components/dataTable2";
 import { GenericIdEntity } from "./genericIdEntity";
 
 export default interface ChatMessage extends GenericIdEntity {
@@ -8,12 +9,13 @@ export default interface ChatMessage extends GenericIdEntity {
     chatSpaceId: string,
 }
 
-export class ChatMessageClass {
+export class ChatMessageClass implements GenericIdEntity {
     id: string;
     userId: string;
     postedAt: Date;
     content: string;
     chatSpaceId: string;
+    [key: string]: InteractiveDataCellSupportedTypes;
 
     static fromProperties(id: string, userId: string, postedAt: Date, content: string, chatSpaceId: string) {
         return new ChatMessageClass({ id, userId, postedAt, content, chatSpaceId });

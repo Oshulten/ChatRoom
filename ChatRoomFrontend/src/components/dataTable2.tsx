@@ -2,6 +2,7 @@ import { ChatSpaceClass } from "../types/chatSpace";
 import { castStringToObject } from "../utilities/casting";
 import { toIsoString } from "../utilities/dateRepresentation";
 import { typeCheck } from "../utilities/typeCheck";
+import { useState } from "react";
 
 /* eslint-disable react/react-in-jsx-scope */
 interface InteractiveDataRowProps {
@@ -9,32 +10,59 @@ interface InteractiveDataRowProps {
 }
 
 export function InteractiveDataRow({ disableIds }: InteractiveDataRowProps) {
-    const mockEntity = ChatSpaceClass.fromProperties("global", "Global", ["Mike", "Adam", "Catherine"])
+    const [entity, setEntity] = useState(ChatSpaceClass.fromProperties("global", "Global", ["Mike", "Adam", "Catherine"]));
+
     disableIds ??= true;
 
-    const handleChange = (newValue: InteractiveDataCellSupportedTypes) => {
-        console.log(`onChange in InteractiveDataRow from InteractiveDataCell - ${newValue}`);
-    };
+    const reassembleEntity = (entity: object, newPropertyValue: InteractiveDataCellSupportedTypes, propertyKey: string) => {
+        type BlankSlate = {
+            [key: string]: InteractiveDataCellSupportedTypes
+        }
+
+        const filledSlate = Object.entries({ ...entity } as BlankSlate).reduce((accumulator, [key, value]) => {
+            if (propertyKey == key) {
+                accumulator[key] = newPropertyValue;
+                return accumulator;
+            }
+            accumulator[key] = value;
+            return accumulator;
+        }, {} as BlankSlate);
+
+        if ("fromObject" in entity) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+            return (entity.fromObject as Function)(filledSlate as object);
+        }
+        return filledSlate as object;
+    }
+
+    const handleChangeFactory = (propertyKey: string) => {
+        return (newPropertyValue: InteractiveDataCellSupportedTypes) => {
+            console.log(`onChange in InteractiveDataRow from InteractiveDataCell - '${propertyKey}': ${newPropertyValue}`);
+            const newEntity = reassembleEntity(entity, newPropertyValue, propertyKey) as ChatSpaceClass;
+            setEntity(newEntity);
+        };
+    }
+
 
     return (
         <div className="overflow-x-auto">
             <table className="table table-xs">
                 <thead>
                     <tr>
-                        {Object.keys(mockEntity).map((key) => {
+                        {Object.keys(entity).map((key) => {
                             return (<th key={key}>{key}</th>)
                         })}
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        {Object.entries(mockEntity).map(([key, value]) => {
-                            const disabled = disableIds && key.toLowerCase().includes("id");
+                        {Object.entries(entity).map(([key, value]) => {
+                            const disabled = disableIds && key.includes("id");
                             return (
                                 <td key={key}>
                                     <InteractiveDataCell
                                         value={value}
-                                        onChange={(newValue) => handleChange(newValue)}
+                                        onChange={newValue => handleChangeFactory(key)(newValue)}
                                         disabled={disabled} />
                                 </td>
                             )
@@ -42,6 +70,7 @@ export function InteractiveDataRow({ disableIds }: InteractiveDataRowProps) {
                     </tr>
                 </tbody>
             </table>
+            <p>{JSON.stringify(entity)}</p>
         </div>
     );
 }

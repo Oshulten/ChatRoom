@@ -1,6 +1,6 @@
-import { PrimitiveType } from "../utilities/casting"
+import { InteractiveDataCellSupportedTypes } from '../components/dataTable2';
 
 export interface GenericIdEntity {
   id: string
-  [key: string]: PrimitiveType
+  [key: string]: InteractiveDataCellSupportedTypes
 }
