@@ -34,6 +34,7 @@ export class StringValidation {
 }
 
 export class ChatUserClass {
+    id: string;
     alias: string;
     password: string;
     joinedAt: Date;
@@ -53,6 +54,10 @@ export class ChatUserClass {
 
     constructor(fromObject: object) {
         const errorMessage = ["property '", "' is missing in deserialized object"];
+
+        if ("id" in fromObject) this.id = fromObject.id as string;
+        else throw new Error(`${errorMessage[0]}id${errorMessage[1]}`);
+
         if ("alias" in fromObject) this.alias = fromObject.alias as string;
         else throw new Error(`${errorMessage[0]}alias${errorMessage[1]}`);
 

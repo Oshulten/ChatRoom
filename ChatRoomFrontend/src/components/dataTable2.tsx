@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { StringValidation } from "../types/chatUser";
 import { castStringToObject } from "../utilities/casting";
 import { toIsoString } from "../utilities/dateRepresentation";
@@ -15,13 +14,7 @@ interface InteractiveDataCellProps {
     disabled?: boolean
 }
 
-interface ValidationState {
-    isValid: boolean,
-    errorMessages: string[]
-}
-
-export function InteractiveDataCell({ value, onChange, validation, disabled }: InteractiveDataCellProps) {
-    const [validationState, setValidationState] = useState<ValidationState>({ isValid: true, errorMessages: [] });
+export function InteractiveDataCell({ value, onChange, disabled }: InteractiveDataCellProps) {
 
     const typeInfo = typeCheck(value);
 
@@ -30,18 +23,9 @@ export function InteractiveDataCell({ value, onChange, validation, disabled }: I
         if (typeInfo == "boolean") {
             properValue = String(e.target.checked);
         }
-        if (validation) {
-            const errorMessages = validation.validate(properValue);
-            setValidationState({ isValid: false, errorMessages: errorMessages });
-            return;
-        }
         const restoredTypedValue = castStringToObject(properValue, typeInfo);
         console.log(`onChange in InteractiveDataCell - '${JSON.stringify(restoredTypedValue)}' [${typeCheck(restoredTypedValue)}]`)
         onChange(restoredTypedValue);
-    }
-
-    if (!validationState.isValid) {
-        return <p>Invalid</p>;
     }
 
     if (typeInfo === "number") {
