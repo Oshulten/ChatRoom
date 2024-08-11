@@ -4,19 +4,17 @@ import { toIsoString } from "../utilities/dateRepresentation";
 import { typeCheck } from "../utilities/typeCheck";
 import { useState } from "react";
 import ObjectInspector from "./objectInspector";
+import { GenericIdEntity } from "../types/genericIdEntity";
 
 /* eslint-disable react/react-in-jsx-scope */
+
 interface InteractiveDataRowProps {
+    entity: ChatSpaceClass;
+    onChange: (entity: ChatSpaceClass) => void;
     disableIds?: boolean;
 }
 
-export function InteractiveDataRow({ disableIds }: InteractiveDataRowProps) {
-    const [entities, setEntities] = useState(
-        [ChatSpaceClass.fromProperties("global", "Global", ["Mike", "Adam", "Catherine"]),
-        ChatSpaceClass.fromProperties("global2", "Global", ["Mike", "Adam", "Catherine"])]);
-
-    disableIds ??= true;
-
+export function InteractiveDataRow({ entity, onChange, disableIds }: InteractiveDataRowProps) {
     const reassembleEntity = (entity: object, newPropertyValue: InteractiveDataCellSupportedTypes, propertyKey: string) => {
         type BlankSlate = {
             [key: string]: InteractiveDataCellSupportedTypes
@@ -33,23 +31,62 @@ export function InteractiveDataRow({ disableIds }: InteractiveDataRowProps) {
 
         if ("fromObject" in entity) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-            return (entity.fromObject as Function)(filledSlate as object);
+            return (entity.fromObject as Function)(filledSlate as ChatSpaceClass);
         }
-        return filledSlate as object;
+        return filledSlate as ChatSpaceClass;
     }
 
-    const handleChangeFactory = (entityId: string, propertyKey: string) => {
+    const handleChangeFactory = (propertyKey: string) => {
         return (newPropertyValue: InteractiveDataCellSupportedTypes) => {
-            const entity = entities.find(entity => entity.id == entityId);
-            if (entity == undefined) {
-                throw new Error(`Entity id ${entityId} cannot be found in state`);
-            }
-            const entityIndex = entities.indexOf(entity);
-            const newEntity = reassembleEntity(entity, newPropertyValue, propertyKey) as ChatSpaceClass;
-            const newEntities = [...entities.slice(0, entityIndex), newEntity!, ...entities.slice(entityIndex + 1)];
-            setEntities(newEntities);
+            const newEntity = reassembleEntity(entity, newPropertyValue, propertyKey);
+            onChange(newEntity);
         };
     };
+
+    return (
+        <tr key={entity.id}>
+            {Object.entries(entity).map(([key, value]) => {
+                const disabled = disableIds && key.includes("id");
+                return (
+                    <td key={key}>
+                        <InteractiveDataCell
+                            value={value}
+                            onChange={newValue => handleChangeFactory(key)(newValue)}
+                            disabled={disabled} />
+                    </td>
+                );
+            })}
+        </tr>
+    );
+}
+
+interface InteractiveDataTableProps {
+    onChange: (entities: ChatSpaceClass[]) => void;
+    disableIds?: boolean;
+}
+
+export function InteractiveDataTable({ disableIds }: InteractiveDataTableProps) {
+    const [entities, setEntities] = useState(
+        [ChatSpaceClass.fromProperties("global", "Global", ["Mike", "Adam", "Catherine"]),
+        ChatSpaceClass.fromProperties("global2", "Global", ["Mike", "Adam", "Catherine"])]);
+
+    disableIds ??= true;
+
+    const handleChange = (newEntity: GenericIdEntity) => {
+        if (newEntity == undefined) {
+            throw new Error(`Entity cannot be found in state`);
+        }
+        const oldEntity = entities.find((entityFromList) => entityFromList.id == newEntity.id) as ChatSpaceClass;
+        const entityIndex = entities.indexOf(oldEntity);
+
+        const newEntities = [...entities.slice(0, entityIndex), newEntity!, ...entities.slice(entityIndex + 1)];
+
+        console.log(`Entities: ${JSON.stringify(entities)}`)
+        console.log(`New entity: ${JSON.stringify(newEntity)}`)
+        console.log(`Index: ${JSON.stringify(entityIndex)}`)
+        console.log(`New entities: ${JSON.stringify(newEntities)}`)
+        setEntities(newEntities as ChatSpaceClass[]);
+    }
 
     return (
         <div className="overflow-x-auto">
@@ -63,19 +100,11 @@ export function InteractiveDataRow({ disableIds }: InteractiveDataRowProps) {
                 </thead>
                 <tbody>
                     {Object.values(entities).map(entity => {
-                        return <tr key={entity.id}>
-                            {Object.entries(entity).map(([key, value]) => {
-                                const disabled = disableIds && key.includes("id");
-                                return (
-                                    <td key={key}>
-                                        <InteractiveDataCell
-                                            value={value}
-                                            onChange={newValue => handleChangeFactory(entity.id, key)(newValue)}
-                                            disabled={disabled} />
-                                    </td>
-                                );
-                            })}
-                        </tr>
+                        return <InteractiveDataRow
+                            key={entity.id}
+                            entity={entity}
+                            onChange={(entity) => handleChange(entity)}
+                            disableIds={disableIds} />
                     })}
                 </tbody>
             </table>
