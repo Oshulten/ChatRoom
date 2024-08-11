@@ -1,5 +1,4 @@
-import { ChatMessageClass } from "../types/chatMessage";
-import { StringValidation } from "../types/chatUser";
+import { ChatSpaceClass } from "../types/chatSpace";
 import { castStringToObject } from "../utilities/casting";
 import { toIsoString } from "../utilities/dateRepresentation";
 import { typeCheck } from "../utilities/typeCheck";
@@ -7,7 +6,7 @@ import { typeCheck } from "../utilities/typeCheck";
 /* eslint-disable react/react-in-jsx-scope */
 
 export function InteractiveDataRow() {
-    const mockEntity = ChatMessageClass.fromProperties("MikeMessage", "Mike", new Date("2024-08-11T13:00:00.000+02:00"), "Hello no-one!", "global");
+    const mockEntity = ChatSpaceClass.fromProperties("global", "Global", ["Mike", "Adam", "Catherine"])
 
     const handleChange = (newValue: InteractiveDataCellSupportedTypes) => {
         console.log(`onChange in InteractiveDataRow from InteractiveDataCell - ${newValue}`);
