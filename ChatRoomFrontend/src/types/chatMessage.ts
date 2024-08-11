@@ -15,7 +15,7 @@ export class ChatMessageClass {
     content: string;
     chatSpaceId: string;
 
-    static fromProperties(id: string, userId: string, postedAt: string, content: string, chatSpaceId: string) {
+    static fromProperties(id: string, userId: string, postedAt: Date, content: string, chatSpaceId: string) {
         return new ChatMessageClass({ id, userId, postedAt, content, chatSpaceId });
     }
 

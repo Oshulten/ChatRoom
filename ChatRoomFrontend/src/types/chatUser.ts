@@ -14,8 +14,8 @@ export class ChatUserClass {
     joinedAt: Date;
     admin: boolean;
 
-    static fromProperties(alias: string, password: string, joinedAt: Date, admin: boolean) {
-        return new ChatUserClass({ alias, password, joinedAt, admin });
+    static fromProperties(id: string, alias: string, password: string, joinedAt: Date, admin: boolean) {
+        return new ChatUserClass({ id, alias, password, joinedAt, admin });
     }
 
     static fromObject(object: object) {

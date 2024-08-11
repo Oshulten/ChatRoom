@@ -12,8 +12,8 @@ export class ChatSpaceClass {
     alias: string;
     userIds: string[];
 
-    static fromProperties(id: string, alias: string, joinedAt: Date, userIds: string[]) {
-        return new ChatSpaceClass({ id, alias, joinedAt, userIds });
+    static fromProperties(id: string, alias: string, userIds: string[]) {
+        return new ChatSpaceClass({ id, alias, userIds });
     }
 
     fromObject(object: object) {
