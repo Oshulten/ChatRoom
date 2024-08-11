@@ -55,6 +55,9 @@ export default function ObjectInspector({ subject, subjectKey, onChange }: Objec
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
                 return (subject.fromObject as Function)(filledSlate as object);
             }
+            if (typeInfo == "Array") {
+                return Object.values(filledSlate).map(value => value);
+            }
             return filledSlate as object;
         }
     }

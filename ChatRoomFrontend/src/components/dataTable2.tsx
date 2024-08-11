@@ -96,6 +96,11 @@ export function InteractiveDataCell({ value, onChange, disabled }: InteractiveDa
         onChange(restoredTypedValue);
     }
 
+    const handleChangeObject = (newObject: InteractiveDataCellSupportedTypes, key: string) => {
+        console.log(`${newObject}`);
+        onChange(newObject);
+    }
+
     if (typeInfo === "number") {
         const numberValue = value as number;
         return <input
@@ -159,7 +164,7 @@ export function InteractiveDataCell({ value, onChange, disabled }: InteractiveDa
                 <ObjectInspector
                     subject={value as object}
                     subjectKey={"?"}
-                    onChange={(newObject, key) => console.log(`${newObject}, ${key}`)} />
+                    onChange={(newObject, key) => handleChangeObject(newObject, key)} />
             </div>
         </div>
     )
