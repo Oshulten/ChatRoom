@@ -4,9 +4,13 @@ import { toIsoString } from "../utilities/dateRepresentation";
 import { typeCheck } from "../utilities/typeCheck";
 
 /* eslint-disable react/react-in-jsx-scope */
+interface InteractiveDataRowProps {
+    disableIds?: boolean;
+}
 
-export function InteractiveDataRow() {
+export function InteractiveDataRow({ disableIds }: InteractiveDataRowProps) {
     const mockEntity = ChatSpaceClass.fromProperties("global", "Global", ["Mike", "Adam", "Catherine"])
+    disableIds ??= true;
 
     const handleChange = (newValue: InteractiveDataCellSupportedTypes) => {
         console.log(`onChange in InteractiveDataRow from InteractiveDataCell - ${newValue}`);
@@ -25,7 +29,15 @@ export function InteractiveDataRow() {
                 <tbody>
                     <tr>
                         {Object.entries(mockEntity).map(([key, value]) => {
-                            return <td key={key}><InteractiveDataCell value={value} onChange={(newValue) => handleChange(newValue)} /></td>
+                            const disabled = disableIds && key.toLowerCase().includes("id");
+                            return (
+                                <td key={key}>
+                                    <InteractiveDataCell
+                                        value={value}
+                                        onChange={(newValue) => handleChange(newValue)}
+                                        disabled={disabled} />
+                                </td>
+                            )
                         })}
                     </tr>
                 </tbody>
@@ -39,12 +51,10 @@ export type InteractiveDataCellSupportedTypes = number | string | boolean | null
 interface InteractiveDataCellProps {
     value: InteractiveDataCellSupportedTypes,
     onChange: (newValue: InteractiveDataCellSupportedTypes) => void,
-    validation?: StringValidation;
     disabled?: boolean
 }
 
 export function InteractiveDataCell({ value, onChange, disabled }: InteractiveDataCellProps) {
-
     const typeInfo = typeCheck(value);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
