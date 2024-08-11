@@ -1,43 +1,93 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { typeCheck } from '../utilities/typeCheck'
-import { Primitive } from '../types/primitiveTypes'
+import { InteractiveDataCell, InteractiveDataCellSupportedTypes } from './dataTable2';
 
-function PrimitiveValue({ primitiveKey, primitive }: { primitiveKey?: string, primitive: Primitive }) {
+interface PrimitiveValueProps {
+    primitiveKey?: string,
+    primitive: InteractiveDataCellSupportedTypes,
+    onChange?: (newValue: InteractiveDataCellSupportedTypes, key: string | undefined) => void;
+}
+
+function PrimitiveValue({ primitiveKey, primitive, onChange }: PrimitiveValueProps) {
+    const handleChange = (newValue: InteractiveDataCellSupportedTypes) => {
+        if (onChange) {
+            console.log(`onChange in PrimitiveValue - '${primitiveKey}': ${primitive}`)
+            onChange(newValue, primitiveKey);
+        }
+    }
+
     return <tr>
         <td>{primitiveKey ?? ""}</td>
         <td>{typeCheck(primitive)}</td>
-        <td>{String(primitive)}</td>
+        <td><InteractiveDataCell value={primitive} onChange={newValue => handleChange(newValue)} /></td>
     </tr>
-}
-
-function EmptyObject({ subjectKey, subject }: { subjectKey?: string, subject: object }) {
-    return (
-        <tr>
-            <td>{subjectKey ?? ""}</td>
-            <td>{typeCheck(subject)}</td>
-            <td>{String(subject)}</td>
-        </tr>
-    )
 }
 
 interface ObjectInspectorProps {
     subject: object,
-    subjectKey: string
+    subjectKey: string,
+    onChange: (newObject: InteractiveDataCellSupportedTypes, key: string | undefined) => void;
 }
 
-export default function ObjectInspector({ subject, subjectKey }: ObjectInspectorProps) {
-    const elements = Object.entries(subject).map(([key, value]) => {
-        if (value instanceof Object) {
-            if (Object.entries(value).length == 0) {
-                return <EmptyObject subject={value} subjectKey={key} key={key} />
+export default function ObjectInspector({ subject, subjectKey, onChange }: ObjectInspectorProps) {
+
+    const reassembleSubject = (newProperty: InteractiveDataCellSupportedTypes, propertyKey: string | undefined) => {
+        const typeInfo = typeCheck(subject);
+        console.log("Reassembling subject...");
+        console.log(`\tType: ${typeInfo}`);
+        console.log(`\tNew Property: ${JSON.stringify(newProperty)}`);
+        console.log(`\tProperty Key: ${propertyKey}`);
+        if (subject instanceof Object) {
+            type BlankSlate = {
+                [key: string]: InteractiveDataCellSupportedTypes
             }
+
+            const filledSlate = Object.entries({ ...subject } as BlankSlate).reduce((accumulator, [key, value]) => {
+                if (propertyKey === key) {
+                    accumulator[key] = newProperty;
+                    return accumulator;
+                }
+                accumulator[key] = value;
+                return accumulator;
+            }, {} as BlankSlate);
+
+            return filledSlate;
+        }
+    }
+
+    const handlePrimitiveChange = (newValue: InteractiveDataCellSupportedTypes, key: string | undefined) => {
+        if (!key) {
+            console.log(`onChange in ObjectInspector from PrimitiveValue - key for value ${newValue} is undefined`);
+            return;
+        }
+        if (onChange) {
+            console.log(`onChange in ObjectInspector from PrimitiveValue - '${key}': ${newValue}`)
+            const reassembledSubject = reassembleSubject(newValue, key);
+            console.log(`Reassembled subject - '${JSON.stringify(reassembledSubject)}`)
+            onChange(reassembledSubject, key);
+            return;
+        }
+        console.log(`onChange in ObjectInspector from PrimitiveValue - parent onChange is missing`)
+    }
+
+    // const handleObjectInspectorChange = (newValue: InteractiveDataCellSupportedTypes, key: string | undefined) => {
+    //     if (onChange) {
+    //         console.log(`onChange in ObjectInspector from ObjectInspector - '${key}': ${newValue}`)
+    //         onChange(newValue, key);
+    //         return;
+    //     }
+    //     console.log(`onChange in ObjectInspector from ObjectInspector - missing`)
+    // }
+
+    const elements = Object.entries(subject).map(([key, value]) => {
+        if (value instanceof Object && !(value instanceof Date)) {
             return <tr key={key}>
                 <td colSpan={3}>
-                    <ObjectInspector key={key} subjectKey={key} subject={value} />
+                    <ObjectInspector key={key} subjectKey={key} subject={value} onChange={(newValue, key) => handlePrimitiveChange(newValue, key)} />
                 </td>
             </tr>
         }
-        return <PrimitiveValue primitive={value} primitiveKey={key} key={key} />
+        return <PrimitiveValue primitive={value} primitiveKey={key} key={key} onChange={(newValue, key) => handlePrimitiveChange(newValue, key)} />
     });
 
     return <>
