@@ -33,11 +33,12 @@ export default function ObjectInspector({ subject, subjectKey, onChange }: Objec
 
     const reassembleSubject = (newProperty: InteractiveDataCellSupportedTypes, propertyKey: string | undefined) => {
         const typeInfo = typeCheck(subject);
-        console.log("Reassembling subject...");
-        console.log(`\tType: ${typeInfo}`);
-        console.log(`\tNew Property: ${JSON.stringify(newProperty)}`);
-        console.log(`\tProperty Key: ${propertyKey}`);
         if (subject instanceof Object) {
+            console.log(`Reassembling subject into ${subject.constructor.name}`);
+            console.log(`\tType: ${typeInfo}`);
+            console.log(`\tNew Property: ${JSON.stringify(newProperty)}`);
+            console.log(`\tProperty Key: ${propertyKey}`);
+
             type BlankSlate = {
                 [key: string]: InteractiveDataCellSupportedTypes
             }
@@ -50,8 +51,10 @@ export default function ObjectInspector({ subject, subjectKey, onChange }: Objec
                 accumulator[key] = value;
                 return accumulator;
             }, {} as BlankSlate);
-
-            return filledSlate;
+            if ("fromObject" in subject) {
+                return (subject.fromObject as Function)(filledSlate as object);
+            }
+            return filledSlate as object;
         }
     }
 

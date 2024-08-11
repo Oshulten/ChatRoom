@@ -17,6 +17,14 @@ export class ChatUserClass {
         return new ChatUserClass({ alias, password, joinedAt, admin });
     }
 
+    static fromObject(object: object) {
+        return new ChatUserClass(object);
+    }
+
+    fromObject(object: object) {
+        return new ChatUserClass(object);
+    }
+
     constructor(fromObject: object) {
         const errorMessage = ["property '", "' is missing in deserialized object"];
         if ("alias" in fromObject) this.alias = fromObject.alias as string;
