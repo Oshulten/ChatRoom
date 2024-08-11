@@ -11,7 +11,9 @@ interface InteractiveDataRowProps {
 }
 
 export function InteractiveDataRow({ disableIds }: InteractiveDataRowProps) {
-    const [entity, setEntity] = useState(ChatSpaceClass.fromProperties("global", "Global", ["Mike", "Adam", "Catherine"]));
+    const [entities, setEntities] = useState(
+        [ChatSpaceClass.fromProperties("global", "Global", ["Mike", "Adam", "Catherine"]),
+        ChatSpaceClass.fromProperties("global2", "Global", ["Mike", "Adam", "Catherine"])]);
 
     disableIds ??= true;
 
@@ -36,11 +38,16 @@ export function InteractiveDataRow({ disableIds }: InteractiveDataRowProps) {
         return filledSlate as object;
     }
 
-    const handleChangeFactory = (propertyKey: string) => {
+    const handleChangeFactory = (entityId: string, propertyKey: string) => {
         return (newPropertyValue: InteractiveDataCellSupportedTypes) => {
-            console.log(`onChange in InteractiveDataRow from InteractiveDataCell - '${propertyKey}': ${newPropertyValue}`);
+            const entity = entities.find(entity => entity.id == entityId);
+            if (entity == undefined) {
+                throw new Error(`Entity id ${entityId} cannot be found in state`);
+            }
+            const entityIndex = entities.indexOf(entity);
             const newEntity = reassembleEntity(entity, newPropertyValue, propertyKey) as ChatSpaceClass;
-            setEntity(newEntity);
+            const newEntities = [...entities.slice(0, entityIndex), newEntity!, ...entities.slice(entityIndex + 1)];
+            setEntities(newEntities);
         };
     };
 
@@ -49,28 +56,30 @@ export function InteractiveDataRow({ disableIds }: InteractiveDataRowProps) {
             <table className="table table-xs">
                 <thead>
                     <tr>
-                        {Object.keys(entity).map((key) => {
+                        {Object.keys(entities[0]).map((key) => {
                             return (<th key={key}>{key}</th>)
                         })}
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        {Object.entries(entity).map(([key, value]) => {
-                            const disabled = disableIds && key.includes("id");
-                            return (
-                                <td key={key}>
-                                    <InteractiveDataCell
-                                        value={value}
-                                        onChange={newValue => handleChangeFactory(key)(newValue)}
-                                        disabled={disabled} />
-                                </td>
-                            )
-                        })}
-                    </tr>
+                    {Object.values(entities).map(entity => {
+                        return <tr key={entity.id}>
+                            {Object.entries(entity).map(([key, value]) => {
+                                const disabled = disableIds && key.includes("id");
+                                return (
+                                    <td key={key}>
+                                        <InteractiveDataCell
+                                            value={value}
+                                            onChange={newValue => handleChangeFactory(entity.id, key)(newValue)}
+                                            disabled={disabled} />
+                                    </td>
+                                );
+                            })}
+                        </tr>
+                    })}
                 </tbody>
             </table>
-            <p>{JSON.stringify(entity)}</p>
+            <p>{JSON.stringify(entities)}</p>
         </div>
     );
 }
@@ -157,15 +166,9 @@ export function InteractiveDataCell({ value, onChange, disabled }: InteractiveDa
         return <>{dateTimeElement}</>;
     }
     return (
-        // <div className="collapse bg-base-200">
-        //     <input type="checkbox" />
-        //     <div className="collapse-title text-xl font-medium">Click me to show/hide content</div>
-        //     <div className="collapse-content">
         <ObjectInspector
             subject={value as object}
             subjectKey={""}
             onChange={(newObject) => handleChangeObject(newObject)} />
-        //     </div>
-        // </div>
     );
 }
