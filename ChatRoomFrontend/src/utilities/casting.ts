@@ -37,7 +37,7 @@ export function castStringToObject(string: string, typeValue: string) {
         case "boolean": return (string === "true");
         case "undefined": return undefined;
         case "null": return null;
-        case "Date": return new Date(string);
+        case "Date": return new Date(Date.parse(string));
         default:
             throw new Error(`Value '${string}' has unhandled type '${typeValue}'`);
     }

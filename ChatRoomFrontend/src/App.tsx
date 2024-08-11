@@ -17,6 +17,7 @@ export default function App() {
       <InteractiveDataCell value={string} onChange={newValue => setString(newValue as string)} />
       <InteractiveDataCell value={boolean} onChange={newValue => setBoolean(newValue as boolean)} />
       <InteractiveDataCell value={date} onChange={newValue => setDate(newValue as Date)} />
+      <p>{JSON.stringify({ number, string, boolean, date })}</p>
     </>
   )
 }

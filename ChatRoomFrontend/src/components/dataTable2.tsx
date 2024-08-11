@@ -25,6 +25,7 @@ export default function InteractiveDataCell({ value, validation, onChange, disab
                 properValue = String(e.target.checked);
             }
             const restoredTypedValue = castStringToObject(properValue, typeInfo);
+            console.log(`Proper value: ${properValue}`);
             console.log(`Cast value: ${restoredTypedValue}`);
             onChange(restoredTypedValue);
         }
@@ -63,25 +64,20 @@ export default function InteractiveDataCell({ value, validation, onChange, disab
         const dateValue = value as Date;
         const [year, month, date] = [dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate()];
         const dateString = `${year}-${month >= 10 ? month : "0" + month}-${date}`;
-        const dateElement = <input
-            type="date"
-            placeholder="Date"
-            value={dateString}
-            disabled={disabled}
-            onChange={e => handleChange(e)}
-            className="input w-full max-w-xs" />
 
         const [hours, minutes, seconds] = [dateValue.getHours(), dateValue.getMinutes(), dateValue.getSeconds()];
         const timeString = `${hours >= 10 ? hours : "0" + hours}:${minutes >= 10 ? minutes : "0" + minutes}:${seconds >= 10 ? seconds : "0" + seconds}`;
-        const timeElement = <input
-            type="time"
-            placeholder="Time"
-            value={timeString}
-            disabled={disabled}
-            onChange={e => handleChange(e)}
-            className="input w-full max-w-xs" />
 
-        return <>{dateElement}{timeElement}</>;
+        const dateTimeElement =
+            <input
+                type="datetime-local"
+                placeholder="Time"
+                value={dateString + "T" + timeString}
+                disabled={disabled}
+                onChange={e => handleChange(e)}
+                className="input w-full max-w-xs" />
+
+        return <>{dateTimeElement}</>;
     }
     return <p>Unhandled type</p>
 }
