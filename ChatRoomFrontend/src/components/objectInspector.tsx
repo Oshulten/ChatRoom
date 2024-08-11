@@ -91,7 +91,9 @@ export default function ObjectInspector({ subject, subjectKey, onChange }: Objec
     return <>
         <div className="collapse collapse-arrow bg-base-200">
             <input type="checkbox" />
-            <div className="text-left collapse-title text-m font-medium">{`${subjectKey}: [${typeCheck(subject)}]`}</div>
+            <div className="text-left collapse-title text-base font-medium">
+                {subjectKey ? `${subjectKey}: [${typeCheck(subject)}]` : typeCheck(subject)}
+            </div>
             <div className="collapse-content">
                 <div className="overflow-x-auto">
                     <table className="table table-zebra">

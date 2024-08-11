@@ -96,7 +96,7 @@ export function InteractiveDataCell({ value, onChange, disabled }: InteractiveDa
         onChange(restoredTypedValue);
     }
 
-    const handleChangeObject = (newObject: InteractiveDataCellSupportedTypes, key: string) => {
+    const handleChangeObject = (newObject: InteractiveDataCellSupportedTypes) => {
         console.log(`${newObject}`);
         onChange(newObject);
     }
@@ -157,15 +157,15 @@ export function InteractiveDataCell({ value, onChange, disabled }: InteractiveDa
         return <>{dateTimeElement}</>;
     }
     return (
-        <div className="collapse bg-base-200">
-            <input type="checkbox" />
-            <div className="collapse-title text-xl font-medium">Click me to show/hide content</div>
-            <div className="collapse-content">
-                <ObjectInspector
-                    subject={value as object}
-                    subjectKey={"?"}
-                    onChange={(newObject, key) => handleChangeObject(newObject, key)} />
-            </div>
-        </div>
-    )
+        // <div className="collapse bg-base-200">
+        //     <input type="checkbox" />
+        //     <div className="collapse-title text-xl font-medium">Click me to show/hide content</div>
+        //     <div className="collapse-content">
+        <ObjectInspector
+            subject={value as object}
+            subjectKey={""}
+            onChange={(newObject) => handleChangeObject(newObject)} />
+        //     </div>
+        // </div>
+    );
 }
