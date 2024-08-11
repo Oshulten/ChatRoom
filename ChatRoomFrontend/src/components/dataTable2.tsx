@@ -8,13 +8,13 @@ import { GenericIdEntity } from "../types/genericIdEntity";
 
 /* eslint-disable react/react-in-jsx-scope */
 
-interface InteractiveDataRowProps {
-    entity: ChatSpaceClass;
-    onChange: (entity: ChatSpaceClass) => void;
+interface InteractiveDataRowProps<T extends GenericIdEntity> {
+    entity: T;
+    onChange: (entity: T) => void;
     disableIds?: boolean;
 }
 
-export function InteractiveDataRow({ entity, onChange, disableIds }: InteractiveDataRowProps) {
+export function InteractiveDataRow<T extends GenericIdEntity>({ entity, onChange, disableIds }: InteractiveDataRowProps<T>) {
     const reassembleEntity = (entity: object, newPropertyValue: InteractiveDataCellSupportedTypes, propertyKey: string) => {
         type BlankSlate = {
             [key: string]: InteractiveDataCellSupportedTypes
@@ -31,9 +31,9 @@ export function InteractiveDataRow({ entity, onChange, disableIds }: Interactive
 
         if ("fromObject" in entity) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-            return (entity.fromObject as Function)(filledSlate as ChatSpaceClass);
+            return (entity.fromObject as Function)(filledSlate as T);
         }
-        return filledSlate as ChatSpaceClass;
+        return filledSlate as T;
     }
 
     const handleChangeFactory = (propertyKey: string) => {
@@ -100,7 +100,7 @@ export function InteractiveDataTable({ disableIds }: InteractiveDataTableProps) 
                 </thead>
                 <tbody>
                     {Object.values(entities).map(entity => {
-                        return <InteractiveDataRow
+                        return <InteractiveDataRow<ChatSpaceClass>
                             key={entity.id}
                             entity={entity}
                             onChange={(entity) => handleChange(entity)}
