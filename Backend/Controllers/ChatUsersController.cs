@@ -16,10 +16,6 @@ public class ChatUsersController(ChatroomDatabaseContext db) : ControllerBase
     [HttpGet]
     public List<ChatUser> GetAll()
     {
-        if (!db.ChatUsers.Any())
-        {
-            db.ChatUsers!.AddRange(ChatUser.SeedData());
-        }
         db.SaveChanges();
         return db.ChatUsers.ToList()!;
     }

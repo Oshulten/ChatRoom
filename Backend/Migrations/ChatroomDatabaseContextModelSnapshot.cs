@@ -23,7 +23,7 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ChatSpace")
+                    b.Property<Guid>("ChatSpaceId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Content")
@@ -48,10 +48,6 @@ namespace Backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Alias")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

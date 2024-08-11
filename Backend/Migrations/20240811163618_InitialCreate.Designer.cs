@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(ChatroomDatabaseContext))]
-    [Migration("20240809221348_InitialCreate")]
+    [Migration("20240811163618_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -26,7 +26,7 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ChatSpace")
+                    b.Property<Guid>("ChatSpaceId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Content")
@@ -51,10 +51,6 @@ namespace Backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Alias")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

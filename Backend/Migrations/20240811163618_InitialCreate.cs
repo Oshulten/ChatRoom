@@ -19,7 +19,7 @@ namespace Backend.Migrations
                     UserId = table.Column<Guid>(type: "TEXT", nullable: false),
                     PostedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Content = table.Column<string>(type: "TEXT", nullable: false),
-                    ChatSpace = table.Column<Guid>(type: "TEXT", nullable: false)
+                    ChatSpaceId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,7 +32,6 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Alias = table.Column<string>(type: "TEXT", nullable: false),
-                    Password = table.Column<string>(type: "TEXT", nullable: false),
                     UserIds = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
