@@ -1,4 +1,4 @@
-import React from 'react'
+/* eslint-disable react/react-in-jsx-scope */
 import { castStringToPrimitive } from '../utilities/casting';
 import type { PrimitiveType } from '../utilities/casting';
 import { GenericIdEntity } from '../types/genericIdEntity';
