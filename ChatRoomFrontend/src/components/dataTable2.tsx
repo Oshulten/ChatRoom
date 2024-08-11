@@ -1,9 +1,39 @@
+import { ChatMessageClass } from "../types/chatMessage";
 import { StringValidation } from "../types/chatUser";
 import { castStringToObject } from "../utilities/casting";
 import { toIsoString } from "../utilities/dateRepresentation";
 import { typeCheck } from "../utilities/typeCheck";
 
 /* eslint-disable react/react-in-jsx-scope */
+
+export function InteractiveDataRow() {
+    const mockEntity = ChatMessageClass.fromProperties("MikeMessage", "Mike", new Date("2024-08-11T13:00:00.000+02:00"), "Hello no-one!", "global");
+
+    const handleChange = (newValue: InteractiveDataCellSupportedTypes) => {
+        console.log(`onChange in InteractiveDataRow from InteractiveDataCell - ${newValue}`);
+    };
+
+    return (
+        <div className="overflow-x-auto">
+            <table className="table table-xs">
+                <thead>
+                    <tr>
+                        {Object.keys(mockEntity).map((key) => {
+                            return (<th key={key}>{key}</th>)
+                        })}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {Object.entries(mockEntity).map(([key, value]) => {
+                            return <td key={key}><InteractiveDataCell value={value} onChange={(newValue) => handleChange(newValue)} /></td>
+                        })}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    );
+}
 
 export type InteractiveDataCellSupportedTypes = number | string | boolean | null | undefined | Date | object;
 
@@ -83,5 +113,5 @@ export function InteractiveDataCell({ value, onChange, disabled }: InteractiveDa
 
         return <>{dateTimeElement}</>;
     }
-    // return <ObjectInspector subject={value as object} subjectKey={"?"} onChange={(newObject, key) => console.log(`${newObject}, ${key}`)} />
+    return <button>Inspect</button>
 }
