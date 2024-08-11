@@ -7,6 +7,32 @@ export default interface ChatUser extends GenericIdEntity {
     admin: boolean
 }
 
+interface StringValidationParameters {
+    minLength?: number,
+    maxLength?: number,
+}
+
+export class StringValidation {
+    minLength?: number;
+    maxLength?: number;
+
+    constructor({ minLength, maxLength }: StringValidationParameters) {
+        this.minLength = minLength;
+        this.maxLength = maxLength;
+    }
+
+    validate(subject: string): string[] {
+        const errorMessages: string[] = [];
+        if (this.maxLength && subject.length > this.maxLength) {
+            errorMessages.push(`Length cannot be longer than ${this.maxLength} characters`);
+        }
+        if (this.minLength && subject.length < this.minLength) {
+            errorMessages.push(`Length must be longer than ${this.minLength - 1} characters`);
+        }
+        return errorMessages;
+    }
+}
+
 export class ChatUserClass {
     alias: string;
     password: string;

@@ -52,6 +52,7 @@ export default function ObjectInspector({ subject, subjectKey, onChange }: Objec
                 return accumulator;
             }, {} as BlankSlate);
             if ("fromObject" in subject) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
                 return (subject.fromObject as Function)(filledSlate as object);
             }
             return filledSlate as object;
