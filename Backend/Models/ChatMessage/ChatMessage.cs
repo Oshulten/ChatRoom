@@ -11,12 +11,12 @@ namespace Backend.Models
         public Guid UserId { get; set; } = userId;
         public DateTime PostedAt { get; set; } = DateTime.Now;
         public string Content { get; set; } = content;
-        public Guid ChatSpace { get; set; } = chatSpace;
+        public Guid ChatSpaceId { get; set; } = chatSpace;
 
         public ChatMessage() : this(Guid.NewGuid(), "A message", Guid.NewGuid()) { }
 
         public static explicit operator ChatMessage(ChatMessagePost post) => new(
-            post.ChatUser, post.Content, post.ChatSpace
+            post.ChatUserId, post.Content, post.ChatSpaceId
         );
     }
 }

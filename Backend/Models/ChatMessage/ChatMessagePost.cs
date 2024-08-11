@@ -10,7 +10,7 @@ namespace Backend.Models
     (
         [Length(Validation.ContentMinLength, Validation.ContentMaxLength)]
         string Content,
-        Guid ChatSpace,
-        Guid ChatUser
+        Guid ChatSpaceId,
+        Guid ChatUserId
     );
 }
