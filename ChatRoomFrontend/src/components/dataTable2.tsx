@@ -3,6 +3,7 @@ import { castStringToObject } from "../utilities/casting";
 import { toIsoString } from "../utilities/dateRepresentation";
 import { typeCheck } from "../utilities/typeCheck";
 import { useState } from "react";
+import ObjectInspector from "./objectInspector";
 
 /* eslint-disable react/react-in-jsx-scope */
 interface InteractiveDataRowProps {
@@ -41,8 +42,7 @@ export function InteractiveDataRow({ disableIds }: InteractiveDataRowProps) {
             const newEntity = reassembleEntity(entity, newPropertyValue, propertyKey) as ChatSpaceClass;
             setEntity(newEntity);
         };
-    }
-
+    };
 
     return (
         <div className="overflow-x-auto">
@@ -151,5 +151,16 @@ export function InteractiveDataCell({ value, onChange, disabled }: InteractiveDa
 
         return <>{dateTimeElement}</>;
     }
-    return <button>Inspect</button>
+    return (
+        <div className="collapse bg-base-200">
+            <input type="checkbox" />
+            <div className="collapse-title text-xl font-medium">Click me to show/hide content</div>
+            <div className="collapse-content">
+                <ObjectInspector
+                    subject={value as object}
+                    subjectKey={"?"}
+                    onChange={(newObject, key) => console.log(`${newObject}, ${key}`)} />
+            </div>
+        </div>
+    )
 }

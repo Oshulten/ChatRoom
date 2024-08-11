@@ -74,15 +74,6 @@ export default function ObjectInspector({ subject, subjectKey, onChange }: Objec
         console.log(`onChange in ObjectInspector from PrimitiveValue - parent onChange is missing`)
     }
 
-    // const handleObjectInspectorChange = (newValue: InteractiveDataCellSupportedTypes, key: string | undefined) => {
-    //     if (onChange) {
-    //         console.log(`onChange in ObjectInspector from ObjectInspector - '${key}': ${newValue}`)
-    //         onChange(newValue, key);
-    //         return;
-    //     }
-    //     console.log(`onChange in ObjectInspector from ObjectInspector - missing`)
-    // }
-
     const elements = Object.entries(subject).map(([key, value]) => {
         if (value instanceof Object && !(value instanceof Date)) {
             return <tr key={key}>
