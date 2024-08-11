@@ -11,9 +11,6 @@ namespace Backend.Models
         [Length(Validation.AliasMinLength, Validation.AliasMaxLength)]
         string Alias,
 
-        [Length(Validation.PasswordMinLength, Validation.PasswordMaxLength)]
-        string Password,
-
         Guid[] UserIds
     );
 }
