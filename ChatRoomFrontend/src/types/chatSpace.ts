@@ -10,11 +10,10 @@ export default interface ChatSpace extends GenericIdEntity {
 export class ChatSpaceClass {
     id: string;
     alias: string;
-    password: Date;
     userIds: string[];
 
-    static fromProperties(id: string, alias: string, password: string, joinedAt: Date, userIds: string[]) {
-        return new ChatSpaceClass({ id, alias, password, joinedAt, userIds });
+    static fromProperties(id: string, alias: string, joinedAt: Date, userIds: string[]) {
+        return new ChatSpaceClass({ id, alias, joinedAt, userIds });
     }
 
     fromObject(object: object) {
@@ -29,9 +28,6 @@ export class ChatSpaceClass {
 
         if ("alias" in fromObject) this.alias = fromObject.alias as string;
         else throw new Error(`${errorMessage[0]}alias${errorMessage[1]}`);
-
-        if ("password" in fromObject) this.password = fromObject.password as string;
-        else throw new Error(`${errorMessage[0]}password${errorMessage[1]}`);
 
         if ("userIds" in fromObject) this.userIds = fromObject.userIds as string[];
         else throw new Error(`${errorMessage[0]}userIds${errorMessage[1]}`);
