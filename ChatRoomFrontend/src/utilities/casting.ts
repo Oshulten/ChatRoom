@@ -29,3 +29,16 @@ export function castStringToPrimitive(valueStringRepresentation: string, typeVal
         default: return Object(valueStringRepresentation).valueOf();
     }
 }
+
+export function castStringToObject(string: string, typeValue: string) {
+    switch (typeValue) {
+        case "string": return string;
+        case "number": return Number.parseFloat(string);
+        case "boolean": return (string === "true");
+        case "undefined": return undefined;
+        case "null": return null;
+        case "Date": return new Date(string);
+        default:
+            throw new Error(`Value '${string}' has unhandled type '${typeValue}'`);
+    }
+}
