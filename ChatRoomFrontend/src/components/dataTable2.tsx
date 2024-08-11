@@ -1,5 +1,6 @@
 import { castStringToObject } from "../utilities/casting";
 import { typeCheck } from "../utilities/typeCheck";
+import ObjectInspector from "./objectInspector";
 
 /* eslint-disable react/react-in-jsx-scope */
 interface ValidationInfo {
@@ -25,8 +26,6 @@ export default function InteractiveDataCell({ value, validation, onChange, disab
                 properValue = String(e.target.checked);
             }
             const restoredTypedValue = castStringToObject(properValue, typeInfo);
-            console.log(`Proper value: ${properValue}`);
-            console.log(`Cast value: ${restoredTypedValue}`);
             onChange(restoredTypedValue);
         }
     }
@@ -79,5 +78,5 @@ export default function InteractiveDataCell({ value, validation, onChange, disab
 
         return <>{dateTimeElement}</>;
     }
-    return <p>Unhandled type</p>
+    return <ObjectInspector subject={value as object} subjectKey={"?"} />
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 export type PrimitiveType = string | boolean | number;
 
 export function castToTypeInfo(typeValue: PrimitiveType): string {
@@ -37,7 +38,13 @@ export function castStringToObject(string: string, typeValue: string) {
         case "boolean": return (string === "true");
         case "undefined": return undefined;
         case "null": return null;
-        case "Date": return new Date(Date.parse(string));
+        case "Date":
+            let newDate = new Date(Date.parse(string));
+            if (newDate.toString() == "Invalid Date") {
+                newDate = new Date(Date.now());
+                console.log("date value is invalid: setting date to now");
+            }
+            return newDate;
         default:
             throw new Error(`Value '${string}' has unhandled type '${typeValue}'`);
     }
