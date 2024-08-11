@@ -1,12 +1,82 @@
-import { ChatSpaceClass } from "../types/chatSpace";
 import { castStringToObject } from "../utilities/casting";
 import { toIsoString } from "../utilities/dateRepresentation";
 import { typeCheck } from "../utilities/typeCheck";
-import { useState } from "react";
 import ObjectInspector from "./objectInspector";
 import { GenericIdEntity } from "../types/genericIdEntity";
+import useConnectToDbTable from "../hooks/useConnectToDbTable";
 
 /* eslint-disable react/react-in-jsx-scope */
+
+interface InteractiveDataTableProps {
+    endpoint: string,
+    label: string,
+    disableIds?: boolean;
+}
+
+export function InteractiveDataTable<T extends GenericIdEntity>({ endpoint, label, disableIds }: InteractiveDataTableProps) {
+    const [entities, setEntities, status] = useConnectToDbTable<T>(endpoint);
+
+    disableIds ??= true;
+
+    const handleChange = (newEntity: GenericIdEntity) => {
+        if (newEntity == undefined) {
+            throw new Error(`Entity cannot be found in state`);
+        }
+
+        const oldEntity = entities.find((entityFromList) => entityFromList.id == newEntity.id) as T;
+        const entityIndex = entities.indexOf(oldEntity);
+        const newEntities = [...entities.slice(0, entityIndex), newEntity!, ...entities.slice(entityIndex + 1)];
+
+        setEntities(newEntities as T[]);
+    }
+
+    let content;
+    switch (status) {
+        case "fetching":
+            content = <span className="loading loading-spinner loading-lg"></span>;
+            break;
+
+        case "failure":
+            content = <>
+                <h2 className="text-red-500 text-3xl">Server is asleep...</h2>
+                <p className="text-red-900">Terrible sorry! We hope you have wonderful day despite this.</p>
+            </>;
+            break;
+
+        case "success":
+            content = (
+                <div className="overflow-x-auto">
+                    <table className="table table-xs">
+                        <thead>
+                            <tr>
+                                {Object.keys(entities[0]).map((key) => {
+                                    return (<th key={key}>{key}</th>)
+                                })}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {Object.values(entities).map(entity => {
+                                return <InteractiveDataRow<T>
+                                    key={entity.id}
+                                    entity={entity}
+                                    onChange={(entity) => handleChange(entity)}
+                                    disableIds={disableIds} />
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            )
+            break;
+    }
+    return (
+        <>
+            <div className="rounded-lg bg-gray-600 p-4">
+                <h2>{label}</h2>
+                {content}
+            </div>
+        </>
+    );
+}
 
 interface InteractiveDataRowProps<T extends GenericIdEntity> {
     entity: T;
@@ -57,59 +127,6 @@ export function InteractiveDataRow<T extends GenericIdEntity>({ entity, onChange
                 );
             })}
         </tr>
-    );
-}
-
-interface InteractiveDataTableProps {
-    onChange: (entities: ChatSpaceClass[]) => void;
-    disableIds?: boolean;
-}
-
-export function InteractiveDataTable({ disableIds }: InteractiveDataTableProps) {
-    const [entities, setEntities] = useState(
-        [ChatSpaceClass.fromProperties("global", "Global", ["Mike", "Adam", "Catherine"]),
-        ChatSpaceClass.fromProperties("global2", "Global", ["Mike", "Adam", "Catherine"])]);
-
-    disableIds ??= true;
-
-    const handleChange = (newEntity: GenericIdEntity) => {
-        if (newEntity == undefined) {
-            throw new Error(`Entity cannot be found in state`);
-        }
-        const oldEntity = entities.find((entityFromList) => entityFromList.id == newEntity.id) as ChatSpaceClass;
-        const entityIndex = entities.indexOf(oldEntity);
-
-        const newEntities = [...entities.slice(0, entityIndex), newEntity!, ...entities.slice(entityIndex + 1)];
-
-        console.log(`Entities: ${JSON.stringify(entities)}`)
-        console.log(`New entity: ${JSON.stringify(newEntity)}`)
-        console.log(`Index: ${JSON.stringify(entityIndex)}`)
-        console.log(`New entities: ${JSON.stringify(newEntities)}`)
-        setEntities(newEntities as ChatSpaceClass[]);
-    }
-
-    return (
-        <div className="overflow-x-auto">
-            <table className="table table-xs">
-                <thead>
-                    <tr>
-                        {Object.keys(entities[0]).map((key) => {
-                            return (<th key={key}>{key}</th>)
-                        })}
-                    </tr>
-                </thead>
-                <tbody>
-                    {Object.values(entities).map(entity => {
-                        return <InteractiveDataRow<ChatSpaceClass>
-                            key={entity.id}
-                            entity={entity}
-                            onChange={(entity) => handleChange(entity)}
-                            disableIds={disableIds} />
-                    })}
-                </tbody>
-            </table>
-            <p>{JSON.stringify(entities)}</p>
-        </div>
     );
 }
 

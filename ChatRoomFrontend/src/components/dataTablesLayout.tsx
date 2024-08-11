@@ -1,4 +1,7 @@
-import PrimitiveDataTable from "./dataTable";
+import { ChatMessageClass } from "../types/chatMessage";
+import { ChatSpaceClass } from "../types/chatSpace";
+import { ChatUserClass } from "../types/chatUser";
+import { InteractiveDataTable } from "./dataTable2";
 
 const baseUrl = "http://localhost:5055/api";
 
@@ -6,7 +9,13 @@ const baseUrl = "http://localhost:5055/api";
 export default function DataTablesLayout({ visible }: { visible: boolean }) {
     return (
         <div hidden={!visible}>
-            <PrimitiveDataTable endpoint={`${baseUrl}/ChatMessages`} label="Chat Messages" showId={true} />
+            <br />
+            <InteractiveDataTable<ChatUserClass> endpoint={`${baseUrl}/ChatUsers`} label="Chat Users" />
+            <br />
+            <InteractiveDataTable<ChatSpaceClass> endpoint={`${baseUrl}/ChatSpaces`} label="Chat Spaces" />
+            <br />
+            <InteractiveDataTable<ChatMessageClass> endpoint={`${baseUrl}/ChatMessages`} label="Chat Messages" />
+            <br />
         </div>
     );
 }
