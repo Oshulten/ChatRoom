@@ -67,9 +67,14 @@ export default function ObjectInspectorLayout() {
                         subjectKey="Fetched Message"
                         onChange={(newObject) => setMessageEntity(newObject as ChatMessageClass)} />
                     <br />
+                    <ObjectInspector
+                        subject={complexEntity}
+                        subjectKey="Fetched Complex Entity"
+                        onChange={(newObject) => setComplexEntity(newObject as ComplexClass)} />
+                    <br />
                 </div>
             </>
         )
     }
-    else return <></>
+    else return <><span className="loading loading-spinner loading-lg"></span></>
 }

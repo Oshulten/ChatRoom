@@ -14,6 +14,12 @@ public class ChatMessagesController(ChatroomDatabaseContext db) : ControllerBase
         return db.ChatMessages.FirstOrDefault(data => data.Id == id)!;
     }
 
+    [HttpGet("by-space/{spaceId}")]
+    public IEnumerable<ChatMessage> GetBySpace(Guid spaceId)
+    {
+        return db.ChatMessages.Where(message => message.ChatSpaceId == spaceId).ToList();
+    }
+
     [HttpGet]
     public IEnumerable<ChatMessage> GetAll()
     {

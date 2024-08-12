@@ -22,17 +22,23 @@ public class ChatUsersController(ChatroomDatabaseContext db) : ControllerBase
     }
 
     [HttpPost("login")]
-    public IActionResult Login(LoginRequest loginRequest)
+    public ChatUser Login(LoginRequest loginRequest)
     {
         ChatUser? user = db.ChatUsers.FirstOrDefault(user => user.Alias == loginRequest.Username && user.Password == loginRequest.Password);
-        if (user is null) return NotFound();
-        return Ok();
+        return user!;
     }
 
     [HttpGet("get-first")]
     public ChatUser GetFirst()
     {
         return db.ChatUsers.FirstOrDefault()!;
+    }
+
+    [HttpGet("get-by-space/{spaceId}")]
+    public IEnumerable<ChatUser> GetBySpace(Guid spaceId)
+    {
+        var space = db.ChatSpaces.First(space => space.Id == spaceId);
+        return db.ChatUsers.Where(user => space.UserIds.Contains(user.Id));
     }
 
     [HttpPatch("{id}")]

@@ -4,7 +4,7 @@ import DataTablesLayout from "./dataTablesLayout";
 import { Login } from "../login";
 
 /* eslint-disable react/react-in-jsx-scope */
-type Tabs = "dataTables" | "objectInspector" | "chatRoom";
+type Tabs = "adminView" | "objectInspector" | "chatRoom";
 
 export default function AdminLayout() {
   const [activeTab, setActiveTab] = useState<Tabs>("chatRoom");
@@ -14,10 +14,10 @@ export default function AdminLayout() {
       <div role="tablist" className="tabs tabs-boxed sticky -top-0 z-10 w-full">
         <a
           role="tab"
-          onClick={() => setActiveTab("dataTables")}
-          className={`tab ${activeTab == "dataTables" && "tab-active"}`}
+          onClick={() => setActiveTab("adminView")}
+          className={`tab ${activeTab == "adminView" && "tab-active"}`}
         >
-          Live Database Table
+          Admin View
         </a>
         <a
           role="tab"
@@ -39,7 +39,7 @@ export default function AdminLayout() {
       <div className="-z-20">
         {activeTab == "objectInspector" &&
           <ObjectInspectorLayout />}
-        {activeTab == "dataTables" &&
+        {activeTab == "adminView" &&
           <DataTablesLayout />}
         {activeTab == "chatRoom" &&
           <Login />}

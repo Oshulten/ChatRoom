@@ -1,17 +1,17 @@
 namespace Backend.Models.ChatMessage;
 
-public class ChatMessage(Guid userId, string content, Guid chatSpace)
+public class ChatMessage(Guid userId, DateTime postedAt, string content, Guid chatSpace)
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid UserId { get; set; } = userId;
-    public DateTime PostedAt { get; set; } = DateTime.Now;
+    public DateTime PostedAt { get; set; } = postedAt;
     public string Content { get; set; } = content;
     public Guid ChatSpaceId { get; set; } = chatSpace;
 
-    public ChatMessage() : this(Guid.NewGuid(), "A message", Guid.NewGuid()) { }
+    public ChatMessage() : this(Guid.NewGuid(), DateTime.Now, "A message", Guid.NewGuid()) { }
 
     public static explicit operator ChatMessage(ChatMessagePost post) => new(
-        post.ChatUserId, post.Content, post.ChatSpaceId
+        post.ChatUserId, DateTime.Now, post.Content, post.ChatSpaceId
     );
 
     public void Patch(ChatMessagePatch patchObject)

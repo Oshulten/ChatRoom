@@ -36,16 +36,16 @@ public class SeedDatabaseController(ChatroomDatabaseContext db) : ControllerBase
         var amandasCornerId = defaultChatSpaces[1].Id;
 
         var defaultMessages = new List<ChatMessage>() {
-            new(amandaId, "Hello world!", globalId),
-            new(amandaId, "How is everyone doing?", globalId),
-            new(michaelId, "It's raining...", globalId),
-            new(georgeId, "Then let's dance in the rain!", globalId),
+            new(amandaId, new DateTime(2021, 04, 5), "Hello world!", globalId),
+            new(amandaId, new DateTime(2021, 04, 6), "How is everyone doing?", globalId),
+            new(michaelId, new DateTime(2021, 04, 7), "It's raining...", globalId),
+            new(georgeId, new DateTime(2021, 04, 8), "Then let's dance in the rain!", globalId),
 
-            new(amandaId, "This is my private space", amandasCornerId),
-            new(amandaId, "It's kinda quiet in here...", amandasCornerId),
-            new(amandaId, "Should I invite George?", amandasCornerId),
-            new(georgeId, "Thanks for sending an invite!", amandasCornerId),
-            new(amandaId, "Just don't tell Michael", amandasCornerId),
+            new(amandaId, new DateTime(2021, 04, 5), "This is my private space", amandasCornerId),
+            new(amandaId, new DateTime(2021, 04, 6), "It's kinda quiet in here...", amandasCornerId),
+            new(amandaId, new DateTime(2021, 04, 7), "Should I invite George?", amandasCornerId),
+            new(georgeId, new DateTime(2021, 04, 8), "Thanks for sending an invite!", amandasCornerId),
+            new(amandaId, new DateTime(2021, 04, 9), "Just don't tell Michael", amandasCornerId),
         };
 
         db.ChatMessages.AddRange(defaultMessages);

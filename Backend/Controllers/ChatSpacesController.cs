@@ -15,6 +15,12 @@ namespace Backend.Controllers
             return db.ChatSpaces.FirstOrDefault(data => data.Id == id)!;
         }
 
+        [HttpGet("by-user/{id}")]
+        public IEnumerable<ChatSpace> GetByUser(Guid id)
+        {
+            return db.ChatSpaces.Where(space => space.UserIds.Contains(id));
+        }
+
         [HttpGet]
         public IEnumerable<ChatSpace> GetAll()
         {
