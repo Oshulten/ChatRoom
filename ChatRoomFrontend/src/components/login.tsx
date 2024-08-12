@@ -1,20 +1,40 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /* eslint-disable react/react-in-jsx-scope */
 export function Login() {
-    const modalRef = useRef(null);
+    const [userId, setUserId] = useState<string | null>(null);
+    const modalRef = useRef<HTMLDialogElement>(null);
+    const userNameRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (modalRef.current) {
+            modalRef.current.showModal();
+        }
+    }, []);
+
+    const loginAttempt = async () => {
+        if (userNameRef.current && passwordRef.current) {
+            console.log(`Username = ${userNameRef.current.value}`);
+            console.log(`Password = ${passwordRef.current.value}`);
+        }
+    }
 
     return (
         <>
-            <button className="btn" onClick={() => undefined/* document.getElementById('my_modal_1').showModal()*/}>Login</button>
-            <dialog id="my_modal_1" className="modal">
+            <dialog ref={modalRef} id="my_modal_1" className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">Hello!</h3>
-                    <p className="py-4">Press ESC key or click the button below to close</p>
-                    <div className="modal-action">
+                    <h3 className="font-bold text-lg">Welcome to Chat Spaces!</h3>
+                    <div className="modal-action place-content-center">
                         <form method="dialog">
-                            {/* if there is a button in form, it will close the modal */}
-                            <button className="btn">Close</button>
+                            <div>
+                                <input ref={userNameRef} type="text" placeholder="User name" className="input input-bordered w-full max-w-xs" />
+                            </div>
+                            <div>
+                                <input ref={passwordRef} type="password" placeholder="Password" className="input input-bordered w-full max-w-xs" />
+                            </div>
+                            <br />
+                            <button className="btn" onClick={loginAttempt}>Login</button>
                         </form>
                     </div>
                 </div>
