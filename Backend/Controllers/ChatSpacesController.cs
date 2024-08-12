@@ -21,6 +21,12 @@ namespace Backend.Controllers
             return db.ChatSpaces;
         }
 
+        [HttpGet("get-first")]
+        public ChatSpace GetFirst()
+        {
+            return db.ChatSpaces.FirstOrDefault()!;
+        }
+
         [HttpPatch("{id}")]
         public IActionResult PatchById(Guid id, ChatSpacePatch patchObject)
         {

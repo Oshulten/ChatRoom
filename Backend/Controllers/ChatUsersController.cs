@@ -21,6 +21,12 @@ public class ChatUsersController(ChatroomDatabaseContext db) : ControllerBase
         return db.ChatUsers.ToList()!;
     }
 
+    [HttpGet("get-first")]
+    public ChatUser GetFirst()
+    {
+        return db.ChatUsers.FirstOrDefault()!;
+    }
+
     [HttpPatch("{id}")]
     public IActionResult PatchById(Guid id, ChatUserPatch patchObject)
     {

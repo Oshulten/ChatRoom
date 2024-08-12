@@ -24,7 +24,7 @@ export default function ObjectInspectorLayout({ visible }: { visible: boolean })
             const user = new ChatUserClass(await response.json());
             setUserEntity(user);
 
-            response = await fetch(`${baseUrl}/ChatMessages/1d16779d-f5ca-49c2-8384-55d3d8f32719`);
+            response = await fetch(`${baseUrl}/ChatMessages/2416340b-c8b9-496c-826d-523a24646238`);
             const message = new ChatMessageClass(await response.json());
             setMessageEntity(message);
 
