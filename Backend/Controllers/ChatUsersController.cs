@@ -21,6 +21,14 @@ public class ChatUsersController(ChatroomDatabaseContext db) : ControllerBase
         return db.ChatUsers.ToList()!;
     }
 
+    [HttpPost("login")]
+    public IActionResult Login(LoginRequest loginRequest)
+    {
+        ChatUser? user = db.ChatUsers.FirstOrDefault(user => user.Alias == loginRequest.Username && user.Password == loginRequest.Password);
+        if (user is null) return NotFound();
+        return Ok();
+    }
+
     [HttpGet("get-first")]
     public ChatUser GetFirst()
     {
