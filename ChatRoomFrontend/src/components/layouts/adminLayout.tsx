@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ObjectInspectorLayout from "./objectInspectorLayout";
 import DataTablesLayout from "./dataTablesLayout";
-import { Login } from "../login";
+import Login from "../login";
 
 /* eslint-disable react/react-in-jsx-scope */
 type Tabs = "adminView" | "objectInspector" | "chatRoom";
@@ -42,7 +42,7 @@ export default function AdminLayout() {
         {activeTab == "adminView" &&
           <DataTablesLayout />}
         {activeTab == "chatRoom" &&
-          <Login />}
+          <Login endpointUrl="http://localhost:5055/api/ChatUsers/authenticate" authenticationSuccessful={(user) => console.log("Logged in successful!")} />}
       </div>
     </div>
   );

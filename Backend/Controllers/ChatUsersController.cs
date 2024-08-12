@@ -21,11 +21,10 @@ public class ChatUsersController(ChatroomDatabaseContext db) : ControllerBase
         return db.ChatUsers.ToList()!;
     }
 
-    [HttpPost("login")]
+    [HttpPost("authenticate")]
     public ChatUser Login(LoginRequest loginRequest)
     {
-        ChatUser? user = db.ChatUsers.FirstOrDefault(user => user.Alias == loginRequest.Username && user.Password == loginRequest.Password);
-        return user!;
+        return db.ChatUsers.FirstOrDefault(user => user.Alias == loginRequest.Username && user.Password == loginRequest.Password)!;
     }
 
     [HttpGet("get-first")]
