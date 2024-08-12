@@ -9,12 +9,12 @@ const baseUrl = "http://localhost:5055/api";
 export default function DataTablesLayout({ visible }: { visible: boolean }) {
     return (
         <div hidden={!visible}>
-            {/* <br />
-            <InteractiveDataTable<ChatUserClass> endpoint={`${baseUrl}/ChatUsers`} label="Chat Users" /> */}
-            {/* <br />
+            <br />
+            <InteractiveDataTable<ChatUserClass> endpoint={`${baseUrl}/ChatUsers`} label="Chat Users" />
+            <br />
             <InteractiveDataTable<ChatSpaceClass> endpoint={`${baseUrl}/ChatSpaces`} label="Chat Spaces" />
             <br />
-            <InteractiveDataTable<ChatMessageClass> endpoint={`${baseUrl}/ChatMessages`} label="Chat Messages" /> */}
+            <InteractiveDataTable<ChatMessageClass> endpoint={`${baseUrl}/ChatMessages`} label="Chat Messages" />
             <br />
         </div>
     );
