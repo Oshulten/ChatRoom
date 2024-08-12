@@ -6,9 +6,9 @@ import { InteractiveDataTable } from "../dataTable";
 const baseUrl = "http://localhost:5055/api";
 
 /* eslint-disable react/react-in-jsx-scope */
-export default function DataTablesLayout({ visible }: { visible: boolean }) {
+export default function DataTablesLayout() {
     return (
-        <div hidden={!visible}>
+        <>
             <br />
             <InteractiveDataTable<ChatUserClass> endpoint={`${baseUrl}/ChatUsers`} label="Chat Users" />
             <br />
@@ -16,6 +16,6 @@ export default function DataTablesLayout({ visible }: { visible: boolean }) {
             <br />
             <InteractiveDataTable<ChatMessageClass> endpoint={`${baseUrl}/ChatMessages`} label="Chat Messages" />
             <br />
-        </div>
+        </>
     );
 }

@@ -8,7 +8,7 @@ import { ChatSpaceClass } from "../../types/chatSpace";
 
 const baseUrl = "http://localhost:5055/api";
 
-export default function ObjectInspectorLayout({ visible }: { visible: boolean }) {
+export default function ObjectInspectorLayout() {
     const [complexEntity, setComplexEntity] = useState<ComplexClass>();
     const [userEntity, setUserEntity] = useState<ChatUserClass>();
     const [messageEntity, setMessageEntity] = useState<ChatMessageClass>();
@@ -20,15 +20,15 @@ export default function ObjectInspectorLayout({ visible }: { visible: boolean })
             const complexClass = new ComplexClass(await response.json());
             setComplexEntity(complexClass);
 
-            response = await fetch(`${baseUrl}/ChatUsers/4e36f637-730c-462a-bfec-b92ce1be7e36`);
+            response = await fetch(`${baseUrl}/ChatUsers/get-first`);
             const user = new ChatUserClass(await response.json());
             setUserEntity(user);
 
-            response = await fetch(`${baseUrl}/ChatMessages/2416340b-c8b9-496c-826d-523a24646238`);
+            response = await fetch(`${baseUrl}/ChatMessages/get-first`);
             const message = new ChatMessageClass(await response.json());
             setMessageEntity(message);
 
-            response = await fetch(`${baseUrl}/ChatSpaces/579ec7c0-b112-483c-af3e-8f5de50f4d6f`);
+            response = await fetch(`${baseUrl}/ChatSpaces/get-first`);
             const space = new ChatSpaceClass(await response.json());
             setSpaceEntity(space);
         }
@@ -37,7 +37,7 @@ export default function ObjectInspectorLayout({ visible }: { visible: boolean })
 
     if (complexEntity && messageEntity && spaceEntity && userEntity) {
         return (
-            <div hidden={!visible}>
+            <>
                 <div className="flex-col p-4">
                     <ObjectInspector
                         subject={
@@ -68,7 +68,7 @@ export default function ObjectInspectorLayout({ visible }: { visible: boolean })
                         onChange={(newObject) => setMessageEntity(newObject as ChatMessageClass)} />
                     <br />
                 </div>
-            </div>
+            </>
         )
     }
     else return <></>

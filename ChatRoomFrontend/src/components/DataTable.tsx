@@ -1,5 +1,5 @@
 import { GenericIdEntity } from "../types/genericIdEntity";
-import useConnectToDbTable from "../hooks/useConnectToDbTable";
+import useConnectToDbTable, { DataRowValidity } from "../hooks/useConnectToDbTable";
 import { InteractiveDataCell, InteractiveDataCellSupportedTypes } from "./interactiveDataCell";
 
 /* eslint-disable react/react-in-jsx-scope */
@@ -11,7 +11,7 @@ interface InteractiveDataTableProps {
 }
 
 export function InteractiveDataTable<T extends GenericIdEntity>({ endpoint, label, disableIds }: InteractiveDataTableProps) {
-    const [entities, setEntities, status] = useConnectToDbTable<T>(endpoint);
+    const [entities, setEntities, status, validity] = useConnectToDbTable<T>(endpoint);
     disableIds ??= true;
 
     const handleChange = (newEntity: GenericIdEntity) => {
@@ -56,7 +56,8 @@ export function InteractiveDataTable<T extends GenericIdEntity>({ endpoint, labe
                                     key={entity.id}
                                     entity={entity}
                                     onChange={(entity) => handleChange(entity)}
-                                    disableIds={disableIds} />
+                                    disableIds={disableIds}
+                                    validity={validity[entity.id]} />
                             })}
                         </tbody>
                     </table>
@@ -77,10 +78,11 @@ export function InteractiveDataTable<T extends GenericIdEntity>({ endpoint, labe
 interface InteractiveDataRowProps<T extends GenericIdEntity> {
     entity: T;
     onChange: (entity: T) => void;
+    validity?: DataRowValidity,
     disableIds?: boolean;
 }
 
-export function InteractiveDataRow<T extends GenericIdEntity>({ entity, onChange, disableIds }: InteractiveDataRowProps<T>) {
+export function InteractiveDataRow<T extends GenericIdEntity>({ entity, onChange, validity, disableIds }: InteractiveDataRowProps<T>) {
     const reassembleEntity = (entity: object, newPropertyValue: InteractiveDataCellSupportedTypes, propertyKey: string) => {
         type BlankSlate = {
             [key: string]: InteractiveDataCellSupportedTypes
@@ -118,7 +120,8 @@ export function InteractiveDataRow<T extends GenericIdEntity>({ entity, onChange
                         <InteractiveDataCell
                             value={value}
                             onChange={newValue => handleChangeFactory(key)(newValue)}
-                            disabled={disabled} />
+                            disabled={disabled}
+                            validity={validity?.[key]} />
                     </td>
                 );
             })}

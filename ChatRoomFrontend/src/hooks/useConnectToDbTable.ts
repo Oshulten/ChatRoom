@@ -3,16 +3,18 @@ import { GenericIdEntity } from "../types/genericIdEntity";
 
 type FetchStatus = "fetching" | "success" | "failure";
 
-interface DataValidity {
-    [id: string]: {
-        [key: string]: string
-    }
+export interface DataTableValidity {
+    [id: string]: DataRowValidity
 }
 
-export default function useConnectToDbTable<T extends GenericIdEntity>(endpointUrl: string): [T[], React.Dispatch<React.SetStateAction<T[]>>, FetchStatus, DataValidity] {
+export interface DataRowValidity {
+    [key: string]: string
+}
+
+export default function useConnectToDbTable<T extends GenericIdEntity>(endpointUrl: string): [T[], React.Dispatch<React.SetStateAction<T[]>>, FetchStatus, DataTableValidity] {
     const [entities, setEntities] = useState<T[]>([]);
     const [status, setStatus] = useState<FetchStatus>("fetching");
-    const [dataValidity, setDataValidity] = useState<DataValidity>({});
+    const [dataValidity, setDataValidity] = useState<DataTableValidity>({});
 
     const fetchAllEntities = async () => {
         setStatus("fetching");
@@ -70,7 +72,7 @@ export default function useConnectToDbTable<T extends GenericIdEntity>(endpointU
     }
 
     function emptyDataValidity(entities: T[]) {
-        const newValidities: DataValidity = {};
+        const newValidities: DataTableValidity = {};
         entities.forEach(entity => {
             newValidities[entity.id] = {};
             Object.keys(entities[0]).forEach(key => {

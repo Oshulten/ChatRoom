@@ -3,10 +3,10 @@ import ObjectInspectorLayout from "./objectInspectorLayout";
 import DataTablesLayout from "./dataTablesLayout";
 
 /* eslint-disable react/react-in-jsx-scope */
-type Tabs = "dataTables" | "objectInspector";
+type Tabs = "dataTables" | "objectInspector" | "chatRoom";
 
 export default function AdminLayout() {
-  const [activeTab, setActiveTab] = useState<Tabs>("dataTables");
+  const [activeTab, setActiveTab] = useState<Tabs>("chatRoom");
   const tabDataTables = useRef<HTMLAnchorElement | null>(null);
   const tabObjectInspector = useRef<HTMLAnchorElement | null>(null);
 
@@ -35,8 +35,10 @@ export default function AdminLayout() {
       <br />
       <br />
       <div className="-z-20">
-        <ObjectInspectorLayout visible={activeTab == "objectInspector"} />
-        <DataTablesLayout visible={activeTab == "dataTables"} />
+        {activeTab == "objectInspector" &&
+          <ObjectInspectorLayout />}
+        {activeTab == "dataTables" &&
+          <DataTablesLayout />}
       </div>
     </div>
   );
