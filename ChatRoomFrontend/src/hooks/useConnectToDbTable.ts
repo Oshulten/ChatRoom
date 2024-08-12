@@ -9,14 +9,10 @@ interface DataValidity {
     }
 }
 
-//Todo: Change structure of data validity object such that only invalid keys on invalid entities exist
-//Currently, all entities are present with all keys, but empty strings if everything is valid
-
 export default function useConnectToDbTable<T extends GenericIdEntity>(endpointUrl: string): [T[], React.Dispatch<React.SetStateAction<T[]>>, FetchStatus, DataValidity] {
     const [entities, setEntities] = useState<T[]>([]);
     const [status, setStatus] = useState<FetchStatus>("fetching");
     const [dataValidity, setDataValidity] = useState<DataValidity>({});
-    // const [refreshedAt, setRefreshedAt] = useState(Date.now());
 
     const fetchAllEntities = async () => {
         setStatus("fetching");
@@ -83,15 +79,6 @@ export default function useConnectToDbTable<T extends GenericIdEntity>(endpointU
         });
         return newValidities;
     }
-
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         setRefreshedAt(Date.now());
-    //         console.log(`Refreshing at ${Date.now()}`);
-    //     }, 1000);
-
-    //     return () => clearInterval(interval);
-    // });
 
     useEffect(() => {
         fetchAllEntities();

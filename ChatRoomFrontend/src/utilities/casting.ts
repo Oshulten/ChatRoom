@@ -1,34 +1,13 @@
 /* eslint-disable no-case-declarations */
-export type PrimitiveType = string | boolean | number;
 
-export function castToTypeInfo(typeValue: PrimitiveType): string {
-    const instanceWrapper = Object(typeValue);
-    let instanceOfClass;
-    if (instanceWrapper instanceof Object) {
-        instanceOfClass = "Object";
+export function typeCheck(subject: unknown) {
+    if (subject === null) {
+        return "null";
     }
-    if (instanceWrapper instanceof Array) {
-        instanceOfClass = "Array";
+    if (typeof (subject) == "object") {
+        return subject.constructor.name;
     }
-    if (instanceWrapper instanceof Boolean) {
-        instanceOfClass = "Boolean";
-    }
-    if (instanceWrapper instanceof Number) {
-        instanceOfClass = "Number";
-    }
-    if (instanceWrapper instanceof Date) {
-        instanceOfClass = "Date";
-    }
-    return (`typeof(value) = ${typeof (typeValue)}, instanceof ${instanceOfClass}`);
-}
-
-export function castStringToPrimitive(valueStringRepresentation: string, typeValue: PrimitiveType): PrimitiveType {
-    switch (typeof (typeValue)) {
-        case "number": return Number(valueStringRepresentation).valueOf();
-        case "string": return String(valueStringRepresentation).valueOf();
-        case "boolean": return valueStringRepresentation == "true" ? true : false;
-        default: return Object(valueStringRepresentation).valueOf();
-    }
+    return typeof (subject);
 }
 
 export function castStringToObject(string: string, typeValue: string) {

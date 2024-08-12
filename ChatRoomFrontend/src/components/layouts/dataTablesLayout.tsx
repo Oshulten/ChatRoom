@@ -1,7 +1,7 @@
-import { ChatMessageClass } from "../types/chatMessage";
-import { ChatSpaceClass } from "../types/chatSpace";
-import { ChatUserClass } from "../types/chatUser";
-import { InteractiveDataTable } from "./dataTable2";
+import { ChatMessageClass } from "../../types/chatMessage";
+import { ChatSpaceClass } from "../../types/chatSpace";
+import { ChatUserClass } from "../../types/chatUser";
+import { InteractiveDataTable } from "../dataTable";
 
 const baseUrl = "http://localhost:5055/api";
 

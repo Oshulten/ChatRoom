@@ -1,4 +1,4 @@
-import { InteractiveDataCellSupportedTypes } from '../components/dataTable2';
+import { InteractiveDataCellSupportedTypes } from "../components/interactiveDataCell"
 
 export interface GenericIdEntity {
   id: string

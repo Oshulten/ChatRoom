@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { typeCheck } from '../utilities/typeCheck'
-import { InteractiveDataCell, InteractiveDataCellSupportedTypes } from './dataTable2';
+import { typeCheck } from '../utilities/casting';
+import { InteractiveDataCell, InteractiveDataCellSupportedTypes } from './interactiveDataCell';
 
 interface PrimitiveValueProps {
     primitiveKey?: string,

@@ -1,11 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useEffect, useState } from "react";
-import ComplexClass from "../types/complexClass";
-import ObjectInspector from "./objectInspector";
-import ChatUser, { ChatUserClass } from "../types/chatUser";
-import { ChatMessageClass } from "../types/chatMessage";
-import { ChatSpaceClass } from "../types/chatSpace";
-import { typeCheck } from "../utilities/typeCheck";
+import ComplexClass from "../../types/complexClass";
+import ObjectInspector from "../objectInspector";
+import { ChatUserClass } from "../../types/chatUser";
+import { ChatMessageClass } from "../../types/chatMessage";
+import { ChatSpaceClass } from "../../types/chatSpace";
 
 const baseUrl = "http://localhost:5055/api";
 
@@ -27,7 +26,6 @@ export default function ObjectInspectorLayout({ visible }: { visible: boolean })
 
             response = await fetch(`${baseUrl}/ChatMessages/1d16779d-f5ca-49c2-8384-55d3d8f32719`);
             const message = new ChatMessageClass(await response.json());
-            console.log(typeCheck(message.postedAt));
             setMessageEntity(message);
 
             response = await fetch(`${baseUrl}/ChatSpaces/579ec7c0-b112-483c-af3e-8f5de50f4d6f`);
@@ -70,14 +68,7 @@ export default function ObjectInspectorLayout({ visible }: { visible: boolean })
                         onChange={(newObject) => setMessageEntity(newObject as ChatMessageClass)} />
                     <br />
                 </div>
-                <p>{JSON.stringify(userEntity)}</p>
-
-                <p>{JSON.stringify(spaceEntity)}</p>
-                <p>{JSON.stringify(messageEntity)}</p>
-                {/* <p>{messageEntity.postedAt.toISOString().slice(0, -5)}</p>
-                <input type="datetime-local" value={messageEntity.postedAt.toISOString().slice(0, -5)}></input> */}
             </div>
-
         )
     }
     else return <></>
