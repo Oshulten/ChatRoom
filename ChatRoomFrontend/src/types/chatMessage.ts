@@ -34,7 +34,7 @@ export class ChatMessageClass implements GenericIdEntity {
         if ("userId" in fromObject) this.userId = fromObject.userId as string;
         else throw new Error(`${errorMessage[0]}userId${errorMessage[1]}`);
 
-        if ("postedAt" in fromObject) this.postedAt = fromObject.postedAt as Date;
+        if ("postedAt" in fromObject) this.postedAt = new Date(fromObject.postedAt as string);
         else throw new Error(`${errorMessage[0]}postedAt${errorMessage[1]}`);
 
         if ("content" in fromObject) this.content = fromObject.content as string;

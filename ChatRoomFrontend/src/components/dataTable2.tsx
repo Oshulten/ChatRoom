@@ -15,7 +15,6 @@ interface InteractiveDataTableProps {
 
 export function InteractiveDataTable<T extends GenericIdEntity>({ endpoint, label, disableIds }: InteractiveDataTableProps) {
     const [entities, setEntities, status] = useConnectToDbTable<T>(endpoint);
-
     disableIds ??= true;
 
     const handleChange = (newEntity: GenericIdEntity) => {
@@ -188,23 +187,11 @@ export function InteractiveDataCell({ value, onChange, disabled }: InteractiveDa
     if (typeInfo === "Date") {
         const dateValue = value as Date;
 
-        const isoString = toIsoString(dateValue);
-        console.log(`ISO Time: ${isoString}`)
-
-        const [year, month, date] = [dateValue.getFullYear(), dateValue.getMonth() + 1, dateValue.getDate()];
-        const dateString = `${year}-${month >= 10 ? month : "0" + month}-${date}`;
-
-        const [hours, minutes, seconds] = [dateValue.getHours(), dateValue.getMinutes(), dateValue.getSeconds()];
-        const timeString = `${hours >= 10 ? hours : "0" + hours}:${minutes >= 10 ? minutes : "0" + minutes}:${seconds >= 10 ? seconds : "0" + seconds}`;
-
-        const dateTimeString = dateString + "T" + timeString
-        console.log(`${dateTimeString}`);
-
         const dateTimeElement =
             <input
                 type="datetime-local"
                 placeholder="Time"
-                value={dateTimeString}
+                value={dateValue.toISOString().slice(0, -5)}
                 disabled={true}
                 onChange={e => handleChange(e)}
                 className="input w-full max-w-xs" />

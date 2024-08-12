@@ -34,11 +34,6 @@ export default function ObjectInspector({ subject, subjectKey, onChange }: Objec
     const reassembleSubject = (newProperty: InteractiveDataCellSupportedTypes, propertyKey: string | undefined) => {
         const typeInfo = typeCheck(subject);
         if (subject instanceof Object) {
-            console.log(`Reassembling subject into ${subject.constructor.name}`);
-            console.log(`\tType: ${typeInfo}`);
-            console.log(`\tNew Property: ${JSON.stringify(newProperty)}`);
-            console.log(`\tProperty Key: ${propertyKey}`);
-
             type BlankSlate = {
                 [key: string]: InteractiveDataCellSupportedTypes
             }
