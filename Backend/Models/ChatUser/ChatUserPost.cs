@@ -2,13 +2,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Models.ChatUser;
 
-public record ChatUserPatch
+public record ChatUserPost
 (
     [Length(Validation.AliasMinLength, Validation.AliasMaxLength)]
-    string? Alias,
+    string Alias,
 
     [Length(Validation.PasswordMinLength, Validation.PasswordMaxLength)]
-    string? Password,
+    string Password,
 
-    bool? Admin
+    DateTime JoinedAt,
+    bool Admin
 );

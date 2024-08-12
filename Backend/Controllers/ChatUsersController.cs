@@ -1,4 +1,5 @@
 using Backend.Models;
+using Backend.Models.ChatUser;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;

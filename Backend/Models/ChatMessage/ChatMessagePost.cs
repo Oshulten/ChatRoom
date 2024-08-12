@@ -4,13 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Backend.Models
-{
-    public record ChatMessagePost
-    (
-        [Length(Validation.ContentMinLength, Validation.ContentMaxLength)]
-        string Content,
-        Guid ChatSpaceId,
-        Guid ChatUserId
-    );
-}
+namespace Backend.Models.ChatMessage;
+
+public record ChatMessagePost
+(
+    [Length(Validation.ContentMinLength, Validation.ContentMaxLength)]
+    string Content,
+    Guid ChatSpaceId,
+    Guid ChatUserId
+);

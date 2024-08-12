@@ -1,6 +1,5 @@
-using System;
-using System.Collections.Generic;
 using Backend.Models;
+using Backend.Models.ChatMessage;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -19,6 +18,21 @@ namespace Backend.Controllers
         public IEnumerable<ChatMessage> GetAll()
         {
             return db.ChatMessages;
+        }
+
+        [HttpPatch("{id}")]
+        public IActionResult PatchById(Guid id, ChatMessagePatch patchObject)
+        {
+            ChatMessage? entity = db.ChatMessages.FirstOrDefault(data => data.Id == id);
+
+            if (entity is null)
+            {
+                return NotFound();
+            }
+
+            entity.Patch(patchObject);
+            db.SaveChanges();
+            return Ok();
         }
     }
 }

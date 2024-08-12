@@ -1,4 +1,6 @@
 using Backend.Models;
+using Backend.Models.ChatSpace;
+using Backend.Models.ChatUser;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -17,6 +19,21 @@ namespace Backend.Controllers
         public IEnumerable<ChatSpace> GetAll()
         {
             return db.ChatSpaces;
+        }
+
+        [HttpPatch("{id}")]
+        public IActionResult PatchById(Guid id, ChatSpacePatch patchObject)
+        {
+            ChatSpace? entity = db.ChatSpaces.FirstOrDefault(data => data.Id == id);
+
+            if (entity is null)
+            {
+                return NotFound();
+            }
+
+            entity.Patch(patchObject);
+            db.SaveChanges();
+            return Ok();
         }
     }
 }

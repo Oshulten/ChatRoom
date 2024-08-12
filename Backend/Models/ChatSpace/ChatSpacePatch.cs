@@ -2,10 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Models.ChatSpace;
 
-public record ChatSpacePost
-(
+public record ChatSpacePatch(
     [Length(Validation.AliasMinLength, Validation.AliasMaxLength)]
-    string Alias,
+    string? Alias,
 
     Guid[] UserIds
 );

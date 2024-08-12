@@ -1,4 +1,4 @@
-namespace Backend.Models;
+namespace Backend.Models.ChatUser;
 
 public class ChatUser(string alias, string password, bool admin, DateTime joinedAt)
 {
@@ -10,6 +10,8 @@ public class ChatUser(string alias, string password, bool admin, DateTime joined
 
     // An explicit parameterless constructor is required for database creation
     public ChatUser() : this("John Doe", "Password", false, DateTime.Now) { }
+
+    public static explicit operator ChatUser(ChatUserPost post) => new(post.Alias, post.Password, post.Admin, post.JoinedAt);
 
     public void Patch(ChatUserPatch patchObject)
     {
