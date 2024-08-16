@@ -1,14 +1,22 @@
 /* eslint-disable react/react-in-jsx-scope */
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import './App.css'
-import AdminLayout from './components/layouts/adminLayout';
+import Login from './components/login'
 
-//Todo: No more than one table can be used at the same time
-//Todo: Single tables don't work if there are no rows in that table on the server
+const fetchAllMessages = async () => {
+
+}
 
 export default function App() {
+  const messagesQuery = useQuery({
+    queryKey: ["messages"],
+    queryFn: fetchAllMessages
+  });
+
+
+  console.log(messagesQuery);
+
   return (
-    <>
-      <AdminLayout />
-    </>
+    <Login />
   )
 }

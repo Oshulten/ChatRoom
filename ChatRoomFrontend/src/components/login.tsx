@@ -1,105 +1,45 @@
-import { useState } from "react";
-import { ChatUserClass } from "../types/chatUser";
-import { SubmitHandler, useForm } from "react-hook-form";
-
 /* eslint-disable react/react-in-jsx-scope */
+import { useForm, SubmitHandler } from "react-hook-form"
 
-type LoginStates = "awaiting-authentication" | "fetching-authentication" | "server-failure";
-
-interface LoginProps {
-    endpointUrl: string,
-    authenticationSuccessful: (user: ChatUserClass) => void;
-}
-
-type LoginInputs = {
-    alias: string,
+interface AuthenticationInputs {
+    username: string
     password: string
 }
 
-export default function Login({ endpointUrl, authenticationSuccessful }: LoginProps) {
-    const [state, setState] = useState<LoginStates>("awaiting-authentication");
-
-    const {
-        register,
-        handleSubmit,
-        setValue,
-    } = useForm<LoginInputs>();
-
-    const onSubmit: SubmitHandler<LoginInputs> = (data) => {
-        console.log(data);
-        attemptAuthentication(data.alias, data.password)
-    }
-
-    const attemptAuthentication = async (alias: string, password: string) => {
-        try {
-            setState("fetching-authentication");
-            console.log(`Fetching authentication on [${alias}, ${password}]`);
-            const loginResponse = await fetch(endpointUrl, {
-                method: "POST",
-                body: JSON.stringify({
-                    username: alias,
-                    password: password
-                }),
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            });
-            console.log(loginResponse);
-            switch (loginResponse.status) {
-                case 200: {
-                    const user = new ChatUserClass(await loginResponse.json());
-                    authenticationSuccessful(user);
-                    break;
-                }
-
-                case 204:
-                    setState("awaiting-authentication");
-                    setValue("password", "");
-                    break;
-
-                default:
-                    throw new Error(`${loginResponse.statusText}`);
-            }
-        } catch (error) {
-            console.error(`Something went wrong on the backend ${(error as Error).message}`);
-            setState("server-failure");
+export default function Login() {
+    const { register, handleSubmit, formState: { errors } } = useForm<AuthenticationInputs>({
+        defaultValues: {
+            username: "",
+            password: ""
         }
-    }
+    });
+    const onSubmit: SubmitHandler<AuthenticationInputs> = (data) => console.log(data);
 
-    switch (state) {
-        case "awaiting-authentication":
-            return (
-                <div>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <input
-                            {...register("alias", { required: true })}
-                            type="text"
-                            placeholder="Username"
-                            className="input input-bordered w-full max-w-xs" />
-                        <br />
-                        <input
-                            {...register("password", { required: true })}
-                            type="password"
-                            placeholder="Password"
-                            className="input input-bordered w-full max-w-xs" />
-                        <br />
-                        <button type="submit" className="btn">Login</button>
-                    </form>
-                </div>
-            );
+    console.log(errors);
 
-        case "fetching-authentication":
-            return (<>
-                <span className="loading loading-dots loading-lg"></span>
-                <h2>Checking username and password...</h2>
-            </>);
-
-        case "server-failure":
-            return (<>
-                <p>❌</p>
-                <h2>{`Server failure (sorry!)`}</h2>
-            </>);
-    }
+    return (
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <div>
+                <input
+                    {...register("username", {
+                        required: "Username is required",
+                        minLength: { value: 3, message: "Username must be longer than 3 characters" }
+                    })}
+                    placeholder="Username"
+                    className="input input-bordered w-full max-w-xs" />
+                <p>{errors["username"] ? errors.username.message : ' '}</p>
+                <input
+                    type="password"
+                    {...register("password", {
+                        required: "Password is required",
+                        minLength: { value: 5, message: "Password must be longer than 5 characters" }
+                    })}
+                    placeholder="Password"
+                    className="input input-bordered w-full max-w-xs" />
+                <p>{errors.password ? errors.password.message : 'no errors'}</p>
+            </div>
+            <input type="submit" />
+        </form>
+    )
 
 }

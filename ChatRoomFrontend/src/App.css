@@ -3,14 +3,9 @@
   margin: 0 auto;
   text-align: center;
   padding: 1rem;
-  width: 100%;
 }
 
 body {
   display: flex;
   flex-direction: column;
-}
-
-scrollbar {
-  display: none;
 }
