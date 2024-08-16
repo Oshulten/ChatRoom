@@ -4,18 +4,14 @@ import { useState } from 'react';
 import AuthenticateForm, { AuthenticationFields } from '../components/authenticateForm';
 import { useQuery } from '@tanstack/react-query';
 import { authorizeUser } from '../api/authorizeUser';
-import { createAccount } from '../api/createAccount';
 
 export const baseUrl = "http://localhost:5055/api";
-
-type LoginState = "login" | "createAccount";
 
 export const Route = createFileRoute('/login')({
   component: () => <Login />
 })
 
 function Login() {
-  const [loginState, setLoginState] = useState<LoginState>("login");
   const [loginField, setLoginField] = useState<AuthenticationFields | null>(null);
 
   const loginQuery = useQuery({
@@ -27,14 +23,8 @@ function Login() {
       }
       return user;
     },
-    enabled: loginField !== null && loginState == "login",
+    enabled: loginField !== null,
   });
-
-  // const createAccountQuery = useQuery({
-  //   queryKey: ["createAccount"],
-  //   queryFn: () => createAccount(baseUrl, loginField!),
-  //   enabled: loginField !== null && loginState == "createAccount"
-  // })
 
   if (loginQuery.isSuccess) {
     if (loginQuery.data != null) {
@@ -46,25 +36,12 @@ function Login() {
     }
   }
 
-  if (loginState == "login") {
-    return (
-      <div className="p-4 rounded-lg bg-slate-800 border-2" >
-        <h2>Welcome!</h2>
-        <AuthenticateForm
-          submitLabel='Login'
-          onSuccess={(fields) => setLoginField(fields)} />
-        <button onClick={() => setLoginState("createAccount")}>New here?</button>
-      </div>)
-  }
-
-  if (loginState == "createAccount") {
-    return (
-      <div className="p-4 rounded-lg bg-slate-800 border-2" >
-        <h2>Create Account</h2>
-        <AuthenticateForm
-          submitLabel='Create Account'
-          onSuccess={(fields) => setLoginField(fields)} />
-        <button onClick={() => setLoginState("login")}>Already a user?</button>
-      </div>)
-  }
+  return (
+    <div className="p-4 rounded-lg bg-slate-800 border-2" >
+      <h2>Welcome!</h2>
+      <AuthenticateForm
+        submitLabel='Login'
+        onSuccess={(fields) => setLoginField(fields)} />
+      <button onClick={() => undefined}>New here?</button>
+    </div>)
 }

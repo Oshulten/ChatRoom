@@ -5,7 +5,7 @@ import { createAccount } from '../api/createAccount';
 import AuthenticateForm, { AuthenticationFields } from '../components/authenticateForm';
 import { useState } from 'react';
 
-export const Route = createFileRoute('/createAccount')({
+export const Route = createFileRoute('/home')({
   component: () => <CreateAccount />
 })
 
