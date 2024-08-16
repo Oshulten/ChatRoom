@@ -12,6 +12,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.51.23",
     "@tanstack/react-query-devtools": "^5.51.23",
+    "@tanstack/react-router": "^1.48.1",
     "immer": "^10.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -20,6 +21,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
+    "@tanstack/router-devtools": "^1.48.1",
+    "@tanstack/router-plugin": "^1.47.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/parser": "^8.0.1",
