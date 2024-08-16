@@ -1,9 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react';
+import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { useContext, useState } from 'react';
 import AuthenticateForm, { AuthenticationFields } from '../components/authenticateForm';
 import { useQuery } from '@tanstack/react-query';
 import { authorizeUser } from '../api/authorizeUser';
+import { GlobalContext } from '../main';
 
 export const baseUrl = "http://localhost:5055/api";
 
@@ -13,6 +14,9 @@ export const Route = createFileRoute('/login')({
 
 function Login() {
   const [loginField, setLoginField] = useState<AuthenticationFields | null>(null);
+  const globalContext = useContext(GlobalContext);
+  console.log(globalContext);
+  const router = useRouter();
 
   const loginQuery = useQuery({
     queryKey: ["login"],
@@ -29,7 +33,8 @@ function Login() {
   if (loginQuery.isSuccess) {
     if (loginQuery.data != null) {
       console.log(`Logged in as ${loginQuery.data.alias}`)
-      //navigate to space page
+      globalContext.signedInAs = loginQuery.data;
+      router.navigate({ from: Route.fullPath, to: "/spaces" });
     } else {
       console.log(`Failed to login`);
       //stay on page, give error message
@@ -42,6 +47,6 @@ function Login() {
       <AuthenticateForm
         submitLabel='Login'
         onSuccess={(fields) => setLoginField(fields)} />
-      <button onClick={() => undefined}>New here?</button>
+      <button onClick={() => router.navigate({ to: "/createAccount" })}>New here?</button>
     </div>)
 }

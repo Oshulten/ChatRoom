@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { createAccount } from '../api/createAccount';
 import AuthenticateForm, { AuthenticationFields } from '../components/authenticateForm';
 import { useState } from 'react';
@@ -13,6 +13,7 @@ export const baseUrl = "http://localhost:5055/api";
 
 function CreateAccount() {
   const [loginField, setLoginField] = useState<AuthenticationFields | null>(null);
+  const router = useRouter();
 
   const createAccountQuery = useQuery({
     queryKey: ["createAccount"],
@@ -36,6 +37,6 @@ function CreateAccount() {
       <AuthenticateForm
         submitLabel='Create Account'
         onSuccess={(fields) => setLoginField(fields)} />
-      <button onClick={() => undefined}>Already a user?</button>
+      <button onClick={() => router.navigate({ to: "/login" })}>Already a user?</button>
     </div>)
 }
