@@ -9,49 +9,39 @@ namespace Backend.Controllers;
 public class ChatUsersController(ChatroomDatabaseContext db) : ControllerBase
 {
     [HttpGet("{id}")]
-    public ChatUser GetById(Guid id)
+    public ChatUserResponse GetById(Guid id)
     {
-        return db.ChatUsers.FirstOrDefault(data => data.Id == id)!;
+        return (ChatUserResponse)db.ChatUsers.FirstOrDefault(data => data.Id == id)!;
     }
 
     [HttpGet]
-    public List<ChatUser> GetAll()
+    public List<ChatUserResponse> GetAll()
     {
-        db.SaveChanges();
-        return db.ChatUsers.ToList()!;
+        return db.ChatUsers.Select(user => (ChatUserResponse)user).ToList()!;
     }
 
     [HttpPost("authenticate")]
-    public ChatUser Login(LoginRequest loginRequest)
+    public ChatUserResponse Login(LoginRequest loginRequest)
     {
-        return db.ChatUsers.FirstOrDefault(user => user.Alias == loginRequest.Username && user.Password == loginRequest.Password)!;
+        var user = db.ChatUsers.FirstOrDefault(user =>
+            user.Alias == loginRequest.Username &&
+            user.Password == loginRequest.Password);
+        if (user is not null) return (ChatUserResponse)user;
+        return null!;
     }
 
-    [HttpGet("get-first")]
-    public ChatUser GetFirst()
+    [HttpPost("create-account")]
+    public ChatUserResponse CreateAccount(LoginRequest loginRequest)
     {
-        return db.ChatUsers.FirstOrDefault()!;
-    }
-
-    [HttpGet("get-by-space/{spaceId}")]
-    public IEnumerable<ChatUser> GetBySpace(Guid spaceId)
-    {
-        var space = db.ChatSpaces.First(space => space.Id == spaceId);
-        return db.ChatUsers.Where(user => space.UserIds.Contains(user.Id));
-    }
-
-    [HttpPatch("{id}")]
-    public IActionResult PatchById(Guid id, ChatUserPatch patchObject)
-    {
-        ChatUser? entity = db.ChatUsers.FirstOrDefault(data => data.Id == id);
-
-        if (entity is null)
+        var user = db.ChatUsers.FirstOrDefault(user => user.Alias == loginRequest.Username);
+        if (user is null)
         {
-            return NotFound();
+            var newUser = new ChatUser(loginRequest.Username, loginRequest.Password, false, DateTime.Now);
+            db.ChatUsers.Add(newUser);
+            db.SaveChanges();
+            return (ChatUserResponse)newUser;
         }
-
-        entity.Patch(patchObject);
-        db.SaveChanges();
-        return Ok();
+        return null!;
     }
+
 }

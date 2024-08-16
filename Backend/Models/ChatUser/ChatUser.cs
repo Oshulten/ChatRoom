@@ -12,6 +12,7 @@ public class ChatUser(string alias, string password, bool admin, DateTime joined
     public ChatUser() : this("John Doe", "Password", false, DateTime.Now) { }
 
     public static explicit operator ChatUser(ChatUserPost post) => new(post.Alias, post.Password, post.Admin, post.JoinedAt);
+    public static explicit operator ChatUserResponse(ChatUser user) => new(user.Id, user.Alias, user.JoinedAt, user.Admin);
 
     public void Patch(ChatUserPatch patchObject)
     {
