@@ -9,6 +9,7 @@ import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { DefaultCatchBoundary } from './components/DefaultCatchBoundary.tsx';
 import { NotFound } from './components/NotFound.tsx';
 import User from './types/user.ts';
+import { UserResponse } from './api/types';
 
 const queryClient = new QueryClient();
 
@@ -30,7 +31,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface IGlobalContext {
-  signedInAs: User | undefined;
+  signedInAs: UserResponse | undefined;
 }
 
 export const GlobalContext = createContext<IGlobalContext>({

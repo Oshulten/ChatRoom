@@ -1,6 +1,6 @@
 import createClient, { Middleware } from "openapi-fetch"
 import { paths } from './schema';
-import { UserResponse, AuthenticationRequest } from "./types";
+import { UserResponse, AuthenticationRequest, Space } from "./types";
 
 const logRequestResponse: Middleware = {
     async onRequest({ request, schemaPath }) {
@@ -23,7 +23,7 @@ export async function getUsers() {
 export async function getUserById(id: string) {
     const { data, response } = await client.GET("/api/ChatMessages/{id}", { params: { path: { id } } });
     if (response.ok) return data as UserResponse;
-    throw Error("Provided ID could not be found");
+    throw Error("Provided id could not be found");
 }
 
 export async function createUser(request: AuthenticationRequest) {
@@ -36,4 +36,10 @@ export async function authenticateUser(request: AuthenticationRequest) {
     const { data, response } = await client.POST("/api/Authentication/authorize-user", { body: { ...request } });
     if (response.ok) return data as UserResponse;
     throw new Error("Username or password is invalid");
+}
+
+export async function getSpacesByUserId(id: string | undefined) {
+    if (!id) throw Error("An id must be provided")
+    const { data } = await client.GET("/api/ChatSpaces/by-user/{id}", { params: { path: { id } } });
+    return data as Space[];
 }

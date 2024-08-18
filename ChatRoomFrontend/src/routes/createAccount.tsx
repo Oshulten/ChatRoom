@@ -2,8 +2,9 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import AuthenticateForm from '../components/authenticateForm';
 import { createUser } from '../api/endpoints';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { AuthenticationRequest } from '../api/types';
+import { GlobalContext } from '../main';
 
 export const Route = createFileRoute('/createAccount')({
   component: () => <CreateAccount />
@@ -13,11 +14,13 @@ export const baseUrl = "http://localhost:5055/api";
 
 function CreateAccount() {
   const [formMessage, setFormMessage] = useState<string | undefined>(undefined);
+  const context = useContext(GlobalContext);
   const router = useRouter();
 
   const handleSubmit = async (fields: AuthenticationRequest) => {
     try {
       const createdUser = await createUser(fields);
+      context.signedInAs = createdUser;
       router.navigate({ to: "/spaces", search: { user: createdUser.alias } })
     }
     catch (error) {

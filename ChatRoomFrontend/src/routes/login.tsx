@@ -1,9 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import AuthenticateForm from '../components/authenticateForm';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { AuthenticationRequest } from '../api/types';
 import { authenticateUser } from '../api/endpoints';
+import { GlobalContext } from '../main';
 
 export const baseUrl = "http://localhost:5055/api";
 
@@ -12,12 +13,14 @@ export const Route = createFileRoute('/login')({
 })
 
 function Login() {
+  const context = useContext(GlobalContext);
   const [formMessage, setFormMessage] = useState<string | undefined>(undefined);
   const router = useRouter();
 
   const handleSubmit = async (fields: AuthenticationRequest) => {
     try {
       const existingUser = await authenticateUser(fields);
+      context.signedInAs = existingUser;
       router.navigate({ to: "/spaces", search: { user: existingUser.alias } })
     }
     catch (error) {
