@@ -1,6 +1,7 @@
 using NSwag.AspNetCore;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 const string applicationTitle = "ChatroomApi";
 const string version = "v1";
@@ -28,6 +29,14 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+        options.SlidingExpiration = true;
+        options.AccessDeniedPath = "/Forbidden/";
+    });
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -45,6 +54,9 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

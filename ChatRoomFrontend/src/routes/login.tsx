@@ -1,10 +1,9 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { useContext, useState } from 'react';
-import AuthenticateForm, { AuthenticationFields } from '../components/authenticateForm';
-import { useQuery } from '@tanstack/react-query';
-import { authorizeUser } from '../api/authorizeUser';
-import { GlobalContext } from '../main';
+import AuthenticateForm from '../components/authenticateForm';
+import { useState } from 'react';
+import { AuthenticationRequest } from '../api/types';
+import { authenticateUser } from '../api/endpoints';
 
 export const baseUrl = "http://localhost:5055/api";
 
@@ -13,31 +12,16 @@ export const Route = createFileRoute('/login')({
 })
 
 function Login() {
-  const [loginField, setLoginField] = useState<AuthenticationFields | null>(null);
-  const globalContext = useContext(GlobalContext);
-  console.log(globalContext);
+  const [formMessage, setFormMessage] = useState<string | undefined>(undefined);
   const router = useRouter();
 
-  const loginQuery = useQuery({
-    queryKey: ["login"],
-    queryFn: async () => {
-      const user = await authorizeUser(baseUrl, loginField!);
-      if (user === null) {
-        setLoginField(null);
-      }
-      return user;
-    },
-    enabled: loginField !== null,
-  });
-
-  if (loginQuery.isSuccess) {
-    if (loginQuery.data != null) {
-      console.log(`Logged in as ${loginQuery.data.alias}`)
-      globalContext.signedInAs = loginQuery.data;
-      router.navigate({ from: Route.fullPath, to: "/spaces" });
-    } else {
-      console.log(`Failed to login`);
-      //stay on page, give error message
+  const handleSubmit = async (fields: AuthenticationRequest) => {
+    try {
+      const existingUser = await authenticateUser(fields);
+      router.navigate({ to: "/spaces", search: { user: existingUser.alias } })
+    }
+    catch (error) {
+      setFormMessage((error as Error).message)
     }
   }
 
@@ -46,7 +30,8 @@ function Login() {
       <h2>Welcome!</h2>
       <AuthenticateForm
         submitLabel='Login'
-        onSuccess={(fields) => setLoginField(fields)} />
+        onSuccess={(fields) => handleSubmit(fields)}
+        errorMessage={formMessage} />
       <button onClick={() => router.navigate({ to: "/createAccount" })}>New here?</button>
     </div>)
 }

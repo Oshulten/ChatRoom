@@ -1,26 +1,23 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useForm, SubmitHandler } from "react-hook-form"
+import { AuthenticationRequest } from "../api/types";
 
-export interface AuthenticationFields {
-    username: string
-    password: string
-}
 
-interface AutenticateFormProps {
-    onSuccess: (fields: AuthenticationFields) => void
+interface Props {
+    onSuccess: (fields: AuthenticationRequest) => void
     submitLabel: string
     errorMessage?: string
 }
 
-export default function AuthenticateForm({ onSuccess, submitLabel, errorMessage }: AutenticateFormProps) {
-    const form = useForm<AuthenticationFields>({
+export default function AuthenticateForm({ onSuccess, submitLabel, errorMessage }: Props) {
+    const form = useForm<AuthenticationRequest>({
         defaultValues: {
             username: "",
             password: ""
         }
     });
 
-    const onSubmit: SubmitHandler<AuthenticationFields> = (fields) => onSuccess(fields);
+    const onSubmit: SubmitHandler<AuthenticationRequest> = (fields) => onSuccess(fields);
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)}>

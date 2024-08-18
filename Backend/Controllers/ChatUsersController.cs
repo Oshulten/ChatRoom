@@ -21,13 +21,13 @@ public class ChatUsersController(ChatroomDatabaseContext db) : ControllerBase
     }
 
     [HttpPost("authenticate")]
-    public ChatUserResponse Login(LoginRequest loginRequest)
+    public IResult AuthenticateUser(LoginRequest loginRequest)
     {
         var user = db.ChatUsers.FirstOrDefault(user =>
             user.Alias == loginRequest.Username &&
             user.Password == loginRequest.Password);
-        if (user is not null) return (ChatUserResponse)user;
-        return null!;
+        if (user is not null) return Results.Ok();
+        return Results.Unauthorized();
     }
 
     [HttpPost("create-account")]

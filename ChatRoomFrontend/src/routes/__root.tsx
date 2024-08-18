@@ -13,9 +13,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootComponent() {
     const globalContext = useContext(GlobalContext);
     const signedIn = !!globalContext.signedInAs;
-    let signedInInfo;
-
-    console.log("rendering root");
 
     return (
         <>
@@ -40,15 +37,14 @@ function RootComponent() {
 
                 <Link
                     to="/spaces"
+                    search={{ user: "anonymous" }}
                     activeProps={{
                         className: 'font-bold',
-                    }}
-                    disabled={!signedIn} >
+                    }} >
                     Spaces
                 </Link>
-            </div>
+            </div >
             <hr />
-            {/* {globalContext.signedInAs ?? <ActiveUser />} */}
             <Outlet />
             <ReactQueryDevtools buttonPosition="top-right" />
             <TanStackRouterDevtools position="bottom-right" />
