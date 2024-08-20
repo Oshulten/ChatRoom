@@ -1,6 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useQuery } from '@tanstack/react-query';
-import { createFileRoute, Navigate } from '@tanstack/react-router'
+import { createFileRoute, Navigate, useSearch } from '@tanstack/react-router'
 import { GlobalContext } from '../main';
 import { useContext } from 'react';
 import { getSpacesByUserId } from '../api/endpoints';
@@ -14,16 +14,21 @@ export const Route = createFileRoute('/spaces')({
 
 export default function Spaces() {
   const context = useContext(GlobalContext);
-  const user = context.signedInAs;
+  const userName = useSearch({ from: '/spaces' }).user;
+  const signedInUser = context.signedInAs;
   const spacesQuery = useQuery({
-    queryKey: ["spaces", user?.id],
+    queryKey: ["spaces", signedInUser?.id],
     queryFn: (context) => getSpacesByUserId(context.queryKey[1]),
-    enabled: user !== undefined
+    enabled: signedInUser !== undefined
   });
 
-  if (user) {
+  if (signedInUser && userName != signedInUser.alias) {
+    return <Navigate to="/login"></Navigate>
+  }
+
+  if (signedInUser) {
     return (<>
-      <h1>{`Hello ${user.alias}!`}</h1>
+      <h1>{`Hello ${signedInUser.alias}!`}</h1>
       {spacesQuery.data && spacesQuery.data.map(space => <p key={space.id}>{space.alias}</p>)}
     </>)
   }

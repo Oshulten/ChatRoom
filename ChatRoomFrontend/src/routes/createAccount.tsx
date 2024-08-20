@@ -21,7 +21,7 @@ function CreateAccount() {
     try {
       const createdUser = await createUser(fields);
       context.signedInAs = createdUser;
-      router.navigate({ to: "/spaces", search: { user: createdUser.alias } })
+      router.navigate({ to: "/spaces", search: { user: createdUser.alias } });
     }
     catch (error) {
       setFormMessage((error as Error).message)

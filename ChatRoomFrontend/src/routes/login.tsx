@@ -21,7 +21,7 @@ function Login() {
     try {
       const existingUser = await authenticateUser(fields);
       context.signedInAs = existingUser;
-      router.navigate({ to: "/spaces", search: { user: existingUser.alias } })
+      router.navigate({ to: "/spaces", search: { user: existingUser.alias } });
     }
     catch (error) {
       setFormMessage((error as Error).message)
