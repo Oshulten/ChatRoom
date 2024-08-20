@@ -1,6 +1,6 @@
 import createClient, { Middleware } from "openapi-fetch"
 import { paths } from './schema';
-import { UserResponse, AuthenticationRequest, Space } from "./types";
+import { UserResponse, AuthenticationRequest, Space, ChatPeriod } from "./types";
 
 const logRequestResponse: Middleware = {
     async onRequest({ request, schemaPath }) {
@@ -15,16 +15,6 @@ const logRequestResponse: Middleware = {
 const client = createClient<paths>({ baseUrl: 'http://localhost:5055' });
 client.use(logRequestResponse);
 
-export async function getUsers() {
-    const { data } = await client.GET("/api/ChatMessages");
-    return data as UserResponse[];
-}
-
-export async function getUserById(id: string) {
-    const { data, response } = await client.GET("/api/ChatMessages/{id}", { params: { path: { id } } });
-    if (response.ok) return data as UserResponse;
-    throw Error("Provided id could not be found");
-}
 
 export async function createUser(request: AuthenticationRequest) {
     const { data, response } = await client.POST("/api/Authentication/create-user", { body: { ...request } });
@@ -40,6 +30,23 @@ export async function authenticateUser(request: AuthenticationRequest) {
 
 export async function getSpacesByUserId(id: string | undefined) {
     if (!id) throw Error("An id must be provided")
-    const { data } = await client.GET("/api/ChatSpaces/by-user/{id}", { params: { path: { id } } });
+    const { data } = await client.GET("/api/ChatSpaces/by-user/{id}", {
+        params: {
+            path: { id }
+        }
+    });
     return data as Space[];
+}
+
+export async function getLastMessagesInSpace(spaceId: string, getBeforeDate: Date, numberOfMessages: number) {
+    const { data } = await client.GET("/api/ChatMessages", {
+        params: {
+            query: {
+                spaceId,
+                date: getBeforeDate.toISOString(),
+                numberOfMessages
+            }
+        }
+    });
+    return data as unknown as ChatPeriod;
 }

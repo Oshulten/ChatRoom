@@ -13,6 +13,9 @@ public class ChatMessage(Guid userId, DateTime postedAt, string content, Guid ch
     public static explicit operator ChatMessage(ChatMessagePost post) => new(
         post.ChatUserId, DateTime.Now, post.Content, post.ChatSpaceId
     );
+    public static explicit operator ChatMessagePost(ChatMessage post) => new ChatMessagePost(
+        post.Content, post.ChatSpaceId, post.UserId, post.PostedAt
+    );
 
     public void Patch(ChatMessagePatch patchObject)
     {

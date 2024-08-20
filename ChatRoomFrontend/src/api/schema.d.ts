@@ -36,38 +36,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/ChatMessages/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ChatMessages_GetById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["ChatMessages_PatchById"];
-        trace?: never;
-    };
-    "/api/ChatMessages/by-space/{spaceId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ChatMessages_GetBySpace"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/ChatMessages": {
         parameters: {
             query?: never;
@@ -75,23 +43,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["ChatMessages_GetAll"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ChatMessages/get-first": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ChatMessages_GetFirst"];
+        get: operations["ChatMessages_GetBySpaceAndDate"];
         put?: never;
         post?: never;
         delete?: never;
@@ -270,25 +222,22 @@ export interface components {
             username?: string;
             password?: string;
         };
-        ChatMessage: {
-            /** Format: guid */
-            id?: string;
-            /** Format: guid */
-            userId?: string;
+        ChatPeriod: {
             /** Format: date-time */
-            postedAt?: string;
+            fromDate?: string;
+            /** Format: date-time */
+            toDate?: string;
+            earliest?: boolean;
+            messages?: components["schemas"]["ChatMessagePost"][];
+        };
+        ChatMessagePost: {
             content?: string;
             /** Format: guid */
             chatSpaceId?: string;
-        };
-        ChatMessagePatch: {
             /** Format: guid */
-            userId?: string | null;
+            chatUserId?: string;
             /** Format: date-time */
-            postedAt?: string | null;
-            content?: string | null;
-            /** Format: guid */
-            chatSpaceId?: string | null;
+            postedAt?: string;
         };
         ChatSpace: {
             /** Format: guid */
@@ -371,76 +320,13 @@ export interface operations {
             };
         };
     };
-    ChatMessages_GetById: {
+    ChatMessages_GetBySpaceAndDate: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
+            query?: {
+                spaceId?: string;
+                date?: string;
+                numberOfMessages?: number;
             };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChatMessage"];
-                };
-            };
-        };
-    };
-    ChatMessages_PatchById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ChatMessagePatch"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/octet-stream": string;
-                };
-            };
-        };
-    };
-    ChatMessages_GetBySpace: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                spaceId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChatMessage"][];
-                };
-            };
-        };
-    };
-    ChatMessages_GetAll: {
-        parameters: {
-            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -452,26 +338,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChatMessage"][];
-                };
-            };
-        };
-    };
-    ChatMessages_GetFirst: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChatMessage"];
+                    "application/json": components["schemas"]["ChatPeriod"];
                 };
             };
         };

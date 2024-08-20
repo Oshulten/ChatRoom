@@ -8,8 +8,7 @@ import { routeTree } from './routeTree.gen'
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { DefaultCatchBoundary } from './components/DefaultCatchBoundary.tsx';
 import { NotFound } from './components/NotFound.tsx';
-import User from './types/user.ts';
-import { UserResponse } from './api/types';
+import { Space, UserResponse } from './api/types';
 
 const queryClient = new QueryClient();
 
@@ -31,16 +30,18 @@ declare module '@tanstack/react-router' {
 }
 
 interface IGlobalContext {
-  signedInAs: UserResponse | undefined;
+  currentUser: UserResponse | undefined
+  currentSpace: Space | undefined
 }
 
 export const GlobalContext = createContext<IGlobalContext>({
-  signedInAs: undefined
+  currentUser: undefined,
+  currentSpace: undefined
 });
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <GlobalContext.Provider value={{ signedInAs: undefined }}>
+    <GlobalContext.Provider value={{ currentUser: undefined, currentSpace: undefined }}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>

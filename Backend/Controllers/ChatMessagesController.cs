@@ -8,42 +8,26 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class ChatMessagesController(ChatroomDatabaseContext db) : ControllerBase
 {
-    [HttpGet("{id}")]
-    public ChatMessage GetById(Guid id)
-    {
-        return db.ChatMessages.FirstOrDefault(data => data.Id == id)!;
-    }
-
-    [HttpGet("by-space/{spaceId}")]
-    public IEnumerable<ChatMessage> GetBySpace(Guid spaceId)
-    {
-        return db.ChatMessages.Where(message => message.ChatSpaceId == spaceId).ToList();
-    }
-
     [HttpGet]
-    public IEnumerable<ChatMessage> GetAll()
+    public ChatPeriod GetBySpaceAndDate(Guid spaceId, DateTime date, int numberOfMessages)
     {
-        return db.ChatMessages;
-    }
+        var orderedMessages = db.ChatMessages
+                                .Where(message =>
+                                    message.ChatSpaceId == spaceId &&
+                                    message.PostedAt < date)
+                                .OrderByDescending(message => message.PostedAt)
+                                .Select(message => (ChatMessagePost)message).ToList();
+        var messages = orderedMessages.Take(numberOfMessages).ToList();
+        var earliestMessage = messages[0];
+        var lastMessage = messages[^1];
+        var earliest = earliestMessage == orderedMessages[0];
 
-    [HttpGet("get-first")]
-    public ChatMessage GetFirst()
-    {
-        return db.ChatMessages.FirstOrDefault()!;
-    }
-
-    [HttpPatch("{id}")]
-    public IActionResult PatchById(Guid id, ChatMessagePatch patchObject)
-    {
-        ChatMessage? entity = db.ChatMessages.FirstOrDefault(data => data.Id == id);
-
-        if (entity is null)
+        return new ChatPeriod()
         {
-            return NotFound();
-        }
-
-        entity.Patch(patchObject);
-        db.SaveChanges();
-        return Ok();
+            Earliest = earliest,
+            FromDate = earliestMessage.PostedAt,
+            ToDate = lastMessage.PostedAt,
+            Messages = messages
+        };
     }
 }

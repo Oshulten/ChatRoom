@@ -10,6 +10,10 @@ public record ChatMessagePost
 (
     [Length(Validation.ContentMinLength, Validation.ContentMaxLength)]
     string Content,
+    [Required]
     Guid ChatSpaceId,
-    Guid ChatUserId
+    [Required]
+    Guid ChatUserId,
+    [Required]
+    DateTime PostedAt
 );

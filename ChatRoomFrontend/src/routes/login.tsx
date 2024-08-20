@@ -17,11 +17,13 @@ function Login() {
   const [formMessage, setFormMessage] = useState<string | undefined>(undefined);
   const router = useRouter();
 
+  console.log(`Context: ${JSON.stringify(context)}`);
+
   const handleSubmit = async (fields: AuthenticationRequest) => {
     try {
       const existingUser = await authenticateUser(fields);
-      context.signedInAs = existingUser;
-      router.navigate({ to: "/spaces", search: { user: existingUser.alias } });
+      context.currentUser = existingUser;
+      router.navigate({ to: "/dashboard", search: { user: existingUser.alias } });
     }
     catch (error) {
       setFormMessage((error as Error).message)

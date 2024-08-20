@@ -11,19 +11,25 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as SpacesImport } from './routes/spaces'
+import { Route as SpaceImport } from './routes/space'
 import { Route as LoginImport } from './routes/login'
+import { Route as DashboardImport } from './routes/dashboard'
 import { Route as CreateAccountImport } from './routes/createAccount'
 
 // Create/Update Routes
 
-const SpacesRoute = SpacesImport.update({
-  path: '/spaces',
+const SpaceRoute = SpaceImport.update({
+  path: '/space',
   getParentRoute: () => rootRoute,
 } as any)
 
 const LoginRoute = LoginImport.update({
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const DashboardRoute = DashboardImport.update({
+  path: '/dashboard',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -43,6 +49,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CreateAccountImport
       parentRoute: typeof rootRoute
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardImport
+      parentRoute: typeof rootRoute
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -50,11 +63,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/spaces': {
-      id: '/spaces'
-      path: '/spaces'
-      fullPath: '/spaces'
-      preLoaderRoute: typeof SpacesImport
+    '/space': {
+      id: '/space'
+      path: '/space'
+      fullPath: '/space'
+      preLoaderRoute: typeof SpaceImport
       parentRoute: typeof rootRoute
     }
   }
@@ -64,8 +77,9 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   CreateAccountRoute,
+  DashboardRoute,
   LoginRoute,
-  SpacesRoute,
+  SpaceRoute,
 })
 
 /* prettier-ignore-end */
@@ -77,18 +91,22 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/createAccount",
+        "/dashboard",
         "/login",
-        "/spaces"
+        "/space"
       ]
     },
     "/createAccount": {
       "filePath": "createAccount.tsx"
     },
+    "/dashboard": {
+      "filePath": "dashboard.tsx"
+    },
     "/login": {
       "filePath": "login.tsx"
     },
-    "/spaces": {
-      "filePath": "spaces.tsx"
+    "/space": {
+      "filePath": "space.tsx"
     }
   }
 }
