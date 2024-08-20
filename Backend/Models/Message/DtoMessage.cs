@@ -9,7 +9,7 @@ namespace Backend.Models.Message;
 public record DtoMessage
 (
     string Content,
-    Guid ChatSpaceId,
-    Guid ChatUserId,
+    Guid SpaceId,
+    Guid UserId,
     DateTime PostedAt
 );

@@ -12,22 +12,22 @@ namespace Backend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ChatMessages",
+                name: "Messages",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     UserId = table.Column<Guid>(type: "TEXT", nullable: false),
                     PostedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Content = table.Column<string>(type: "TEXT", nullable: false),
-                    ChatSpaceId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    SpaceId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChatMessages", x => x.Id);
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ChatSpaces",
+                name: "Spaces",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -36,11 +36,11 @@ namespace Backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChatSpaces", x => x.Id);
+                    table.PrimaryKey("PK_Spaces", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ChatUsers",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -51,7 +51,7 @@ namespace Backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChatUsers", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
         }
 
@@ -59,13 +59,13 @@ namespace Backend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ChatMessages");
+                name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "ChatSpaces");
+                name: "Spaces");
 
             migrationBuilder.DropTable(
-                name: "ChatUsers");
+                name: "Users");
         }
     }
 }

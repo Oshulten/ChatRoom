@@ -11,7 +11,7 @@ namespace Backend.Controllers
         [HttpGet]
         public IEnumerable<DbSpace> GetByUser(Guid userId)
         {
-            return db.ChatSpaces.Where(space => space.UserIds.Contains(userId));
+            return db.Spaces.Where(space => space.UserIds.Contains(userId));
         }
     }
 }

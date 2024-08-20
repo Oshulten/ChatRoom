@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(ChatroomDatabaseContext))]
-    [Migration("20240820174435_InitialCreate")]
+    [Migration("20240820184837_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -26,9 +26,6 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ChatSpaceId")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -36,12 +33,15 @@ namespace Backend.Migrations
                     b.Property<DateTime>("PostedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("SpaceId")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ChatMessages");
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Backend.Models.Space.DbSpace", b =>
@@ -60,7 +60,7 @@ namespace Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ChatSpaces");
+                    b.ToTable("Spaces");
                 });
 
             modelBuilder.Entity("Backend.Models.User.DbUser", b =>
@@ -85,7 +85,7 @@ namespace Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ChatUsers");
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }

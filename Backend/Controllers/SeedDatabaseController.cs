@@ -2,6 +2,7 @@ using Backend.Models;
 using Backend.Models.Message;
 using Backend.Models.Space;
 using Backend.Models.User;
+using Bogus;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -12,9 +13,9 @@ public class SeedDatabaseController(ChatroomDatabaseContext db) : ControllerBase
     [HttpPost]
     public IActionResult SeedData()
     {
-        db.ChatMessages.RemoveRange(db.ChatMessages);
-        db.ChatSpaces.RemoveRange(db.ChatSpaces);
-        db.ChatUsers.RemoveRange(db.ChatUsers);
+        db.Messages.RemoveRange(db.Messages);
+        db.Spaces.RemoveRange(db.Spaces);
+        db.Users.RemoveRange(db.Users);
 
         var defaultUsers = new List<DbUser>() {
             new("Michael", "Password", true, new DateTime(1983, 4, 15)),
@@ -48,9 +49,51 @@ public class SeedDatabaseController(ChatroomDatabaseContext db) : ControllerBase
             new(amandaId, new DateTime(2021, 04, 9), "Just don't tell Michael", amandasCornerId),
         };
 
-        db.ChatMessages.AddRange(defaultMessages);
-        db.ChatSpaces.AddRange(defaultChatSpaces);
-        db.ChatUsers.AddRange(defaultUsers);
+        db.Messages.AddRange(defaultMessages);
+        db.Spaces.AddRange(defaultChatSpaces);
+        db.Users.AddRange(defaultUsers);
+
+        db.SaveChanges();
+        return Ok();
+    }
+
+    [HttpPost("bogus")]
+    public IActionResult SeedDataWithBogus()
+    {
+        var numberOfUsers = 50;
+        var numberOfSpaces = 10;
+        var numberOfMessages = 500;
+
+        db.Messages.RemoveRange(db.Messages);
+        db.Spaces.RemoveRange(db.Spaces);
+        db.Users.RemoveRange(db.Users);
+
+        var users = new Faker<DbUser>()
+            .RuleFor(o => o.Alias, f => f.Person.UserName)
+            .RuleFor(o => o.Password, f => f.Internet.Password(10, true))
+            .RuleFor(o => o.JoinedAt, f => f.Date.Between(new DateTime(1991, 04, 26), DateTime.Now))
+            .RuleFor(o => o.Admin, f => f.Random.Bool())
+            .Generate(numberOfUsers);
+
+        var userIds = users.Select(user => user.Id).ToArray();
+
+        var spaces = new Faker<DbSpace>()
+            .RuleFor(o => o.Alias, f => f.Internet.DomainWord())
+            .RuleFor(o => o.UserIds, f => f.Random.ArrayElements<Guid>(userIds))
+            .Generate(numberOfSpaces);
+
+        var spaceIds = spaces.Select(space => space.Id).ToArray();
+
+        var messages = new Faker<DbMessage>()
+            .RuleFor(o => o.UserId, f => f.Random.ListItem<Guid>(userIds))
+            .RuleFor(o => o.PostedAt, f => f.Date.Between(new DateTime(1991, 04, 26), DateTime.Now))
+            .RuleFor(o => o.Content, f => f.Random.Words(Random.Shared.Next(3, 50)))
+            .RuleFor(o => o.SpaceId, f => f.Random.ArrayElement(userIds))
+            .Generate(numberOfMessages);
+
+        db.Messages.AddRange(messages);
+        db.Spaces.AddRange(spaces);
+        db.Users.AddRange(users);
 
         db.SaveChanges();
         return Ok();

@@ -11,9 +11,9 @@ public class MessagesController(ChatroomDatabaseContext db) : ControllerBase
     [HttpGet]
     public DtoMessageSequence GetBySpaceAndDate(Guid spaceId, DateTime date, int numberOfMessages)
     {
-        var orderedMessages = db.ChatMessages
+        var orderedMessages = db.Messages
                                 .Where(message =>
-                                    message.ChatSpaceId == spaceId &&
+                                    message.SpaceId == spaceId &&
                                     message.PostedAt < date)
                                 .OrderByDescending(message => message.PostedAt)
                                 .Select(message => (DtoMessage)message).ToList();
