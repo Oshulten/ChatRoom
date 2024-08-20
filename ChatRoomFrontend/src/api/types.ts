@@ -1,11 +1,10 @@
 import { components } from '../api/schema';
 
-export type Message = Required<components["schemas"]["ChatMessagePost"]>;
-export type SpacePatch = components["schemas"]["ChatSpacePatch"];
-export type Space = Required<components["schemas"]["ChatSpace"]>;
-export type UserResponse = Required<components["schemas"]["ChatUserResponse"]>;
-export type AuthenticationRequest = components["schemas"]["LoginRequest"];
-export type ChatPeriod = {
+export type Message = Required<components["schemas"]["DtoMessage"]>;
+export type Space = Required<components["schemas"]["DbSpace"]>;
+export type User = Required<components["schemas"]["DtoUser"]>;
+export type Authentication = components["schemas"]["DtoAuthentication"];
+export type MessageSequence = {
     fromDate: string,
     toDate: string,
     earliest: number,

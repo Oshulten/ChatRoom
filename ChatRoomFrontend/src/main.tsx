@@ -8,7 +8,7 @@ import { routeTree } from './routeTree.gen'
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { DefaultCatchBoundary } from './components/DefaultCatchBoundary.tsx';
 import { NotFound } from './components/NotFound.tsx';
-import { Space, UserResponse } from './api/types';
+import { Space, User } from './api/types';
 
 const queryClient = new QueryClient();
 
@@ -30,7 +30,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface IGlobalContext {
-  currentUser: UserResponse | undefined
+  currentUser: User | undefined
   currentSpace: Space | undefined
 }
 

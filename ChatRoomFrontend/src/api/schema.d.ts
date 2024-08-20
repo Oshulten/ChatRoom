@@ -36,144 +36,16 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/ChatMessages": {
+    "/api/Messages": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["ChatMessages_GetBySpaceAndDate"];
+        get: operations["Messages_GetBySpaceAndDate"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ChatSpaces/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ChatSpaces_GetById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["ChatSpaces_PatchById"];
-        trace?: never;
-    };
-    "/api/ChatSpaces/by-user/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ChatSpaces_GetByUser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ChatSpaces": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ChatSpaces_GetAll"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ChatSpaces/get-first": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ChatSpaces_GetFirst"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ChatUsers/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ChatUsers_GetById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ChatUsers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["ChatUsers_GetAll"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ChatUsers/authenticate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ChatUsers_AuthenticateUser"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/ChatUsers/create-account": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["ChatUsers_CreateAccount"];
         delete?: never;
         options?: never;
         head?: never;
@@ -196,11 +68,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/Spaces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Spaces_GetByUser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        ChatUserResponse: {
+        DtoUser: {
             /** Format: guid */
             id?: string;
             alias?: string;
@@ -218,19 +106,19 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
-        LoginRequest: {
+        DtoAuthentication: {
             username?: string;
             password?: string;
         };
-        ChatPeriod: {
+        DtoMessageSequence: {
             /** Format: date-time */
             fromDate?: string;
             /** Format: date-time */
             toDate?: string;
             earliest?: boolean;
-            messages?: components["schemas"]["ChatMessagePost"][];
+            messages?: components["schemas"]["DtoMessage"][];
         };
-        ChatMessagePost: {
+        DtoMessage: {
             content?: string;
             /** Format: guid */
             chatSpaceId?: string;
@@ -239,14 +127,10 @@ export interface components {
             /** Format: date-time */
             postedAt?: string;
         };
-        ChatSpace: {
+        DbSpace: {
             /** Format: guid */
             id?: string;
             alias?: string;
-            userIds?: string[];
-        };
-        ChatSpacePatch: {
-            alias?: string | null;
             userIds?: string[];
         };
     };
@@ -267,7 +151,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LoginRequest"];
+                "application/json": components["schemas"]["DtoAuthentication"];
             };
         };
         responses: {
@@ -276,7 +160,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChatUserResponse"];
+                    "application/json": components["schemas"]["DtoUser"];
                 };
             };
             400: {
@@ -298,7 +182,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LoginRequest"];
+                "application/json": components["schemas"]["DtoAuthentication"];
             };
         };
         responses: {
@@ -307,7 +191,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChatUserResponse"];
+                    "application/json": components["schemas"]["DtoUser"];
                 };
             };
             404: {
@@ -320,7 +204,7 @@ export interface operations {
             };
         };
     };
-    ChatMessages_GetBySpaceAndDate: {
+    Messages_GetBySpaceAndDate: {
         parameters: {
             query?: {
                 spaceId?: string;
@@ -338,198 +222,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChatPeriod"];
-                };
-            };
-        };
-    };
-    ChatSpaces_GetById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChatSpace"];
-                };
-            };
-        };
-    };
-    ChatSpaces_PatchById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ChatSpacePatch"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/octet-stream": string;
-                };
-            };
-        };
-    };
-    ChatSpaces_GetByUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChatSpace"][];
-                };
-            };
-        };
-    };
-    ChatSpaces_GetAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChatSpace"][];
-                };
-            };
-        };
-    };
-    ChatSpaces_GetFirst: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChatSpace"];
-                };
-            };
-        };
-    };
-    ChatUsers_GetById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChatUserResponse"];
-                };
-            };
-        };
-    };
-    ChatUsers_GetAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChatUserResponse"][];
-                };
-            };
-        };
-    };
-    ChatUsers_AuthenticateUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginRequest"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/octet-stream": string;
-                };
-            };
-        };
-    };
-    ChatUsers_CreateAccount: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginRequest"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChatUserResponse"];
+                    "application/json": components["schemas"]["DtoMessageSequence"];
                 };
             };
         };
@@ -549,6 +242,27 @@ export interface operations {
                 };
                 content: {
                     "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    Spaces_GetByUser: {
+        parameters: {
+            query?: {
+                userId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DbSpace"][];
                 };
             };
         };
