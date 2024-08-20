@@ -58,12 +58,8 @@ public class SeedDatabaseController(ChatroomDatabaseContext db) : ControllerBase
     }
 
     [HttpPost("bogus")]
-    public IActionResult SeedDataWithBogus()
+    public IActionResult SeedDataWithBogus(int numberOfUsers, int numberOfSpaces, int numberOfMessages)
     {
-        var numberOfUsers = 50;
-        var numberOfSpaces = 10;
-        var numberOfMessages = 500;
-
         db.Messages.RemoveRange(db.Messages);
         db.Spaces.RemoveRange(db.Spaces);
         db.Users.RemoveRange(db.Users);

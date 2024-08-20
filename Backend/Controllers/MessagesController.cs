@@ -9,7 +9,9 @@ namespace Backend.Controllers;
 public class MessagesController(ChatroomDatabaseContext db) : ControllerBase
 {
     [HttpGet]
-    public DtoMessageSequence GetBySpaceAndDate(Guid spaceId, DateTime date, int numberOfMessages)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DtoMessage))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<DtoMessageSequence> GetBySpaceAndDate(Guid spaceId, DateTime date, int numberOfMessages)
     {
         var orderedMessages = db.Messages
                                 .Where(message =>
@@ -17,7 +19,14 @@ public class MessagesController(ChatroomDatabaseContext db) : ControllerBase
                                     message.PostedAt < date)
                                 .OrderByDescending(message => message.PostedAt)
                                 .Select(message => (DtoMessage)message).ToList();
+
         var messages = orderedMessages.Take(numberOfMessages).ToList();
+
+        if (messages.Count == 0)
+        {
+            return NotFound();
+        }
+
         var earliestMessage = messages[0];
         var lastMessage = messages[^1];
         var earliest = earliestMessage == orderedMessages[0];

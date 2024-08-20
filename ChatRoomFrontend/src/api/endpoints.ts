@@ -39,7 +39,7 @@ export async function getSpacesByUserId(userId: string | undefined) {
 }
 
 export async function getLastMessagesInSpace(spaceId: string, getBeforeDate: Date, numberOfMessages: number) {
-    const { data } = await client.GET("/api/Messages", {
+    const { data, error } = await client.GET("/api/Messages", {
         params: {
             query: {
                 spaceId,
@@ -48,5 +48,10 @@ export async function getLastMessagesInSpace(spaceId: string, getBeforeDate: Dat
             }
         }
     });
+
+    if (error != undefined) {
+        return null;
+    }
+
     return data as unknown as MessageSequence;
 }

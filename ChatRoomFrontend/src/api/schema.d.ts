@@ -68,6 +68,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/SeedDatabase/bogus": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SeedDatabase_SeedDataWithBogus"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/Spaces": {
         parameters: {
             query?: never;
@@ -110,20 +126,12 @@ export interface components {
             username?: string;
             password?: string;
         };
-        DtoMessageSequence: {
-            /** Format: date-time */
-            fromDate?: string;
-            /** Format: date-time */
-            toDate?: string;
-            earliest?: boolean;
-            messages?: components["schemas"]["DtoMessage"][];
-        };
         DtoMessage: {
             content?: string;
             /** Format: guid */
-            chatSpaceId?: string;
+            spaceId?: string;
             /** Format: guid */
-            chatUserId?: string;
+            userId?: string;
             /** Format: date-time */
             postedAt?: string;
         };
@@ -222,12 +230,39 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DtoMessageSequence"];
+                    "application/json": components["schemas"]["DtoMessage"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
                 };
             };
         };
     };
     SeedDatabase_SeedData: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
+                };
+            };
+        };
+    };
+    SeedDatabase_SeedDataWithBogus: {
         parameters: {
             query?: never;
             header?: never;
