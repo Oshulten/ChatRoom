@@ -1,0 +1,20 @@
+namespace Backend.Models.Message;
+
+public class DbMessage(Guid userId, DateTime postedAt, string content, Guid chatSpace)
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid UserId { get; set; } = userId;
+    public DateTime PostedAt { get; set; } = postedAt;
+    public string Content { get; set; } = content;
+    public Guid ChatSpaceId { get; set; } = chatSpace;
+
+    public DbMessage() : this(Guid.NewGuid(), DateTime.Now, "A message", Guid.NewGuid()) { }
+
+    public static explicit operator DbMessage(DtoMessage post) => new(
+        post.ChatUserId, DateTime.Now, post.Content, post.ChatSpaceId
+    );
+
+    public static explicit operator DtoMessage(DbMessage post) => new DtoMessage(
+        post.Content, post.ChatSpaceId, post.UserId, post.PostedAt
+    );
+}

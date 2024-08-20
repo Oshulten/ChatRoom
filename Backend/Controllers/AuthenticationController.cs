@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Backend.Models;
-using Backend.Models.ChatUser;
+using Backend.Models.User;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -13,34 +13,36 @@ namespace Backend.Controllers
     public class AuthenticationController(ChatroomDatabaseContext db) : ControllerBase
     {
         [HttpPost("create-user")]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ChatUserResponse))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DtoUser))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<ChatUserResponse> CreateUser(LoginRequest request)
+        public ActionResult<DtoUser> CreateUser(DtoAuthentication request)
         {
-            Console.WriteLine($"Requested Username: {request.Username}");
             var existingUser = db.ChatUsers.FirstOrDefault(user => user.Alias == request.Username);
-            Console.WriteLine(existingUser);
+
             if (existingUser is not null)
             {
                 return BadRequest();
             }
-            var newUser = (ChatUser)request;
+
+            var newUser = (DbUser)request;
             db.ChatUsers.Add(newUser);
             db.SaveChanges();
-            return (ChatUserResponse)newUser;
+            return (DtoUser)newUser;
         }
 
         [HttpPost("authorize-user")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ChatUserResponse))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DtoUser))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ChatUserResponse> AuthorizeUser(LoginRequest request)
+        public ActionResult<DtoUser> AuthorizeUser(DtoAuthentication request)
         {
             var existingUser = db.ChatUsers.FirstOrDefault(user => user.Alias == request.Username && user.Password == request.Password);
+
             if (existingUser is null)
             {
                 return NotFound();
             }
-            return (ChatUserResponse)existingUser;
+
+            return (DtoUser)existingUser;
         }
     }
 }

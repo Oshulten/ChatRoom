@@ -17,7 +17,7 @@ namespace Backend.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
 
-            modelBuilder.Entity("Backend.Models.ChatMessage", b =>
+            modelBuilder.Entity("Backend.Models.Message.DbMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -41,7 +41,7 @@ namespace Backend.Migrations
                     b.ToTable("ChatMessages");
                 });
 
-            modelBuilder.Entity("Backend.Models.ChatSpace", b =>
+            modelBuilder.Entity("Backend.Models.Space.DbSpace", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -60,7 +60,7 @@ namespace Backend.Migrations
                     b.ToTable("ChatSpaces");
                 });
 
-            modelBuilder.Entity("Backend.Models.ChatUser", b =>
+            modelBuilder.Entity("Backend.Models.User.DbUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

@@ -4,16 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Backend.Models.ChatMessage;
+namespace Backend.Models.Message;
 
-public record ChatMessagePost
+public record DtoMessage
 (
-    [Length(Validation.ContentMinLength, Validation.ContentMaxLength)]
     string Content,
-    [Required]
     Guid ChatSpaceId,
-    [Required]
     Guid ChatUserId,
-    [Required]
     DateTime PostedAt
 );
