@@ -33,7 +33,7 @@ export default function AuthenticateForm({ onSuccess, submitLabel, errorMessage 
                     type="password"
                     {...form.register("password", {
                         required: "Password is required",
-                        minLength: { value: 5, message: "Password must be longer than 5 characters" }
+                        minLength: { value: 3, message: "Password must be longer than 3 characters" }
                     })}
                     placeholder="Password"
                     className="input input-bordered w-full max-w-xs m-1" />

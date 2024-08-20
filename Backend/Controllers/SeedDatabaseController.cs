@@ -75,6 +75,14 @@ public class SeedDatabaseController(ChatroomDatabaseContext db) : ControllerBase
             .RuleFor(o => o.Admin, f => f.Random.Bool())
             .Generate(numberOfUsers);
 
+        users.Add(new DbUser()
+        {
+            Alias = "qwer",
+            Password = "qwer",
+            JoinedAt = new DateTime(1991, 04, 26),
+            Admin = true
+        });
+
         var userIds = users.Select(user => user.Id).ToArray();
 
         var spaces = new Faker<DbSpace>()
