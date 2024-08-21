@@ -1,4 +1,4 @@
-import { useRouter } from "@tanstack/react-router";
+import { Navigate, useRouter } from "@tanstack/react-router";
 import { useState, useContext } from "react";
 import { authenticateUser } from "../api/endpoints";
 import { Authentication } from "../api/types";
@@ -15,6 +15,10 @@ export default function Authenticate({ authenticationType }: Props) {
     const [formMessage, setFormMessage] = useState<string | undefined>(undefined);
     const context = useContext(GlobalContext);
     const router = useRouter();
+
+    if (context.currentUser) {
+        return <Navigate to="/dashboard" search={{ user: context.currentUser.alias }} />;
+    }
 
     const handleSubmit = async (fields: Authentication) => {
         try {

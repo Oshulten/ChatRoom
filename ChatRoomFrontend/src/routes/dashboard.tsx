@@ -25,6 +25,7 @@ export default function Spaces() {
   });
 
   console.log(`Context: ${JSON.stringify(context)}`);
+  console.log(`Spaces: ${JSON.stringify(spacesQuery.data)}`);
 
   const goToSpace = (space: Space) => {
     const currentSpace = spacesQuery.data!.find(querySpace => querySpace.id == space.id)!;

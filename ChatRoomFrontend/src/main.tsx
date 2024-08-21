@@ -41,7 +41,18 @@ export const GlobalContext = createContext<IGlobalContext>({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <GlobalContext.Provider value={{ currentUser: undefined, currentSpace: undefined }}>
+    <GlobalContext.Provider value={{
+      currentUser: undefined,
+      // currentUser: {
+      //   id: '507c970-d65d-49c3-b765-bc89a263b96b',
+      //   alias: 'qwer',
+      //   joinedAt: (new Date()).toISOString(),
+      //   admin: true
+      // },
+      currentSpace: undefined
+      // currentUser: localStorage["currentUser"],
+      // currentSpace: undefined
+    }}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>

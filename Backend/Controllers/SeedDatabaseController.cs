@@ -71,19 +71,20 @@ public class SeedDatabaseController(ChatroomDatabaseContext db) : ControllerBase
             .RuleFor(o => o.Admin, f => f.Random.Bool())
             .Generate(numberOfUsers);
 
-        users.Add(new DbUser()
+        var adminUser = new DbUser()
         {
             Alias = "qwer",
             Password = "qwer",
             JoinedAt = new DateTime(1991, 04, 26),
             Admin = true
-        });
+        };
+        users.Add(adminUser);
 
         var userIds = users.Select(user => user.Id).ToArray();
 
         var spaces = new Faker<DbSpace>()
             .RuleFor(o => o.Alias, f => f.Internet.DomainWord())
-            .RuleFor(o => o.UserIds, f => f.Random.ArrayElements<Guid>(userIds))
+            .RuleFor(o => o.UserIds, f => f.Random.ArrayElements<Guid>(userIds, userIds.Count()))
             .Generate(numberOfSpaces);
 
         var spaceIds = spaces.Select(space => space.Id).ToArray();
@@ -92,8 +93,10 @@ public class SeedDatabaseController(ChatroomDatabaseContext db) : ControllerBase
             .RuleFor(o => o.UserId, f => f.Random.ListItem<Guid>(userIds))
             .RuleFor(o => o.PostedAt, f => f.Date.Between(new DateTime(1991, 04, 26), DateTime.Now))
             .RuleFor(o => o.Content, f => f.Random.Words(Random.Shared.Next(3, 50)))
-            .RuleFor(o => o.SpaceId, f => f.Random.ArrayElement(userIds))
+            .RuleFor(o => o.SpaceId, f => f.Random.ArrayElement(spaceIds))
             .Generate(numberOfMessages);
+
+        Console.Write($"Generated {messages.Count} messages, {spaces.Count} spaces and {users.Count} users.");
 
         db.Messages.AddRange(messages);
         db.Spaces.AddRange(spaces);

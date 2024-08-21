@@ -38,20 +38,26 @@ export async function getSpacesByUserId(userId: string | undefined) {
     return data as Space[];
 }
 
+export async function getUserByUserId(userId: string) {
+    const { data } = await client.GET("/api/Users/{userId}", {
+        params: {
+            path: { userId }
+        }
+    });
+    return data as User;
+}
+
 export async function getLastMessagesInSpace(spaceId: string, getBeforeDate: Date, numberOfMessages: number) {
-    const { data, error } = await client.GET("/api/Messages", {
+    const { data } = await client.GET("/api/Messages", {
         params: {
             query: {
-                spaceId,
+                spaceId: spaceId,
                 date: getBeforeDate.toISOString(),
-                numberOfMessages
+                numberOfMessages: numberOfMessages
             }
         }
     });
-
-    if (error != undefined) {
-        return null;
-    }
+    console.log("data: ", data);
 
     return data as unknown as MessageSequence;
 }

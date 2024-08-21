@@ -9,21 +9,22 @@ namespace Backend.Controllers;
 public class MessagesController(ChatroomDatabaseContext db) : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DtoMessage))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DtoMessageSequence))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<DtoMessageSequence> GetBySpaceAndDate(Guid spaceId, DateTime date, int numberOfMessages)
     {
+        Console.WriteLine($"spaceId {spaceId}, date {date}, numberOfMessages {numberOfMessages}");
+        var ids = db.Messages.Select(m => m.SpaceId);
+        foreach (var id in ids) Console.WriteLine(id);
         var orderedMessages = db.Messages
-                                .Where(message =>
-                                    message.SpaceId == spaceId &&
-                                    message.PostedAt < date)
-                                .OrderByDescending(message => message.PostedAt)
+                                .Where(message => message.SpaceId == spaceId)
+                                .OrderByDescending(message => message.PostedAt).ToList()
                                 .Select(message => (DtoMessage)message).ToList();
-
         var messages = orderedMessages.Take(numberOfMessages).ToList();
 
         if (messages.Count == 0)
         {
+            Console.Write("Not found");
             return NotFound();
         }
 

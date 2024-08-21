@@ -3,6 +3,7 @@ import { QueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { createRootRouteWithContext, Navigate, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import './../__root.css'
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
     component: RootComponent,
