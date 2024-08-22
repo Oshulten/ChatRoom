@@ -4,7 +4,7 @@ import { AppContext } from "../main";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getLastMessagesInSpace } from "../api/endpoints";
 import { Navigate } from "@tanstack/react-router";
-
+import { formatRelativeDate } from "../utilities/formatRelativeDate";
 
 export default function Conversation() {
     const { currentUser, currentSpace } = useContext(AppContext);
@@ -47,8 +47,10 @@ export default function Conversation() {
                     </div>
                 </div>
                 <div className="chat-header">
-                    {user.alias}{'\tposted at'}
-                    <time className="text-xs opacity-50">{message.postedAt}</time>
+                    {user.alias}
+                    <time className="text-xs opacity-50">
+                        {`\tposted ${formatRelativeDate(new Date(message.postedAt), new Date(Date.now()))}`}
+                    </time>
                 </div>
                 <div className="chat-bubble">{message.content}</div>
             </div>
