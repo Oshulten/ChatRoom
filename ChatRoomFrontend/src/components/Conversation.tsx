@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useContext } from "react";
 import { Message, User } from "../api/types";
-import { GlobalContext } from "../main";
+import { AppContext } from "../main";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import ConversationBubble from "./ConversationBubble";
 import { getLastMessagesInSpace, getUserByUserId } from "../api/endpoints";
@@ -24,7 +24,7 @@ type ChatSection = {
 };
 
 export default function Conversation({ spaceId }: Props) {
-    const context = useContext(GlobalContext);
+    const context = useContext(AppContext);
 
     const messagesQuery = useQuery({
         queryKey: ["messages", spaceId],

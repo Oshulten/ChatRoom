@@ -3,7 +3,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useSearch } from '@tanstack/react-router'
 import { getLastMessagesInSpace, getUserByUserId } from '../api/endpoints';
 import { useContext } from 'react';
-import { GlobalContext } from '../main';
+import { AppContext } from '../main';
 import Conversation from '../components/Conversation';
 
 export const Route = createFileRoute('/space')({
@@ -16,7 +16,7 @@ export const Route = createFileRoute('/space')({
 })
 
 export default function Space() {
-  const context = useContext(GlobalContext);
+  const context = useContext(AppContext);
   const { spaceAlias } = useSearch({ from: "/space" });
 
   if (!context.currentSpace || !context.currentUser) {

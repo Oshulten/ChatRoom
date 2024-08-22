@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Navigate, useRouter, useSearch } from '@tanstack/react-router'
-import { GlobalContext } from '../main';
+import { AppContext } from '../main';
 import { useContext } from 'react';
 import { getSpacesByUserId } from '../api/endpoints';
 import { Space } from '../api/types';
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/dashboard')({
 });
 
 export default function Spaces() {
-  const context = useContext(GlobalContext);
+  const context = useContext(AppContext);
   const userName = useSearch({ from: '/dashboard' }).user;
   const router = useRouter();
   const signedInUser = context.currentUser;

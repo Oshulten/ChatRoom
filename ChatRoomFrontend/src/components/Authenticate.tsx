@@ -2,7 +2,7 @@ import { Navigate, useRouter } from "@tanstack/react-router";
 import { useState, useContext } from "react";
 import { authenticateUser } from "../api/endpoints";
 import { Authentication } from "../api/types";
-import { GlobalContext } from "../main";
+import { AppContext } from "../main";
 import AuthenticateForm from "./AuthenticateForm";
 
 /* eslint-disable react/react-in-jsx-scope */
@@ -13,7 +13,7 @@ interface Props {
 
 export default function Authenticate({ authenticationType }: Props) {
     const [formMessage, setFormMessage] = useState<string | undefined>(undefined);
-    const context = useContext(GlobalContext);
+    const context = useContext(AppContext);
     const router = useRouter();
 
     if (context.currentUser) {

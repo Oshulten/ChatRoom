@@ -6,7 +6,7 @@ import { routeTree } from './routeTree.gen'
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { DefaultCatchBoundary } from './components/DefaultCatchBoundary.tsx';
 import { NotFound } from './components/NotFound.tsx';
-import { AppContext, defaultAppContext } from './types/AppContext.tsx';
+import { ApplicationContext, defaultApplicationContext } from './types/AppContext.tsx';
 import './index.css'
 
 const queryClient = new QueryClient();
@@ -28,14 +28,14 @@ declare module '@tanstack/react-router' {
   }
 }
 
-export const GlobalContext = createContext<AppContext>(defaultAppContext);
+export const AppContext = createContext<ApplicationContext>(defaultApplicationContext);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <GlobalContext.Provider value={defaultAppContext}>
+    <AppContext.Provider value={defaultApplicationContext}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>
-    </GlobalContext.Provider>
+    </AppContext.Provider>
   </StrictMode>,
 )

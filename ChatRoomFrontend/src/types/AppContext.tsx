@@ -1,11 +1,11 @@
 import { Space, User } from "../api/types"
 
-export interface AppContext {
+export interface ApplicationContext {
     currentUser?: User
     currentSpace?: Space
 }
 
-export const defaultAppContext = {
+export const defaultApplicationContext = {
     currentUser: undefined,
     currentSpace: undefined
 }
