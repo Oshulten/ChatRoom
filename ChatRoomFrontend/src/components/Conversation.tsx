@@ -5,6 +5,7 @@ import { AppContext } from "../main";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import ConversationBubble from "./ConversationBubble";
 import { getLastMessagesInSpace, getUserByUserId } from "../api/endpoints";
+import { Navigate } from "@tanstack/react-router";
 
 type AugmentedMessage = {
     content: string,
@@ -41,13 +42,13 @@ export default function Conversation() {
     })
 
     if (!currentSpace || !currentUser) {
-        const errorMessage = `Context lacks currentSpace or currentUser: ${JSON.stringify({ currentUser, currentSpace})}`
+        const errorMessage = `Context lacks currentSpace or currentUser: ${JSON.stringify({ currentUser, currentSpace })}`
         console.error(errorMessage);
-        return <p>{errorMessage}</p>
+        return <Navigate to="/login" />
     }
 
     if (!messagesQuery.data || !usersQuery.data) {
-        <p>Loading...</p>
+        return <p>Loading...</p>
     }
 
     const sortedMessages = messagesQuery.data!.messages.sort((a, b) => {

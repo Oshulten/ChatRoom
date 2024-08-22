@@ -21,7 +21,7 @@ export default function Space() {
   return (
     <>
       <p>{`${currentSpace.alias} Space`}</p>
-      {/* <Conversation /> */}
+      <Conversation />
       <DisplayContext />
     </>
   );
