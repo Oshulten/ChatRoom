@@ -16,7 +16,7 @@ public class MessagesController(ChatroomDatabaseContext db) : ControllerBase
     {
         var messages = db.Messages
                             .Where(message => message.SpaceId == spaceId)
-                            .OrderByDescending(message => message.PostedAt).ToList()
+                            .OrderByDescending(message => message.PostedAt)
                             // .Where(message => message.PostedAt < messagesBefore)
                             .Take(numberOfMessages)
                             .Select(message => (DtoMessage)message)
