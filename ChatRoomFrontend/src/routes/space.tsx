@@ -1,7 +1,5 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { createFileRoute, useSearch } from '@tanstack/react-router'
-import { getLastMessagesInSpace, getUserByUserId } from '../api/endpoints';
 import { useContext } from 'react';
 import { AppContext } from '../main';
 import Conversation from '../components/Conversation';
@@ -34,7 +32,7 @@ export default function Space() {
   return (
     <>
       <p>{`${spaceAlias} Space`}</p>
-      {sortedMessages && usersQuery.data && <Conversation messages={sortedMessages} users={usersQuery.data!} />}
+      <Conversation />}
     </>
   );
 }
