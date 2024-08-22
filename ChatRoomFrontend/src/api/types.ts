@@ -8,5 +8,6 @@ export type MessageSequence = {
     fromDate: string,
     toDate: string,
     earliest: number,
-    messages: Message[]
+    messages: Message[],
+    users: User[]
 }

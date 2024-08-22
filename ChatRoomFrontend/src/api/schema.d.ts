@@ -107,7 +107,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["Users_GetUserById"];
+        get: operations["Users_GetUserByIds"];
         put?: never;
         post?: never;
         delete?: never;
@@ -149,6 +149,7 @@ export interface components {
             toDate?: string;
             earliest?: boolean;
             messages?: components["schemas"]["DtoMessage"][];
+            users?: components["schemas"]["DtoUser"][];
         };
         DtoMessage: {
             content?: string;
@@ -240,7 +241,7 @@ export interface operations {
         parameters: {
             query?: {
                 spaceId?: string;
-                date?: string;
+                messagesBefore?: string;
                 numberOfMessages?: number;
             };
             header?: never;
@@ -330,7 +331,7 @@ export interface operations {
             };
         };
     };
-    Users_GetUserById: {
+    Users_GetUserByIds: {
         parameters: {
             query?: never;
             header?: never;

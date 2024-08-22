@@ -18,23 +18,29 @@ client.use(logRequestResponse);
 
 export async function createUser(request: Authentication) {
     const { data, response } = await client.POST("/api/Authentication/create-user", { body: { ...request } });
+
     if (response.ok) return data as User;
+
     throw new Error("Username already exists");
 }
 
 export async function authenticateUser(request: Authentication) {
     const { data, response } = await client.POST("/api/Authentication/authorize-user", { body: { ...request } });
+
     if (response.ok) return data as User;
+
     throw new Error("Username or password is invalid");
 }
 
 export async function getSpacesByUserId(userId: string | undefined) {
     if (!userId) throw Error("An id must be provided")
+
     const { data } = await client.GET("/api/Spaces", {
         params: {
             query: { userId }
         }
     });
+
     return data as Space[];
 }
 
@@ -44,6 +50,7 @@ export async function getUserByUserId(userId: string) {
             path: { userId }
         }
     });
+
     return data as User;
 }
 
@@ -57,7 +64,6 @@ export async function getLastMessagesInSpace(spaceId: string, getBeforeDate: Dat
             }
         }
     });
-    console.log("data: ", data);
 
     return data as unknown as MessageSequence;
 }
