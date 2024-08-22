@@ -59,8 +59,8 @@ export async function getLastMessagesInSpace(spaceId: string, getBeforeDate: Dat
         params: {
             query: {
                 spaceId: spaceId,
-                date: getBeforeDate.toISOString(),
-                numberOfMessages: numberOfMessages
+                messagesBefore: getBeforeDate.toISOString(),
+                numberOfMessages: numberOfMessages,
             }
         }
     });

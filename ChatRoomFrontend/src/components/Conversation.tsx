@@ -11,7 +11,7 @@ export default function Conversation() {
 
     const { data, isPending, isError, error } = useQuery({
         queryKey: ["messageSequence"],
-        queryFn: () => getLastMessagesInSpace(currentSpace!.id, new Date(), 5),
+        queryFn: () => getLastMessagesInSpace(currentSpace!.id, new Date(), 10),
         enabled: (currentSpace != undefined && currentUser != undefined),
         placeholderData: keepPreviousData,
     });
@@ -55,6 +55,6 @@ export default function Conversation() {
                 <div className="chat-bubble">{message.content}</div>
             </div>
         });
-        return sections;
+        return sections.reverse();
     }
 }

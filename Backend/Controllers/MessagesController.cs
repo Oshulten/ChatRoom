@@ -12,12 +12,12 @@ public class MessagesController(ChatroomDatabaseContext db) : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DtoMessageSequence))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<DtoMessageSequence> GetBySpaceAndDate(Guid spaceId, DateTime messagesBefore, int numberOfMessages)
+    public ActionResult<DtoMessageSequence> GetBySpaceAndDate([FromQuery] Guid spaceId, [FromQuery] DateTime messagesBefore, [FromQuery] int numberOfMessages)
     {
         var messages = db.Messages
                             .Where(message => message.SpaceId == spaceId)
                             .OrderByDescending(message => message.PostedAt)
-                            // .Where(message => message.PostedAt < messagesBefore)
+                            .Where(message => message.PostedAt < messagesBefore)
                             .Take(numberOfMessages)
                             .Select(message => (DtoMessage)message)
                             .ToList();
