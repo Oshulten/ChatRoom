@@ -1,13 +1,13 @@
 /* eslint-disable react/react-in-jsx-scope */
-
 import { useContext } from "react";
 import { Message, User } from "../api/types";
 import { GlobalContext } from "../main";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import ConversationBubble from "./ConversationBubble";
+import { getLastMessagesInSpace, getUserByUserId } from "../api/endpoints";
 
 interface Props {
-    messages: Message[]
-    users: User[]
+    spaceId: string
 }
 
 type AugmentedMessage = {
@@ -23,10 +23,40 @@ type ChatSection = {
     side: MessageSide;
 };
 
-export default function Conversation({ messages, users }: Props) {
+export default function Conversation({ spaceId }: Props) {
     const context = useContext(GlobalContext);
 
-    if (messages.length == 0 || users.length == 0 || !context.currentUser) return <p>Lack of messages or users, or no current user</p>
+    const messagesQuery = useQuery({
+        queryKey: ["messages", spaceId],
+        queryFn: () => getLastMessagesInSpace(context.currentSpace!.id, new Date(), 5),
+        enabled: context.currentSpace != undefined && context.currentUser != undefined,
+        placeholderData: keepPreviousData,
+    });
+
+    const usersQuery = useQuery({
+        queryKey: ["usersInSpace"],
+        queryFn: async () => {
+            const distinctUserIds = [...new Set(messagesQuery.data?.messages.map(message => message.userId))];
+            const userPromises = distinctUserIds.map(id => getUserByUserId(id));
+            const users = await Promise.all(userPromises);
+            return users;
+        },
+        enabled: messagesQuery.isSuccess
+    })
+
+    if (!context.currentSpace || !context.currentUser) {
+        const errorMessage = `Context lacks currentSpace or currentUser: ${JSON.stringify(context)}`
+        console.error(errorMessage);
+        return <p>{errorMessage}</p>
+    }
+
+    if (!messagesQuery.data || !usersQuery.data) {
+        <p>Loading...</p>
+    }
+
+    const sortedMessages = messagesQuery.data!.messages.sort((a, b) => {
+        return (new Date(a.postedAt)) > (new Date(b.postedAt)) ? 1 : -1
+    })
 
     const chatSections: ChatSection[] = [];
     let currentSide: MessageSide | null = null;
@@ -35,9 +65,9 @@ export default function Conversation({ messages, users }: Props) {
 
     const userId = context.currentUser.id;
 
-    messages.forEach((message: Message) => {
+    sortedMessages.forEach((message: Message) => {
         const messageSide: MessageSide = message.userId === userId ? "user" : "sender";
-        const currentUser = users.find((user: User) => user.id === message.userId)!;
+        const currentUser = usersQuery.data!.find((user: User) => user.id === message.userId)!;
         const userAlias = currentUser.alias;
 
         if (lastSenderId == currentUser.id) {
