@@ -1,38 +1,28 @@
 /* eslint-disable react/react-in-jsx-scope */
-import { createFileRoute, useSearch } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useContext } from 'react';
 import { AppContext } from '../main';
 import Conversation from '../components/Conversation';
+import DisplayContext from '../components/DisplayContext';
 
 export const Route = createFileRoute('/space')({
-  validateSearch: (search) => {
-    return {
-      spaceAlias: search.spaceAlias as string
-    }
-  },
   component: () => <Space />
 })
 
 export default function Space() {
-  const context = useContext(AppContext);
-  const { spaceAlias } = useSearch({ from: "/space" });
+  const { currentUser, currentSpace } = useContext(AppContext);
 
-  if (!context.currentSpace || !context.currentUser) {
-    const errorMessage = `Context lacks currentSpace or currentUser: ${JSON.stringify(context)}`
+  if (!currentSpace || !currentUser) {
+    const errorMessage = `currentSpace or currentUser is undefined}`
     console.error(errorMessage);
-    return <p>{errorMessage}</p>
-  }
-
-  if (context.currentSpace.alias != spaceAlias) {
-    const errorMessage = `Query space ${spaceAlias} doesn't match current space ${JSON.stringify(context.currentSpace)}`
-    console.log(errorMessage);
     return <p>{errorMessage}</p>
   }
 
   return (
     <>
-      <p>{`${spaceAlias} Space`}</p>
-      <Conversation />}
+      <p>{`${currentSpace.alias} Space`}</p>
+      {/* <Conversation /> */}
+      <DisplayContext />
     </>
   );
 }

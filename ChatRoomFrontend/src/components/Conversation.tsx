@@ -41,7 +41,7 @@ export default function Conversation() {
     })
 
     if (!currentSpace || !currentUser) {
-        const errorMessage = `Context lacks currentSpace or currentUser: ${JSON.stringify(context)}`
+        const errorMessage = `Context lacks currentSpace or currentUser: ${JSON.stringify({ currentUser, currentSpace})}`
         console.error(errorMessage);
         return <p>{errorMessage}</p>
     }

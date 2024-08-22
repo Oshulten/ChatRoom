@@ -1,11 +1,10 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { Navigate, useRouter } from "@tanstack/react-router";
 import { useState, useContext } from "react";
 import { authenticateUser } from "../api/endpoints";
 import { Authentication } from "../api/types";
 import { AppContext } from "../main";
 import AuthenticateForm from "./AuthenticateForm";
-
-/* eslint-disable react/react-in-jsx-scope */
 
 interface Props {
     authenticationType: "login" | "create"
@@ -17,14 +16,14 @@ export default function Authenticate({ authenticationType }: Props) {
     const router = useRouter();
 
     if (context.currentUser) {
-        return <Navigate to="/dashboard" search={{ user: context.currentUser.alias }} />;
+        return <Navigate to="/dashboard" />;
     }
 
     const handleSubmit = async (fields: Authentication) => {
         try {
             const existingUser = await authenticateUser(fields);
             context.currentUser = existingUser;
-            router.navigate({ to: "/dashboard", search: { user: existingUser.alias } });
+            router.navigate({ to: "/dashboard" });
         }
         catch (error) {
             setFormMessage((error as Error).message)
@@ -51,5 +50,6 @@ export default function Authenticate({ authenticationType }: Props) {
             <button onClick={() => router.navigate({ to: switchPageAddress })}>
                 {switchButtonLabel}
             </button>
-        </div>)
+        </div>
+    )
 }
