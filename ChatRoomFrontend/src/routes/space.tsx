@@ -3,7 +3,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useContext } from 'react';
 import { AppContext } from '../main';
 import Conversation from '../components/Conversation';
-import DisplayContext from '../components/DisplayContext';
 
 export const Route = createFileRoute('/space')({
   component: () => <Space />
@@ -22,7 +21,6 @@ export default function Space() {
     <>
       <p>{`${currentSpace.alias} Space`}</p>
       <Conversation />
-      <DisplayContext />
     </>
   );
 }

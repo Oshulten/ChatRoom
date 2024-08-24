@@ -39,9 +39,10 @@ public class MessagesController(ChatroomDatabaseContext db) : ControllerBase
 
         var dtoUsers = distinctUsers.Select(user => (DtoUser)user!);
 
-        var earliestMessage = messages[0];
-        var lastMessage = messages[^1];
+        var earliestMessage = messages[^1];
+        var lastMessage = messages[0];
         var earliest = earliestMessage == messages[0];
+        if (messages.Count < numberOfMessages) earliest = true;
 
         return new DtoMessageSequence(
             earliestMessage.PostedAt,

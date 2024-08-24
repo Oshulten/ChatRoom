@@ -5,12 +5,10 @@ import { AppContext } from '../main';
 import { useContext } from 'react';
 import { getSpacesByUserId } from '../api/endpoints';
 import { Space } from '../api/types';
-import DisplayContext from '../components/DisplayContext';
 
 export const Route = createFileRoute('/dashboard')({
   component: () => <>
     <Dashboard />
-    <DisplayContext />
   </>
 });
 

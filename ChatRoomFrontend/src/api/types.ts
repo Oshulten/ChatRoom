@@ -7,7 +7,7 @@ export type Authentication = components["schemas"]["DtoAuthentication"];
 export type MessageSequence = {
     fromDate: string,
     toDate: string,
-    earliest: number,
+    earliest: boolean,
     messages: Message[],
     users: User[]
 }
