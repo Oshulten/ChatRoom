@@ -11,6 +11,7 @@ export default function Conversation() {
     const { currentUser, currentSpace } = useContext(AppContext);
     const upperBoundary = useRef<HTMLDivElement>(null);
     const lowerBoundary = useRef<HTMLDivElement>(null);
+    const container = useRef<HTMLDivElement>(null);
     const messagesPerFetch = 10;
 
     const {
@@ -45,7 +46,6 @@ export default function Conversation() {
     }
 
     if (data) {
-        console.log(data);
         const sections = data.pages.map(sequence => {
             return sequence.messages.map(message => {
                 const user = sequence.users.find(user => user.id == message.userId);
@@ -65,7 +65,7 @@ export default function Conversation() {
                     <div className="chat-header">
                         {user.alias}
                         <time className="text-xs opacity-50">
-                            {`\tposted ${formatRelativeDate(new Date(message.postedAt), new Date(Date.now()))}`}
+                            {`\t${formatRelativeDate(new Date(message.postedAt), new Date(Date.now()))}`}
                         </time>
                     </div>
                     <div className="chat-bubble">{message.content}</div>
@@ -73,22 +73,13 @@ export default function Conversation() {
             })
         }).flat();
 
+        const scrollToBottom = () => lowerBoundary.current!.scrollIntoView({ behavior: "smooth" });
+        const fetchByScrollPosition = () => container.current!.scrollTop == 0 && hasNextPage && fetchNextPage();
+
         return (
             <>
-                <button onClick={() => {
-                    if (hasNextPage) {
-                        console.log(`Fetching next page`);
-                        fetchNextPage();
-                        return;
-                    }
-                    console.log("Out of pages");
-                }}>Fetch more messages</button>
-
-                <button onClick={() => {
-                    console.log(lowerBoundary.current != undefined);
-                    lowerBoundary.current!.scrollIntoView({ behavior: "smooth" });
-                }}>Scroll down</button>
-                <div className="h-96 overflow-auto p-8">
+                <button onClick={scrollToBottom}>Scroll down</button>
+                <div ref={container} className="h-96 overflow-auto p-8" onScroll={fetchByScrollPosition}>
                     <div ref={upperBoundary}></div>
                     {sections.reverse()}
                     <div ref={lowerBoundary}></div>
