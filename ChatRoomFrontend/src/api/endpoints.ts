@@ -1,6 +1,6 @@
 import createClient, { Middleware } from "openapi-fetch"
 import { paths } from './schema';
-import { User, Authentication, Space, MessageSequence } from "./types";
+import { User, Authentication, Space, MessageSequence, MessagePost, Message } from "./types";
 
 const logRequestResponse: Middleware = {
     async onRequest({ request, schemaPath }) {
@@ -66,4 +66,12 @@ export async function getLastMessagesInSpace(spaceId: string, getBeforeDate: Dat
     });
 
     return data as unknown as MessageSequence;
+}
+
+export async function postMessage({ content, spaceId, userId }: MessagePost) {
+    console.log({ content, spaceId, userId });
+    const { data } = await client.POST("/api/Messages", {
+        body: { content, spaceId, userId }
+    });
+    return data as Message;
 }

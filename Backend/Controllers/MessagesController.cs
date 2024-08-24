@@ -52,4 +52,13 @@ public class MessagesController(ChatroomDatabaseContext db) : ControllerBase
             dtoUsers.ToList()
         );
     }
+
+    [HttpPost]
+    public ActionResult<DtoMessage> PostMessage(DtoMessagePost post)
+    {
+        var createdMessage = (DbMessage)post;
+        db.Messages.Add(createdMessage);
+        db.SaveChanges();
+        return (DtoMessage)createdMessage;
+    }
 }

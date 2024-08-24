@@ -45,7 +45,7 @@ export interface paths {
         };
         get: operations["Messages_GetBySpaceAndDate"];
         put?: never;
-        post?: never;
+        post: operations["Messages_PostMessage"];
         delete?: never;
         options?: never;
         head?: never;
@@ -160,6 +160,13 @@ export interface components {
             /** Format: date-time */
             postedAt?: string;
         };
+        DtoMessagePost: {
+            content?: string;
+            /** Format: guid */
+            spaceId?: string;
+            /** Format: guid */
+            userId?: string;
+        };
         DbSpace: {
             /** Format: guid */
             id?: string;
@@ -264,6 +271,29 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    Messages_PostMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoMessagePost"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoMessage"];
                 };
             };
         };

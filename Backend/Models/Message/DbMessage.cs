@@ -14,7 +14,12 @@ public class DbMessage(Guid userId, DateTime postedAt, string content, Guid chat
         post.UserId, DateTime.Now, post.Content, post.SpaceId
     );
 
-    public static explicit operator DtoMessage(DbMessage post) => new DtoMessage(
+    public static explicit operator DbMessage(DtoMessagePost post) => new(
+        post.UserId, DateTime.Now, post.Content, post.SpaceId
+    );
+
+    public static explicit operator DtoMessage(DbMessage post) => new(
         post.Content, post.SpaceId, post.UserId, post.PostedAt
     );
+
 }
