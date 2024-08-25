@@ -1,4 +1,4 @@
-namespace Backend.Models.Message;
+namespace Backend.Dto;
 
 public record DtoMessage
 (

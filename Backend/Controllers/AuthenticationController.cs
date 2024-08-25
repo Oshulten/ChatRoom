@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Backend.Database;
+using Backend.Dto;
 using Backend.Models;
-using Backend.Models.User;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers

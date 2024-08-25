@@ -1,6 +1,4 @@
-using Backend.Models.User;
-
-namespace Backend.Models.Message;
+namespace Backend.Dto;
 
 public record DtoMessageSequence
 (

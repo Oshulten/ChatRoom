@@ -1,7 +1,7 @@
-using System.ComponentModel.DataAnnotations.Schema;
-using Backend.Models.User;
+using Backend.Database;
+using Backend.Dto;
 
-namespace Backend.Models.Space;
+namespace Backend.Models;
 
 public class DbSpace(string alias, List<DbUser> members)
 {

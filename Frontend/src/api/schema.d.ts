@@ -68,22 +68,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/SeedDatabase/bogus": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["SeedDatabase_SeedDataWithBogus"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/Spaces": {
         parameters: {
             query?: never;
@@ -100,14 +84,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Users/{userId}": {
+    "/api/Users/{userGuid}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["Users_GetUserByIds"];
+        get: operations["Users_GetUserByGuid"];
         put?: never;
         post?: never;
         delete?: never;
@@ -122,7 +106,7 @@ export interface components {
     schemas: {
         DtoUser: {
             /** Format: guid */
-            id?: string;
+            guid?: string;
             alias?: string;
             /** Format: date-time */
             joinedAt?: string;
@@ -139,7 +123,7 @@ export interface components {
             [key: string]: unknown;
         };
         DtoAuthentication: {
-            username?: string;
+            alias?: string;
             password?: string;
         };
         DtoMessageSequence: {
@@ -149,29 +133,38 @@ export interface components {
             toDate?: string;
             earliest?: boolean;
             messages?: components["schemas"]["DtoMessage"][];
-            users?: components["schemas"]["DtoUser"][];
+            senders?: components["schemas"]["DtoUser"][];
         };
         DtoMessage: {
             content?: string;
             /** Format: guid */
-            spaceId?: string;
+            spaceGuid?: string;
             /** Format: guid */
-            userId?: string;
+            senderGuid?: string;
             /** Format: date-time */
             postedAt?: string;
         };
         DtoMessagePost: {
             content?: string;
             /** Format: guid */
-            spaceId?: string;
+            spaceGuid?: string;
             /** Format: guid */
-            userId?: string;
+            senderGuid?: string;
         };
         DbSpace: {
             /** Format: guid */
-            id?: string;
+            guid?: string;
             alias?: string;
-            userIds?: string[];
+            members?: components["schemas"]["DbUser"][];
+        };
+        DbUser: {
+            /** Format: guid */
+            guid?: string;
+            alias?: string;
+            password?: string;
+            /** Format: date-time */
+            joinedAt?: string;
+            admin?: boolean;
         };
     };
     responses: never;
@@ -247,7 +240,7 @@ export interface operations {
     Messages_GetBySpaceAndDate: {
         parameters: {
             query?: {
-                spaceId?: string;
+                spaceGuid?: string;
                 messagesBefore?: string;
                 numberOfMessages?: number;
             };
@@ -300,25 +293,6 @@ export interface operations {
     };
     SeedDatabase_SeedData: {
         parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/octet-stream": string;
-                };
-            };
-        };
-    };
-    SeedDatabase_SeedDataWithBogus: {
-        parameters: {
             query?: {
                 numberOfUsers?: number;
                 numberOfSpaces?: number;
@@ -343,7 +317,7 @@ export interface operations {
     Spaces_GetByUser: {
         parameters: {
             query?: {
-                userId?: string;
+                userGuid?: string;
             };
             header?: never;
             path?: never;
@@ -361,12 +335,12 @@ export interface operations {
             };
         };
     };
-    Users_GetUserByIds: {
+    Users_GetUserByGuid: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                userId: string;
+                userGuid: string;
             };
             cookie?: never;
         };

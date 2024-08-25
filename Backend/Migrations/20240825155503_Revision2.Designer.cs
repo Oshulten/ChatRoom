@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(ChatroomDatabaseContext))]
-    [Migration("20240825153228_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240825155503_Revision2")]
+    partial class Revision2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

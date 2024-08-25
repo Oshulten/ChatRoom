@@ -32,33 +32,33 @@ export async function authenticateUser(request: Authentication) {
     throw new Error("Username or password is invalid");
 }
 
-export async function getSpacesByUserId(userId: string | undefined) {
-    if (!userId) throw Error("An id must be provided")
+export async function getSpacesByUserId(userGuid: string | undefined) {
+    if (!userGuid) throw Error("An id must be provided")
 
     const { data } = await client.GET("/api/Spaces", {
         params: {
-            query: { userId }
+            query: { userGuid }
         }
     });
 
     return data as Space[];
 }
 
-export async function getUserByUserId(userId: string) {
-    const { data } = await client.GET("/api/Users/{userId}", {
+export async function getUserByUserId(userGuid: string) {
+    const { data } = await client.GET("/api/Users/{userGuid}", {
         params: {
-            path: { userId }
+            path: { userGuid }
         }
     });
 
     return data as User;
 }
 
-export async function getLastMessagesInSpace(spaceId: string, getBeforeDate: Date, numberOfMessages: number) {
+export async function getLastMessagesInSpace(spaceGuid: string, getBeforeDate: Date, numberOfMessages: number) {
     const { data } = await client.GET("/api/Messages", {
         params: {
             query: {
-                spaceId: spaceId,
+                spaceGuid: spaceGuid,
                 messagesBefore: getBeforeDate.toISOString(),
                 numberOfMessages: numberOfMessages,
             }
@@ -68,10 +68,10 @@ export async function getLastMessagesInSpace(spaceId: string, getBeforeDate: Dat
     return data as unknown as MessageSequence;
 }
 
-export async function postMessage({ content, spaceId, userId }: MessagePost) {
-    console.log({ content, spaceId, userId });
+export async function postMessage({ content, spaceGuid, senderGuid }: MessagePost) {
+    console.log({ content, spaceId: spaceGuid, userId: senderGuid });
     const { data } = await client.POST("/api/Messages", {
-        body: { content, spaceId, userId }
+        body: { content, spaceId: spaceGuid, userId: senderGuid }
     });
     return data as Message;
 }

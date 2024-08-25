@@ -12,7 +12,7 @@ interface Props {
 export default function AuthenticateForm({ onSuccess, submitLabel, errorMessage }: Props) {
     const form = useForm<Authentication>({
         defaultValues: {
-            username: "",
+            alias: "",
             password: ""
         }
     });
@@ -23,7 +23,7 @@ export default function AuthenticateForm({ onSuccess, submitLabel, errorMessage 
         <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="p-4">
                 <input
-                    {...form.register("username", {
+                    {...form.register("alias", {
                         required: "Username is required",
                         minLength: { value: 3, message: "Username must be longer than 3 characters" }
                     })}

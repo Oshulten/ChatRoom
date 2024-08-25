@@ -19,7 +19,7 @@ export default function Dashboard() {
   const router = useRouter();
 
   const spacesQuery = useQuery({
-    queryKey: ["dashboard-spaces", currentUser!.id],
+    queryKey: ["dashboard-spaces", currentUser!.guid],
     queryFn: (context) => getSpacesByUserId(context.queryKey[1]),
     enabled: currentUser !== undefined
   });
@@ -31,7 +31,7 @@ export default function Dashboard() {
   }
 
   const goToSpace = (space: Space) => {
-    context.currentSpace = spacesQuery.data!.find(querySpace => querySpace.id == space.id)!;
+    context.currentSpace = spacesQuery.data!.find(querySpace => querySpace.guid == space.guid)!;
     router.navigate({ to: "/space" })
   };
 
@@ -43,7 +43,7 @@ export default function Dashboard() {
     <h1>{`Hello ${currentUser.alias}!`}</h1>
     {spacesQuery.data && spacesQuery.data.map(space =>
       <button
-        key={space.id}
+        key={space.guid}
         onClick={() => goToSpace(space)}>
         {space.alias}
       </button>)}

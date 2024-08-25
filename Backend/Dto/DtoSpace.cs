@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using Backend.Models;
 
-namespace Backend.Models.Space;
+namespace Backend.Dto;
 
 public record DtoSpace
 (
-    [Length(Validation.AliasMinLength, Validation.AliasMaxLength)]
+    [Length(Restrictions.AliasMinLength, Restrictions.AliasMaxLength)]
     string Alias,
     List<Guid> MemberGuids
 );

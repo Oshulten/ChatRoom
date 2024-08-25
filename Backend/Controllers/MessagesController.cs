@@ -1,6 +1,6 @@
+using Backend.Database;
+using Backend.Dto;
 using Backend.Models;
-using Backend.Models.Message;
-using Backend.Models.User;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;

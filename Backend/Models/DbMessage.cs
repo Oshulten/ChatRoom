@@ -1,7 +1,7 @@
-using Backend.Models.Space;
-using Backend.Models.User;
+using Backend.Database;
+using Backend.Dto;
 
-namespace Backend.Models.Message;
+namespace Backend.Models;
 
 public class DbMessage(DbUser sender, DateTime postedAt, string content, DbSpace space)
 {
@@ -28,6 +28,4 @@ public class DbMessage(DbUser sender, DateTime postedAt, string content, DbSpace
 
     public static explicit operator DtoMessage(DbMessage post) =>
         new(post.Content, post.Space.Guid, post.Sender.Guid, post.PostedAt);
-
-
 }

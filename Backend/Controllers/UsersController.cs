@@ -1,5 +1,5 @@
-using Backend.Models;
-using Backend.Models.User;
+using Backend.Database;
+using Backend.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;

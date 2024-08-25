@@ -1,6 +1,6 @@
 namespace Backend.Models;
 
-public class Validation
+public class Restrictions
 {
     public const int AliasMinLength = 3;
     public const int AliasMaxLength = 25;

@@ -1,7 +1,7 @@
 using NSwag.AspNetCore;
-using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Backend.Database;
 
 const string applicationTitle = "ChatroomApi";
 const string version = "v1";

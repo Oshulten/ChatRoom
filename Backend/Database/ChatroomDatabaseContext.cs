@@ -1,10 +1,8 @@
-using Backend.Models.Message;
-using Backend.Models.Space;
-using Backend.Models.User;
+using Backend.Models;
 using Bogus;
 using Microsoft.EntityFrameworkCore;
 
-namespace Backend.Models;
+namespace Backend.Database;
 
 public class ChatroomDatabaseContext(DbContextOptions options) : DbContext(options)
 {
@@ -52,17 +50,18 @@ public class ChatroomDatabaseContext(DbContextOptions options) : DbContext(optio
         };
         users.Add(adminUser);
 
-        var userGuids = users.Select(user => user.Guid).ToArray();
-
         var spaces = new Faker<DbSpace>()
             .RuleFor(o => o.Alias, f => f.Internet.DomainWord())
-            .RuleFor(o => o.Members, f => f.Random.ListItems<DbUser>(users, users.Count))
+            .RuleFor(o => o.Members, f => f.Random.ListItems(users))
             .Generate(numberOfSpaces);
 
-        var spaceGuids = spaces.Select(space => space.Guid);
+        foreach (var space in spaces)
+        {
+            space.Members.Add(adminUser);
+        }
 
         var messages = new Faker<DbMessage>()
-            .RuleFor(o => o.Sender, f => f.Random.ListItem<DbUser>(users))
+            .RuleFor(o => o.Sender, f => f.Random.ListItem(users))
             .RuleFor(o => o.PostedAt, f => f.Date.Between(new DateTime(1991, 04, 26), DateTime.Now))
             .RuleFor(o => o.Content, f => f.Lorem.Paragraph())
             .RuleFor(o => o.Space, f => f.Random.ListItem(spaces))

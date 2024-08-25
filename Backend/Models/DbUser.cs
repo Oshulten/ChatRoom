@@ -1,4 +1,6 @@
-namespace Backend.Models.User;
+using Backend.Dto;
+
+namespace Backend.Models;
 
 public class DbUser(string alias, string password, bool admin, DateTime joinedAt)
 {

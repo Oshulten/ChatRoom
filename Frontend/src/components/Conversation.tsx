@@ -18,7 +18,7 @@ export default function Conversation() {
 
     const { data, error, isPending, isError, fetchNextPage, hasNextPage } = useInfiniteQuery({
         queryKey: ["messageSequence"],
-        queryFn: ({ pageParam }) => getLastMessagesInSpace(currentSpace!.id, pageParam, messagesPerFetch),
+        queryFn: ({ pageParam }) => getLastMessagesInSpace(currentSpace!.guid, pageParam, messagesPerFetch),
         initialPageParam: new Date(),
         getNextPageParam: (lastPage: MessageSequence) => lastPage.earliest ? null : new Date(lastPage.fromDate),
         enabled: (currentSpace != undefined && currentUser != undefined),
@@ -27,7 +27,7 @@ export default function Conversation() {
 
     const messageMutation = useMutation({
         mutationKey: ["messageSequence"],
-        mutationFn: (message: string) => postMessage({ content: message, spaceId: currentSpace!.id, userId: currentUser!.id }),
+        mutationFn: (message: string) => postMessage({ content: message, spaceGuid: currentSpace!.guid, senderGuid: currentUser!.guid }),
         onSuccess: (data) => {
             queryClient.setQueryData(["messageSequence"], (currentData: InfiniteData<MessageSequence, unknown>) => {
                 const firstPage: MessageSequence = { ...currentData.pages[0]!, messages: [data, ...currentData.pages[0]!.messages] };
@@ -60,13 +60,13 @@ export default function Conversation() {
     if (data) {
         const sections = data.pages.map(sequence => {
             return sequence.messages.map(message => {
-                const user = sequence.users.find(user => user.id == message.userId);
+                const user = sequence.users.find(user => user.guid == message.senderGuid);
 
                 if (user == undefined) {
                     return;
                 }
 
-                return <div key={message.postedAt} className={`chat chat-${(user.id == currentUser.id) ? 'end' : 'start'}`}>
+                return <div key={message.postedAt} className={`chat chat-${(user.guid == currentUser.guid) ? 'end' : 'start'}`}>
                     <div className="chat-image avatar">
                         <div className="w-10 rounded-full">
                             <img
