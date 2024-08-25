@@ -8,7 +8,10 @@ const string version = "v1";
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ChatroomDatabaseContext>(options => options.UseSqlite(applicationTitle));
+builder.Configuration.AddUserSecrets<Program>();
+builder.Services.AddDbContext<ChatroomDatabaseContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
