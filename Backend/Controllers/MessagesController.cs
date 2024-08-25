@@ -7,15 +7,15 @@ namespace Backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class MessagesController(ChatroomDatabaseContext db) : ControllerBase
+public class MessagesController(ChatroomDatabaseContext context) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DtoMessageSequence))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<DtoMessageSequence> GetBySpaceAndDate([FromQuery] Guid spaceId, [FromQuery] DateTime messagesBefore, [FromQuery] int numberOfMessages)
+    public ActionResult<DtoMessageSequence> GetBySpaceAndDate([FromQuery] Guid spaceGuid, [FromQuery] DateTime messagesBefore, [FromQuery] int numberOfMessages)
     {
-        var messages = db.Messages
-                            .Where(message => message.SpaceId == spaceId)
+        var messages = context.Messages
+                            .Where(message => message.Space.Guid == spaceGuid)
                             .OrderByDescending(message => message.PostedAt)
                             .Where(message => message.PostedAt < messagesBefore)
                             .Take(numberOfMessages)
@@ -28,9 +28,9 @@ public class MessagesController(ChatroomDatabaseContext db) : ControllerBase
         }
 
         var distinctUsers = messages
-                        .Select(message => message.UserId)
+                        .Select(message => message.SenderGuid)
                         .Distinct()
-                        .Select(id => db.Users.FirstOrDefault(user => user.Id == id));
+                        .Select(guid => context.Users.FirstOrDefault(user => user.Guid == guid));
 
         if (distinctUsers.Any(user => user is null))
         {
@@ -56,9 +56,9 @@ public class MessagesController(ChatroomDatabaseContext db) : ControllerBase
     [HttpPost]
     public ActionResult<DtoMessage> PostMessage(DtoMessagePost post)
     {
-        var createdMessage = (DbMessage)post;
-        db.Messages.Add(createdMessage);
-        db.SaveChanges();
+        var createdMessage = DbMessage.MessageFromDtoMessage(post, context);
+        context.Messages.Add(createdMessage);
+        context.SaveChanges();
         return (DtoMessage)createdMessage;
     }
 }

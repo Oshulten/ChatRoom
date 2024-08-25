@@ -17,7 +17,7 @@ namespace Backend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<DtoUser> CreateUser(DtoAuthentication request)
         {
-            var existingUser = db.Users.FirstOrDefault(user => user.Alias == request.Username);
+            var existingUser = db.Users.FirstOrDefault(user => user.Alias == request.Alias);
 
             if (existingUser is not null)
             {
@@ -35,7 +35,7 @@ namespace Backend.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<DtoUser> AuthorizeUser(DtoAuthentication request)
         {
-            var existingUser = db.Users.FirstOrDefault(user => user.Alias == request.Username && user.Password == request.Password);
+            var existingUser = db.Users.FirstOrDefault(user => user.Alias == request.Alias && user.Password == request.Password);
 
             if (existingUser is null)
             {

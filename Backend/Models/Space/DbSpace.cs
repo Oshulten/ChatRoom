@@ -1,12 +1,18 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Models.User;
+
 namespace Backend.Models.Space;
 
-public class DbSpace(string alias, Guid[] userIds)
+public class DbSpace(string alias, List<DbUser> members)
 {
-    public Guid Id { get; init; } = Guid.NewGuid();
+    public Guid Guid { get; init; } = Guid.NewGuid();
     public string Alias { get; set; } = alias;
-    public Guid[] UserIds { get; set; } = userIds;
+    public List<DbUser> Members { get; set; } = members;
 
-    public DbSpace() : this("An empty room", [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()]) { }
+    public static readonly DbSpace Null = new("Null", []);
 
-    public static explicit operator DbSpace(DtoSpace post) => new(post.Alias, post.UserIds);
+    public DbSpace() : this(Null.Alias, Null.Members) { }
+
+    public static DbSpace SpaceFromDtoSpace(DtoSpace dto, ChatroomDatabaseContext context) =>
+        new(dto.Alias, [.. context.Users.Where(user => dto.MemberGuids.Contains(user.Guid))]);
 }

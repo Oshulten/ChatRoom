@@ -9,9 +9,9 @@ namespace Backend.Controllers
     public class SpacesController(ChatroomDatabaseContext db) : ControllerBase
     {
         [HttpGet]
-        public IEnumerable<DbSpace> GetByUser(Guid userId)
+        public IEnumerable<DbSpace> GetByUser(Guid userGuid)
         {
-            return db.Spaces.Where(space => space.UserIds.Contains(userId));
+            return db.Spaces.Where(space => space.Members.Select(member => member.Guid).Contains(userGuid));
         }
     }
 }

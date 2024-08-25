@@ -8,5 +8,5 @@ public record DtoMessageSequence
     DateTime ToDate,
     bool Earliest,
     List<DtoMessage> Messages,
-    List<DtoUser> Users
+    List<DtoUser> Senders
 );

@@ -6,5 +6,5 @@ public record DtoSpace
 (
     [Length(Validation.AliasMinLength, Validation.AliasMaxLength)]
     string Alias,
-    Guid[] UserIds
+    List<Guid> MemberGuids
 );

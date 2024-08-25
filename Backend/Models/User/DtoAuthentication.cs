@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 namespace Backend.Models.User;
 
 public record DtoAuthentication(
-    string Username,
+    string Alias,
     string Password
 );

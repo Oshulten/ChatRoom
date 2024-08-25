@@ -1,25 +1,33 @@
+using Backend.Models.Space;
+using Backend.Models.User;
+
 namespace Backend.Models.Message;
 
-public class DbMessage(Guid userId, DateTime postedAt, string content, Guid chatSpace)
+public class DbMessage(DbUser sender, DateTime postedAt, string content, DbSpace space)
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
-    public Guid UserId { get; set; } = userId;
+    public Guid Guid { get; set; } = Guid.NewGuid();
+    public DbUser Sender { get; set; } = sender;
     public DateTime PostedAt { get; set; } = postedAt;
     public string Content { get; set; } = content;
-    public Guid SpaceId { get; set; } = chatSpace;
+    public DbSpace Space { get; set; } = space;
 
-    public DbMessage() : this(Guid.NewGuid(), DateTime.Now, "A message", Guid.NewGuid()) { }
+    public static readonly DbMessage Null = new(DbUser.Null, DateTime.Now, string.Empty, DbSpace.Null);
 
-    public static explicit operator DbMessage(DtoMessage post) => new(
-        post.UserId, DateTime.Now, post.Content, post.SpaceId
-    );
+    public DbMessage() : this(Null.Sender, Null.PostedAt, Null.Content, Null.Space) { }
 
-    public static explicit operator DbMessage(DtoMessagePost post) => new(
-        post.UserId, DateTime.Now, post.Content, post.SpaceId
-    );
+    public static DbMessage MessageFromDtoMessage(DtoMessagePost dto, ChatroomDatabaseContext context)
+    {
+        var user = context.Users.FirstOrDefault(user => user.Guid == dto.SenderGuid)
+            ?? throw new Exception("User guid on dto must map to an existing user");
 
-    public static explicit operator DtoMessage(DbMessage post) => new(
-        post.Content, post.SpaceId, post.UserId, post.PostedAt
-    );
+        var space = context.Spaces.FirstOrDefault(space => space.Guid == dto.SpaceGuid)
+            ?? throw new Exception("Space guid on dto must map to an existing space");
+
+        return new(user, DateTime.Now, dto.Content, space);
+    }
+
+    public static explicit operator DtoMessage(DbMessage post) =>
+        new(post.Content, post.Space.Guid, post.Sender.Guid, post.PostedAt);
+
 
 }
