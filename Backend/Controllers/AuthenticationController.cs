@@ -28,7 +28,7 @@ namespace Backend.Controllers
             var newUser = (DbUser)request;
             db.Users.Add(newUser);
             db.SaveChanges();
-            return (DtoUser)newUser;
+            return CreatedAtAction(null, (DtoUser)newUser);
         }
 
         [HttpPost("authorize-user")]

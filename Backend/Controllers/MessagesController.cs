@@ -15,12 +15,12 @@ public class MessagesController(ChatroomDatabaseContext context) : ControllerBas
     public ActionResult<DtoMessageSequence> GetBySpaceAndDate([FromQuery] Guid spaceGuid, [FromQuery] DateTime messagesBefore, [FromQuery] int numberOfMessages)
     {
         var messages = context.Messages
-                            .Where(message => message.Space.Guid == spaceGuid)
-                            .OrderByDescending(message => message.PostedAt)
-                            .Where(message => message.PostedAt < messagesBefore)
-                            .Take(numberOfMessages)
-                            .Select(message => (DtoMessage)message)
-                            .ToList();
+            .Where(message => message.Space.Guid == spaceGuid)
+            .OrderByDescending(message => message.PostedAt)
+            .Where(message => message.PostedAt < messagesBefore)
+            .Take(numberOfMessages)
+            .Select(message => (DtoMessage)message)
+            .ToList();
 
         if (messages.Count == 0)
         {
@@ -28,9 +28,9 @@ public class MessagesController(ChatroomDatabaseContext context) : ControllerBas
         }
 
         var distinctUsers = messages
-                        .Select(message => message.SenderGuid)
-                        .Distinct()
-                        .Select(guid => context.Users.FirstOrDefault(user => user.Guid == guid));
+            .Select(message => message.SenderGuid)
+            .Distinct()
+            .Select(guid => context.Users.FirstOrDefault(user => user.Guid == guid));
 
         if (distinctUsers.Any(user => user is null))
         {
