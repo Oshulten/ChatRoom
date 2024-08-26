@@ -12,22 +12,33 @@ public class MessagesController(ChatroomDatabaseContext context) : ControllerBas
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DtoMessageSequence))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<DtoMessageSequence> GetBySpaceAndDate([FromQuery] Guid spaceGuid, [FromQuery] DateTime messagesBefore, [FromQuery] int numberOfMessages)
+    public ActionResult<DtoMessageSequence> GetBySpaceAndDate(DtoGetBySpaceAndDate dto)
     {
+        if (context.SpaceByGuid(dto.SpaceGuid) is null)
+        {
+            return NotFound($"A space with guid {dto.SpaceGuid} doesn't exist");
+        }
+
         var messages = context.Messages
-            .Where(message => message.Space.Guid == spaceGuid)
+            .Where(message => message.Space.Guid == dto.SpaceGuid)
             .OrderByDescending(message => message.PostedAt)
-            .Where(message => message.PostedAt < messagesBefore)
-            .Take(numberOfMessages)
+            .ToList();
+
+        if (dto.MessagesBefore is not null)
+        {
+            messages = messages.Where(message => message.PostedAt < dto.MessagesBefore).ToList();
+        }
+
+        if (dto.NumberOfMessages is not null)
+        {
+            messages = messages.Take(dto.NumberOfMessages ?? 0).ToList();
+        }
+
+        var dtoMessages = messages
             .Select(message => (DtoMessage)message)
             .ToList();
 
-        if (messages.Count == 0)
-        {
-            return NotFound();
-        }
-
-        var distinctUsers = messages
+        var distinctUsers = dtoMessages
             .Select(message => message.SenderGuid)
             .Distinct()
             .Select(guid => context.Users.FirstOrDefault(user => user.Guid == guid));
@@ -39,16 +50,24 @@ public class MessagesController(ChatroomDatabaseContext context) : ControllerBas
 
         var dtoUsers = distinctUsers.Select(user => (DtoUser)user!);
 
-        var earliestMessage = messages[^1];
-        var lastMessage = messages[0];
-        var earliest = earliestMessage == messages[0];
-        if (messages.Count < numberOfMessages) earliest = true;
+        var earliestMessage = dtoMessages[^1];
+        var lastMessage = dtoMessages[0];
+        var earliest = earliestMessage == dtoMessages[0];
+
+        if (dto.NumberOfMessages is null)
+        {
+            earliest = true;
+        }
+        else
+        {
+            earliest = dtoMessages.Count < dto.NumberOfMessages;
+        }
 
         return new DtoMessageSequence(
             earliestMessage.PostedAt,
             lastMessage.PostedAt,
             earliest,
-            messages,
+            dtoMessages,
             dtoUsers.ToList()
         );
     }

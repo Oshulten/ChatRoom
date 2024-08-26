@@ -28,6 +28,7 @@ namespace Backend.Controllers
             var newUser = (DbUser)request;
             db.Users.Add(newUser);
             db.SaveChanges();
+
             return CreatedAtAction(null, (DtoUser)newUser);
         }
 

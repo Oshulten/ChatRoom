@@ -3,10 +3,9 @@ using Backend.Models;
 
 namespace Backend.Dto;
 
-public record DtoSpace
+public record DtoSpacePost
 (
     [Length(Restrictions.AliasMinLength, Restrictions.AliasMaxLength)]
-    string Alias,
-    Guid Guid,
-    List<Guid> MemberGuids
-);
+    string Alias
+)
+{ public DtoSpacePost() : this(string.Empty) { } };

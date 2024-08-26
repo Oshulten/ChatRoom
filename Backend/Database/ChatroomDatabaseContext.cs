@@ -28,6 +28,15 @@ public class ChatroomDatabaseContext(DbContextOptions options) : DbContext(optio
             .HasKey("Id");
     }
 
+    public DbSpace? SpaceByGuid(Guid spaceGuid) =>
+        Spaces.FirstOrDefault(space => space.Guid == spaceGuid);
+
+    public DbUser? UserByGuid(Guid userGuid) =>
+        Users.FirstOrDefault(user => user.Guid == userGuid);
+
+    public IEnumerable<DbSpace> SpacesByUserGuidMembership(Guid userGuid) =>
+        Spaces.Where(space => space.Members.Select(member => member.Guid).Contains(userGuid));
+
     public void SeedDataWithBogus(int numberOfUsers, int numberOfSpaces, int numberOfMessages)
     {
         Messages.RemoveRange(Messages);

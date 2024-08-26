@@ -8,4 +8,5 @@ namespace Backend.Dto;
 public record DtoAuthentication(
     string Alias,
     string Password
-);
+)
+{ public DtoAuthentication() : this("", "") { } };
