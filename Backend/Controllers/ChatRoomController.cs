@@ -53,8 +53,14 @@ namespace Backend.Controllers
             return Ok(dtoUser);
         }
 
-        //CreateSpace (Post)
-        //DtoSpacePost => DtoSpace (side effect)
+        [HttpPost("create-space")]
+        [ProducesResponseType(201, Type = typeof(DtoSpace))]
+        public ActionResult<DtoUser> CreateSpace(DtoSpacePost post)
+        {
+            var space = new Space(post.Alias, []);
+            var dtoSpace = new DtoSpace(space.Alias, space.Guid, [.. space.Members.Select(member => member.Guid)]);
+            return CreatedAtAction(null, dtoSpace);
+        }
 
         //AddUserToSpace (Put)
         //DtoUser user, Guid spaceGuid => DtoSpace (side effect)
