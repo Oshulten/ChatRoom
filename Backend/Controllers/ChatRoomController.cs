@@ -65,6 +65,33 @@ namespace Backend.Controllers
 
         //AddUserToSpace (Put)
         //DtoUser user, Guid spaceGuid => DtoSpace (side effect)
+        [HttpPut("add-user-to-space/{spaceGuid}")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(DtoSpace))]
+        public ActionResult<DtoSpace> AddUserToSpace(Guid spaceGuid, DtoUser dtoUser)
+        {
+            var existingSpace = context.Spaces.FirstOrDefault(space => space.Guid == spaceGuid);
+
+            if (existingSpace is null)
+            {
+                return NotFound($"A space with guid {spaceGuid} does not exist");
+            }
+
+            var existingUser = context.Users.FirstOrDefault(user => user.Guid == dtoUser.Guid);
+
+            if (existingUser is null)
+            {
+                return NotFound($"A user with guid {dtoUser.Guid} does not exist");
+            }
+
+            existingSpace.Members.Add(existingUser);
+
+            context.SaveChanges();
+
+            var dtoSpace = new DtoSpace(existingSpace.Alias, existingSpace.Guid, [.. existingSpace.Members.Select(member => member.Guid)]);
+
+            return Ok(dtoSpace);
+        }
 
         //RemoveUserFromSpace (Put)
         //Guid userGuid, Guid spaceGuid => DtoSpace  (side effect)
