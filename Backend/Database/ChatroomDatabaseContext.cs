@@ -29,40 +29,6 @@ public class ChatroomDatabaseContext(DbContextOptions options) : DbContext(optio
             .HasKey("Id");
     }
 
-    public Space? SpaceByGuid(Guid spaceGuid) =>
-        Spaces.FirstOrDefault(space => space.Guid == spaceGuid);
-
-    public User? UserByGuid(Guid userGuid) =>
-        Users.FirstOrDefault(user => user.Guid == userGuid);
-
-    public IEnumerable<Space> SpacesByUserGuidMembership(Guid userGuid) =>
-        Spaces.Where(space => space.Members.Select(member => member.Guid).Contains(userGuid));
-
-    //Casting
-    public DtoUser DtoUserFromUser(User user) =>
-        new(user.Guid, user.Alias, user.JoinedAt, user.Admin);
-
-    public User UserFromDtoAuthentication(DtoAuthentication auth) =>
-        new(auth.Alias, auth.Password, false, DateTime.Now);
-
-    public async Task<User?> GetUserFromAuthentication(DtoAuthentication auth) =>
-        await Users.FirstOrDefaultAsync(user =>
-            user.Alias == auth.Alias &&
-            user.Password == auth.Alias);
-
-    public async Task<User?> CreateUser(DtoAuthentication auth)
-    {
-        var existingUser = Users.FirstOrDefault(user =>
-            user.Alias == auth.Alias);
-
-        if (existingUser is not null) return null;
-
-        await Users.AddAsync(existingUser!);
-        await SaveChangesAsync();
-
-        return existingUser;
-    }
-
     public void SeedData(int numberOfUsers, int numberOfSpaces, int numberOfMessages)
     {
         Messages.RemoveRange(Messages);

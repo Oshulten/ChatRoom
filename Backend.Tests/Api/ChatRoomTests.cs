@@ -13,21 +13,12 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
 {
     private readonly HttpClient _client = factory.CreateClient();
 
-    public async Task<HttpResponseMessage> CreateUserByAuthResponse(DtoAuthentication auth) =>
-        await _client.PostAsync("api/Chatroom", JsonContent.Create(auth));
-
-    public async Task<DtoUser> CreateUserByAuth(DtoAuthentication auth)
-    {
-        var response = await CreateUserByAuthResponse(auth);
-        return (await response.Content.ReadFromJsonAsync<DtoUser>())!;
-    }
-
     [Fact]
     [Trait("Outcome", "Happy")]
     public async Task CreateNewUserByAuthShouldReturn201Created()
     {
         var auth = DtoAuthenticationFaker.Generate(1)[0];
-        var response = await CreateUserByAuthResponse(auth);
+        var response = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }

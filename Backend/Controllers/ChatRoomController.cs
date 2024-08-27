@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Backend.Database;
 using Backend.Dto;
+using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -15,29 +16,26 @@ namespace Backend.Controllers
         //CreateUserByAuth (Post)
         //DtoAuthorization auth => DtoUser (side effect)
         //Tested (3)
-        [HttpPost]
-        public async Task<ActionResult<DtoUser>> CreateUserByAuth(DtoAuthentication auth)
+        [HttpPost("create-user")]
+        public ActionResult<DtoUser> CreateUserByAuth(DtoAuthentication auth)
         {
-            var createdUser = await context.CreateUser(auth);
+            var existingUser = context.Users.FirstOrDefault(user => user.Alias == auth.Alias);
 
-            if (createdUser is null)
-                return BadRequest($"A user with alias {auth.Alias} already exists.");
+            if (existingUser is null)
+            {
+                var user = new User(auth.Alias, auth.Password, false, DateTime.Now);
+                context.Users.Add(user);
+                context.SaveChanges();
 
-            return CreatedAtAction(null, context.DtoUserFromUser(createdUser));
+                var dtoUser = new DtoUser(user.Guid, user.Alias, user.JoinedAt, user.Admin);
+                return CreatedAtAction(null, dtoUser);
+            }
+
+            return BadRequest($"A user with alias {auth.Alias} already exists.");
         }
 
         //GetUserByAuth (Get)
         //DtoAuthorization auth => DtoUser
-        [HttpPost]
-        public async Task<ActionResult<DtoUser>> GetUserByAuth(DtoAuthentication auth)
-        {
-            var existingUser = await context.GetUserFromAuthentication(auth);
-
-            if (existingUser is null)
-                return BadRequest($"A user with alias {auth.Alias} and password {auth.Password} cannot be found.");
-
-            return Ok(context.DtoUserFromUser(existingUser));
-        }
 
         //CreateSpace (Post)
         //DtoSpacePost => DtoSpace (side effect)
