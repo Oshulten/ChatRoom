@@ -9,7 +9,7 @@ public class SeedDatabaseController(ChatroomDatabaseContext context) : Controlle
     [HttpPost]
     public IActionResult SeedData(int numberOfUsers, int numberOfSpaces, int numberOfMessages)
     {
-        context.SeedDataWithBogus(numberOfUsers, numberOfSpaces, numberOfMessages);
+        context.SeedData(numberOfUsers, numberOfSpaces, numberOfMessages);
         return Ok();
     }
 }

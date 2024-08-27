@@ -55,10 +55,12 @@ export async function getUserByUserId(userGuid: string) {
 }
 
 export async function getLastMessagesInSpace(spaceGuid: string, getBeforeDate: Date, numberOfMessages: number) {
-    const { data } = await client.GET("/api/Messages", {
+    const { data } = await client.GET("/api/Messages/{spaceGuid}", {
         params: {
-            query: {
+            path: {
                 spaceGuid: spaceGuid,
+            },
+            query: {
                 messagesBefore: getBeforeDate.toISOString(),
                 numberOfMessages: numberOfMessages,
             }

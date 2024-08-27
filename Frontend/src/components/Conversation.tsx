@@ -24,7 +24,6 @@ export default function Conversation() {
         enabled: (currentSpace != undefined && currentUser != undefined),
     });
 
-
     const messageMutation = useMutation({
         mutationKey: ["messageSequence"],
         mutationFn: (message: string) => postMessage({ content: message, spaceGuid: currentSpace!.guid, senderGuid: currentUser!.guid }),
