@@ -13,10 +13,10 @@ namespace Backend.Controllers
     [Route("api/[controller]")]
     public class ChatroomController(ChatroomDatabaseContext context) : ControllerBase
     {
-        //CreateUserByAuth (Post)
-        //DtoAuthorization auth => DtoUser (side effect)
         //Tested (3)
         [HttpPost("create-user")]
+        [ProducesResponseType(201, Type = typeof(DtoUser))]
+        [ProducesResponseType(400)]
         public ActionResult<DtoUser> CreateUserByAuth(DtoAuthentication auth)
         {
             var existingUser = context.Users.FirstOrDefault(user => user.Alias == auth.Alias);
@@ -34,8 +34,23 @@ namespace Backend.Controllers
             return BadRequest($"A user with alias {auth.Alias} already exists.");
         }
 
-        //GetUserByAuth (Get)
-        //DtoAuthorization auth => DtoUser
+        [HttpPost("get-user-by-auth")]
+        [ProducesResponseType(200, Type = typeof(DtoUser))]
+        [ProducesResponseType(400)]
+        public ActionResult<DtoUser> GetUserByAuth(DtoAuthentication auth)
+        {
+            var matchingUser = context.Users.FirstOrDefault(user =>
+                user.Alias == auth.Alias &&
+                user.Password == auth.Password);
+
+            if (matchingUser is null)
+            {
+                return BadRequest($"A user with that alias and password does not exist");
+            }
+
+            var dtoUser = new DtoUser(matchingUser.Guid, matchingUser.Alias, matchingUser.JoinedAt, matchingUser.Admin);
+            return Ok(dtoUser);
+        }
 
         //CreateSpace (Post)
         //DtoSpacePost => DtoSpace (side effect)
