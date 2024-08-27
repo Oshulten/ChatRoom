@@ -36,7 +36,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Messages": {
+    "/api/Messages/{spaceGuid}": {
         parameters: {
             query?: never;
             header?: never;
@@ -44,6 +44,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["Messages_GetBySpaceAndDate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
         put?: never;
         post: operations["Messages_PostMessage"];
         delete?: never;
@@ -75,8 +91,24 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["Spaces_GetByUser"];
+        get: operations["Spaces_GetByUserGuid"];
         put?: never;
+        post: operations["Spaces_PostSpace"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Spaces/{spaceGuid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Spaces_GetByGuid"];
+        put: operations["Spaces_AddExistingMemberToSpace"];
         post?: never;
         delete?: never;
         options?: never;
@@ -151,20 +183,14 @@ export interface components {
             /** Format: guid */
             senderGuid?: string;
         };
-        DbSpace: {
+        DtoSpace: {
+            alias?: string;
             /** Format: guid */
             guid?: string;
-            alias?: string;
-            members?: components["schemas"]["DbUser"][];
+            memberGuids?: string[];
         };
-        DbUser: {
-            /** Format: guid */
-            guid?: string;
+        DtoSpacePost: {
             alias?: string;
-            password?: string;
-            /** Format: date-time */
-            joinedAt?: string;
-            admin?: boolean;
         };
     };
     responses: never;
@@ -240,12 +266,13 @@ export interface operations {
     Messages_GetBySpaceAndDate: {
         parameters: {
             query?: {
-                spaceGuid?: string;
-                messagesBefore?: string;
-                numberOfMessages?: number;
+                messagesBefore?: string | null;
+                numberOfMessages?: number | null;
             };
             header?: never;
-            path?: never;
+            path: {
+                spaceGuid: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -314,7 +341,7 @@ export interface operations {
             };
         };
     };
-    Spaces_GetByUser: {
+    Spaces_GetByUserGuid: {
         parameters: {
             query?: {
                 userGuid?: string;
@@ -330,7 +357,76 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DbSpace"][];
+                    "application/json": components["schemas"]["DtoSpace"][];
+                };
+            };
+        };
+    };
+    Spaces_PostSpace: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoSpacePost"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoSpace"];
+                };
+            };
+        };
+    };
+    Spaces_GetByGuid: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                spaceGuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoSpace"];
+                };
+            };
+        };
+    };
+    Spaces_AddExistingMemberToSpace: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                spaceGuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoUser"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/octet-stream": string;
                 };
             };
         };

@@ -34,7 +34,5 @@ public class MessagesTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         var space = new DtoSpacePost(Guid.NewGuid().ToString());
         var response = await _client.PostAsync("/api/Spaces", JsonContent.Create(space));
         var spaceDto = await response.Content.ReadFromJsonAsync<DtoSpace>();
-
-
     }
 }
