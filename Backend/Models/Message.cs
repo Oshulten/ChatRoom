@@ -3,19 +3,19 @@ using Backend.Dto;
 
 namespace Backend.Models;
 
-public class DbMessage(DbUser sender, DateTime postedAt, string content, DbSpace space)
+public class Message(User sender, DateTime postedAt, string content, Space space)
 {
     public Guid Guid { get; set; } = Guid.NewGuid();
-    public DbUser Sender { get; set; } = sender;
+    public User Sender { get; set; } = sender;
     public DateTime PostedAt { get; set; } = postedAt;
     public string Content { get; set; } = content;
-    public DbSpace Space { get; set; } = space;
+    public Space Space { get; set; } = space;
 
-    public static readonly DbMessage Null = new(DbUser.Null, DateTime.Now, string.Empty, DbSpace.Null);
+    public static readonly Message Null = new(User.Null, DateTime.Now, string.Empty, Space.Null);
 
-    public DbMessage() : this(Null.Sender, Null.PostedAt, Null.Content, Null.Space) { }
+    public Message() : this(Null.Sender, Null.PostedAt, Null.Content, Null.Space) { }
 
-    public static DbMessage MessageFromDtoMessage(DtoMessagePost dto, ChatroomDatabaseContext context)
+    public static Message MessageFromDtoMessage(DtoMessagePost dto, ChatroomDatabaseContext context)
     {
         var user = context.Users.FirstOrDefault(user => user.Guid == dto.SenderGuid)
             ?? throw new Exception("User guid on dto must map to an existing user");
@@ -26,6 +26,6 @@ public class DbMessage(DbUser sender, DateTime postedAt, string content, DbSpace
         return new(user, DateTime.Now, dto.Content, space);
     }
 
-    public static explicit operator DtoMessage(DbMessage post) =>
+    public static explicit operator DtoMessage(Message post) =>
         new(post.Content, post.Space.Guid, post.Sender.Guid, post.PostedAt);
 }

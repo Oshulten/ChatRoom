@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Backend.Database;
 using Backend.Dto;
 using Backend.Models;
@@ -25,7 +21,7 @@ namespace Backend.Controllers
                 return BadRequest();
             }
 
-            var newUser = (DbUser)request;
+            var newUser = (User)request;
             db.Users.Add(newUser);
             db.SaveChanges();
 

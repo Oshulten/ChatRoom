@@ -17,23 +17,22 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{spaceGuid}")]
-        public ActionResult<DtoSpace> GetByGuid(string spaceGuid)
+        public ActionResult<DtoSpace> GetByGuid(Guid spaceGuid)
         {
-            var guid = Guid.Parse(spaceGuid);
-            var space = db.SpaceByGuid(guid);
+            var space = db.SpaceByGuid(spaceGuid);
 
             if (space is null)
             {
-                return NotFound(SpaceNotFound(guid));
+                return NotFound(SpaceNotFound(spaceGuid));
             }
 
-            return (DtoSpace)db.SpaceByGuid(guid)!;
+            return (DtoSpace)db.SpaceByGuid(spaceGuid)!;
         }
 
         [HttpPost]
         public ActionResult<DtoSpace> PostSpace(DtoSpacePost space)
         {
-            var dbSpace = (DbSpace)space;
+            var dbSpace = (Space)space;
 
             db.Spaces.Add(dbSpace);
             db.SaveChanges();

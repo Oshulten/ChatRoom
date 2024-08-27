@@ -9,29 +9,29 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class MessagesController(ChatroomDatabaseContext context) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("{spaceGuid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DtoMessageSequence))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<DtoMessageSequence> GetBySpaceAndDate(DtoGetBySpaceAndDate dto)
+    public ActionResult<DtoMessageSequence> GetBySpaceAndDate(Guid spaceGuid, [FromQuery] DateTime? messagesBefore, [FromQuery] int? numberOfMessages)
     {
-        if (context.SpaceByGuid(dto.SpaceGuid) is null)
+        if (context.SpaceByGuid(spaceGuid) is null)
         {
-            return NotFound($"A space with guid {dto.SpaceGuid} doesn't exist");
+            return NotFound($"A space with guid {spaceGuid} doesn't exist");
         }
 
         var messages = context.Messages
-            .Where(message => message.Space.Guid == dto.SpaceGuid)
+            .Where(message => message.Space.Guid == spaceGuid)
             .OrderByDescending(message => message.PostedAt)
             .ToList();
 
-        if (dto.MessagesBefore is not null)
+        if (messagesBefore is not null)
         {
-            messages = messages.Where(message => message.PostedAt < dto.MessagesBefore).ToList();
+            messages = messages.Where(message => message.PostedAt < messagesBefore).ToList();
         }
 
-        if (dto.NumberOfMessages is not null)
+        if (numberOfMessages is not null)
         {
-            messages = messages.Take(dto.NumberOfMessages ?? 0).ToList();
+            messages = messages.Take(numberOfMessages ?? 0).ToList();
         }
 
         var dtoMessages = messages
@@ -54,13 +54,13 @@ public class MessagesController(ChatroomDatabaseContext context) : ControllerBas
         var lastMessage = dtoMessages[0];
         var earliest = earliestMessage == dtoMessages[0];
 
-        if (dto.NumberOfMessages is null)
+        if (numberOfMessages is null)
         {
             earliest = true;
         }
         else
         {
-            earliest = dtoMessages.Count < dto.NumberOfMessages;
+            earliest = dtoMessages.Count < numberOfMessages;
         }
 
         return new DtoMessageSequence(
@@ -75,7 +75,7 @@ public class MessagesController(ChatroomDatabaseContext context) : ControllerBas
     [HttpPost]
     public ActionResult<DtoMessage> PostMessage(DtoMessagePost post)
     {
-        var createdMessage = DbMessage.MessageFromDtoMessage(post, context);
+        var createdMessage = Message.MessageFromDtoMessage(post, context);
         context.Messages.Add(createdMessage);
         context.SaveChanges();
         return (DtoMessage)createdMessage;
