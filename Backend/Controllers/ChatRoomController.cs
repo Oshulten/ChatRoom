@@ -53,6 +53,7 @@ namespace Backend.Controllers
             return Ok(dtoUser);
         }
 
+        //Tested (2)
         [HttpPost("create-space")]
         [ProducesResponseType(201, Type = typeof(DtoSpace))]
         public ActionResult<DtoUser> CreateSpace(DtoSpacePost post)

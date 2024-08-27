@@ -118,4 +118,87 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         dtoSpace.Alias.Should().Be(dtoSpacePost.Alias);
         dtoSpace.MemberGuids.Should().BeEmpty();
     }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
+    [Trait("Outcome", "Sad")]
+    public async Task AddExistingUserToNonExistingSpaceShouldReturn404NotFound()
+    {
+        var auth = DtoAuthenticationFaker.Generate(1)[0];
+        var responseA = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
+        var dtoUser = await responseA.Content.ReadFromJsonAsync<DtoUser>();
+
+        var nonExistingSpaceGuid = Guid.NewGuid();
+
+        var responseB = await _client.PutAsJsonAsync($"api/Chatroom/add-user-to-space/{nonExistingSpaceGuid}", dtoUser);
+
+        responseB.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
+    [Trait("Outcome", "Happy")]
+    public async Task AddExistingUserToExistingSpaceShouldReturn200Ok()
+    {
+        var auth = DtoAuthenticationFaker.Generate(1)[0];
+        var responseA = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
+        var dtoUser = await responseA.Content.ReadFromJsonAsync<DtoUser>();
+
+        var dtoSpacePost = new DtoSpacePost(Guid.NewGuid().ToString());
+        var responseB = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
+
+        responseB.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
+    [Trait("Outcome", "Happy")]
+    public async Task AddExistingUserToExistingSpaceShouldReturnDtoSpace()
+    {
+        var auth = DtoAuthenticationFaker.Generate(1)[0];
+        var responseA = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
+
+        var dtoSpacePost = new DtoSpacePost(Guid.NewGuid().ToString());
+        var responseB = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
+        var dtoSpace = await responseB.Content.ReadFromJsonAsync<DtoSpace>();
+
+        dtoSpace.Should().NotBeNull();
+        dtoSpace!.Alias.Should().Be(dtoSpacePost.Alias);
+        dtoSpace!.Guid.Should().NotBeEmpty();
+        dtoSpace!.MemberGuids.Count.Should().Be(1);
+    }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
+    [Trait("Outcome", "Happy")]
+    public async Task AddTwoExistingUsersToExistingSpaceShouldReturnDtoSpaceWithTwoMembers()
+    {
+        var auth = DtoAuthenticationFaker.Generate(1)[0];
+        await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
+        var auth2 = DtoAuthenticationFaker.Generate(1)[0];
+        await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth2);
+
+        var dtoSpacePost = new DtoSpacePost(Guid.NewGuid().ToString());
+        var responseB = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
+        var dtoSpace = await responseB.Content.ReadFromJsonAsync<DtoSpace>();
+
+        dtoSpace.Should().NotBeNull();
+        dtoSpace!.MemberGuids.Count.Should().Be(2);
+    }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
+    [Trait("Outcome", "Sad")]
+    public async Task AddNonExistingUserToExistingSpaceShouldReturn404NotFound()
+    {
+        var nonExistingDtoUser = new DtoUser(Guid.NewGuid(), Guid.NewGuid().ToString(), DateTime.Now, false);
+
+        var dtoSpacePost = new DtoSpacePost(Guid.NewGuid().ToString());
+        var response = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
+        var dtoSpace = await response.Content.ReadFromJsonAsync<DtoSpace>();
+
+        var responseB = await _client.PutAsJsonAsync($"api/Chatroom/add-user-to-space/{dtoSpace!.Guid}", nonExistingDtoUser);
+
+        responseB.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 }
