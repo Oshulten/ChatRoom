@@ -34,6 +34,7 @@ namespace Backend.Controllers
             return BadRequest($"A user with alias {auth.Alias} already exists.");
         }
 
+        //Tested (3)
         [HttpPost("get-user-by-auth")]
         [ProducesResponseType(200, Type = typeof(DtoUser))]
         [ProducesResponseType(400)]

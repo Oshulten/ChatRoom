@@ -14,6 +14,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     private readonly HttpClient _client = factory.CreateClient();
 
     [Fact]
+    [Trait("Endpoint", "api/Chatroom/create-user")]
     [Trait("Outcome", "Happy")]
     public async Task CreateNewUserByAuthShouldReturn201Created()
     {
@@ -24,6 +25,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     }
 
     [Fact]
+    [Trait("Endpoint", "api/Chatroom/create-user")]
     [Trait("Outcome", "Sad")]
     public async Task CreateUserWithExistingAliasByAuthShouldReturn400BadRequest()
     {
@@ -35,6 +37,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     }
 
     [Fact]
+    [Trait("Endpoint", "api/Chatroom/create-user")]
     [Trait("Outcome", "Happy")]
     public async Task CreateNewUserByAuthShouldReturnDtoUser()
     {
@@ -50,6 +53,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     }
 
     [Fact]
+    [Trait("Endpoint", "api/Chatroom/get-user-by-auth")]
     [Trait("Outcome", "Sad")]
     public async Task GetNotExistingUserByAuthShouldReturn400BadRequest()
     {
@@ -60,6 +64,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     }
 
     [Fact]
+    [Trait("Endpoint", "api/Chatroom/get-user-by-auth")]
     [Trait("Outcome", "Happy")]
     public async Task GetExistingUserByAuthShouldReturn200Ok()
     {
@@ -71,6 +76,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     }
 
     [Fact]
+    [Trait("Endpoint", "api/Chatroom/get-user-by-auth")]
     [Trait("Outcome", "Happy")]
     public async Task GetExistingUserByAuthShouldReturnDtoUser()
     {
@@ -87,4 +93,29 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         dtoUser.Admin.Should().BeFalse();
     }
 
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/create-space")]
+    [Trait("Outcome", "Happy")]
+    public async Task CreateSpaceShouldReturn201Created()
+    {
+        var dtoSpacePost = new DtoSpacePost(Guid.NewGuid().ToString());
+        var response = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/create-space")]
+    [Trait("Outcome", "Happy")]
+    public async Task CreateSpaceShouldReturnDtoSpace()
+    {
+        var dtoSpacePost = new DtoSpacePost(Guid.NewGuid().ToString());
+        var response = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
+        var dtoSpace = await response.Content.ReadFromJsonAsync<DtoSpace>();
+
+        dtoSpace.Should().NotBeNull();
+        dtoSpace!.Guid.Should().NotBeEmpty();
+        dtoSpace.Alias.Should().Be(dtoSpacePost.Alias);
+        dtoSpace.MemberGuids.Should().BeEmpty();
+    }
 }
