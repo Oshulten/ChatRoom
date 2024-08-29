@@ -12,6 +12,5 @@ public class Space(string alias)
     public List<Message> Messages { get; set; } = [];
 
     public static readonly Space Null = new("Null");
-
     public Space() : this(Null.Alias) { }
 }

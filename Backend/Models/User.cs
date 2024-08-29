@@ -15,6 +15,5 @@ public class User(string alias, string password)
     public bool Admin { get; set; } = false;
 
     public static readonly User Null = new("Null", "Null");
-
     public User() : this(Null.Alias, Null.Password) { }
 }
