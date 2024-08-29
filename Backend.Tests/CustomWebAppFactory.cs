@@ -11,6 +11,11 @@ namespace Backend.Tests;
 public class CustomWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly SqlEdgeContainer _sqlContainer = new SqlEdgeBuilder().Build();
+    public ChatroomDatabaseContext GetContext()
+    {
+        using var serviceScope = this.Services.CreateAsyncScope();
+        return (serviceScope.ServiceProvider.GetService<ChatroomDatabaseContext>()!);
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

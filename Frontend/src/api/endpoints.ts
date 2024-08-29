@@ -1,6 +1,6 @@
 import createClient, { Middleware } from "openapi-fetch"
 import { paths } from './schema';
-import { User, Authentication, Space, MessageSequence, MessagePost, Message } from "./types";
+import { User, Authentication, Space, MessageSequence, Message } from "./types";
 
 const logRequestResponse: Middleware = {
     async onRequest({ request, schemaPath }) {
@@ -17,7 +17,7 @@ client.use(logRequestResponse);
 
 
 export async function createUser(request: Authentication) {
-    const { data, response } = await client.POST("/api/Authentication/create-user", { body: { ...request } });
+    const { data, response } = await client.POST("/api/Chatroom/create-user", { body: { ...request } });
 
     if (response.ok) return data as User;
 
@@ -25,7 +25,7 @@ export async function createUser(request: Authentication) {
 }
 
 export async function authenticateUser(request: Authentication) {
-    const { data, response } = await client.POST("/api/Authentication/authorize-user", { body: { ...request } });
+    const { data, response } = await client.POST("/api/Chatroom/get-user-by-auth", { body: { ...request } });
 
     if (response.ok) return data as User;
 
@@ -35,27 +35,17 @@ export async function authenticateUser(request: Authentication) {
 export async function getSpacesByUserId(userGuid: string | undefined) {
     if (!userGuid) throw Error("An id must be provided")
 
-    const { data } = await client.GET("/api/Spaces", {
+    const { data } = await client.GET("/api/Chatroom/get-spaces-by-user-guid/{userGuid}", {
         params: {
-            query: { userGuid }
+            path: { userGuid }
         }
     });
 
     return data as Space[];
 }
 
-export async function getUserByUserId(userGuid: string) {
-    const { data } = await client.GET("/api/Users/{userGuid}", {
-        params: {
-            path: { userGuid }
-        }
-    });
-
-    return data as User;
-}
-
 export async function getLastMessagesInSpace(spaceGuid: string, getBeforeDate: Date, numberOfMessages: number) {
-    const { data } = await client.GET("/api/Messages/{spaceGuid}", {
+    const { data } = await client.GET("/api/Chatroom/get-messages-in-space-before-date/{spaceGuid}", {
         params: {
             path: {
                 spaceGuid: spaceGuid,
@@ -70,9 +60,9 @@ export async function getLastMessagesInSpace(spaceGuid: string, getBeforeDate: D
     return data as unknown as MessageSequence;
 }
 
-export async function postMessage({ content, spaceGuid, senderGuid }: MessagePost) {
+export async function postMessage({ content, spaceGuid, senderGuid }: Message) {
     console.log({ content, spaceId: spaceGuid, userId: senderGuid });
-    const { data } = await client.POST("/api/Messages", {
+    const { data } = await client.POST("/api/Chatroom/create-message", {
         body: { content, spaceId: spaceGuid, userId: senderGuid }
     });
     return data as Message;

@@ -25,16 +25,16 @@ public class ChatroomDatabaseContext(DbContextOptions options) : DbContext(optio
             user.Alias == auth.Alias &&
             user.Password == auth.Password);
 
-    public bool CreateUser(User user)
+    public User? CreateUser(User user)
     {
         if (!Users.Contains(user))
         {
             Users.Add(user);
             SaveChanges();
-            return true;
+            return user;
         }
 
-        return false;
+        return null;
     }
 
     public bool CreateSpace(Space space)
@@ -73,7 +73,11 @@ public class ChatroomDatabaseContext(DbContextOptions options) : DbContext(optio
         var space = SpaceByGuid(message.Space.Guid);
 
         if (user == null || space == null)
+        {
+            Console.WriteLine("Non-existant user or space!");
             return null;
+        }
+
 
         Messages.Add(message);
         space.Messages.Add(message);
@@ -103,22 +107,27 @@ public class ChatroomDatabaseContext(DbContextOptions options) : DbContext(optio
             .ToList();
     }
 
-    public List<Message>? MessagesBySpaceGuid(Guid spaceGuid)
+    public List<Message>? MessagesBySpaceGuid(Guid spaceGuid, DateTime? before, int? numberOfMessages)
     {
         var space = SpaceByGuid(spaceGuid);
 
         if (space == null)
             return null;
 
-        return space.Messages;
-    }
+        var messages = space.Messages.OrderByDescending(m => m.PostedAt).ToList();
 
+        if (before != null)
+            messages = messages.Where(m => m.PostedAt < before).ToList();
+
+        if (numberOfMessages != null)
+            messages = messages.Take(numberOfMessages ?? 0).ToList();
+
+        return messages;
+    }
 
     public void SeedData(int numberOfUsers, int numberOfSpaces, int numberOfMessages)
     {
-        Messages.RemoveRange(Messages);
-        Spaces.RemoveRange(Spaces);
-        Users.RemoveRange(Users);
+        Clear();
 
         var users = new Faker<User>()
             .RuleFor(o => o.Alias, f => f.Person.UserName)
@@ -136,14 +145,22 @@ public class ChatroomDatabaseContext(DbContextOptions options) : DbContext(optio
         };
         users.Add(adminUser);
 
+        foreach (var user in users)
+        {
+            CreateUser(user);
+        }
+
         var spaces = new Faker<Space>()
             .RuleFor(o => o.Alias, f => f.Internet.DomainWord())
-            .RuleFor(o => o.Members, f => f.Random.ListItems(users))
             .Generate(numberOfSpaces);
 
         foreach (var space in spaces)
         {
-            space.Members.Add(adminUser);
+            CreateSpace(space);
+            foreach (var user in users)
+            {
+                AddUserToSpace(user, space);
+            }
         }
 
         var messages = new Faker<Message>()
@@ -153,9 +170,10 @@ public class ChatroomDatabaseContext(DbContextOptions options) : DbContext(optio
             .RuleFor(o => o.Space, f => f.Random.ListItem(spaces))
             .Generate(numberOfMessages);
 
-        Messages.AddRange(messages);
-        Spaces.AddRange(spaces);
-        Users.AddRange(users);
+        foreach (var message in messages)
+        {
+            CreateMessage(message);
+        }
 
         SaveChanges();
     }

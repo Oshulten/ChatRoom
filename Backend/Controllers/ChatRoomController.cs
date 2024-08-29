@@ -39,6 +39,14 @@ namespace Backend.Controllers
             return new Message(user, message.PostedAt, message.Content, space);
         }
 
+        [HttpPost("seed")]
+        [ProducesResponseType(200)]
+        public IActionResult Seed()
+        {
+            context.SeedData(2, 2, 15);
+            return Ok();
+        }
+
         [HttpDelete("clear")]
         [ProducesResponseType(200)]
         public IActionResult Clear()
@@ -53,8 +61,17 @@ namespace Backend.Controllers
             [.. context.Users.Select(user => ToDtoUser(user))];
 
         [HttpGet("get-spaces")]
-        public List<DtoSpace> GetDtoSpaces() =>
-            [.. context.Spaces.Select(space => ToDtoSpace(space))];
+        public List<DtoSpace> GetDtoSpaces()
+        {
+            foreach (var space in context.Spaces)
+            {
+                Console.WriteLine(space.Members.Count);
+                var dto = ToDtoSpace(space);
+                Console.WriteLine(dto.MemberGuids);
+            }
+            return [.. context.Spaces.Select(space => ToDtoSpace(space))];
+        }
+
 
         [HttpGet("get-messages")]
         public List<DtoMessage> GetDtoMessages() =>
@@ -66,9 +83,8 @@ namespace Backend.Controllers
         [ProducesResponseType(400)]
         public ActionResult<DtoUser> CreateUserByAuth(DtoAuthentication auth)
         {
-            var user = ToUser(auth);
-            return
-                context.CreateUser(user)
+            var user = context.CreateUser(ToUser(auth));
+            return user != null
                 ? CreatedAtAction(null, ToDtoUser(user))
                 : BadRequest($"A user with alias {auth.Alias} already exists.");
         }
@@ -136,79 +152,61 @@ namespace Backend.Controllers
 
         //GetMessagesInSpaceBeforeDate (Get)
         //Guid spaceGuid, DateTime? beforeDate, int? numberOfMessages => DtoMessageSequence
-        [HttpGet("get-messages-in-space/{spaceGuid:guid}")]
+        [HttpGet("get-messages-in-space/{spaceGuid}")]
         [ProducesResponseType(400)]
         [ProducesResponseType(200, Type = typeof(List<DtoMessage>))]
         public ActionResult<List<DtoMessage>> GetMessagesInSpace(Guid spaceGuid)
         {
-            var messages = context.MessagesBySpaceGuid(spaceGuid);
+            var messages = context.MessagesBySpaceGuid(spaceGuid, null, null);
 
             return messages != null
                 ? Ok(messages.Select(ToDtoMessage))
                 : BadRequest("Space doesn't exist");
         }
 
-        // [HttpGet("{spaceGuid}")]
-        // [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DtoMessageSequence))]
-        // [ProducesResponseType(StatusCodes.Status404NotFound)]
-        // public ActionResult<DtoMessageSequence> GetBySpaceAndDate(Guid spaceGuid, [FromQuery] DateTime? messagesBefore, [FromQuery] int? numberOfMessages)
-        // {
-        //     if (context.SpaceByGuid(spaceGuid) is null)
-        //     {
-        //         return NotFound($"A space with guid {spaceGuid} doesn't exist");
-        //     }
+        [HttpGet("get-messages-in-space-before-date/{spaceGuid}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DtoMessageSequence))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<DtoMessageSequence> GetBySpaceAndDate(Guid spaceGuid, [FromQuery] DateTime? messagesBefore, [FromQuery] int? numberOfMessages)
+        {
+            var messages = context.MessagesBySpaceGuid(spaceGuid, messagesBefore, numberOfMessages);
 
-        //     var messages = context.Messages
-        //         .Where(message => message.Space.Guid == spaceGuid)
-        //         .OrderByDescending(message => message.PostedAt)
-        //         .ToList();
+            var dtoMessages = messages!
+                .Select(ToDtoMessage)
+                .ToList();
 
-        //     if (messagesBefore is not null)
-        //     {
-        //         messages = messages.Where(message => message.PostedAt < messagesBefore).ToList();
-        //     }
+            var distinctUsers = dtoMessages
+                .Select(message => message.SenderGuid)
+                .Distinct()
+                .Select(guid => context.Users.FirstOrDefault(user => user.Guid == guid)!);
 
-        //     if (numberOfMessages is not null)
-        //     {
-        //         messages = messages.Take(numberOfMessages ?? 0).ToList();
-        //     }
+            if (distinctUsers.Any(user => user is null))
+            {
+                return Problem("Corrupt database");
+            }
 
-        //     var dtoMessages = messages
-        //         .Select(message => (DtoMessage)message)
-        //         .ToList();
+            var dtoUsers = distinctUsers.Select(ToDtoUser);
 
-        //     var distinctUsers = dtoMessages
-        //         .Select(message => message.SenderGuid)
-        //         .Distinct()
-        //         .Select(guid => context.Users.FirstOrDefault(user => user.Guid == guid));
+            var earliestMessage = dtoMessages[^1];
+            var lastMessage = dtoMessages[0];
+            var earliest = earliestMessage == dtoMessages[0];
 
-        //     if (distinctUsers.Any(user => user is null))
-        //     {
-        //         return Problem("Corrupt database");
-        //     }
+            if (numberOfMessages is null)
+            {
+                earliest = true;
+            }
+            else
+            {
+                earliest = dtoMessages.Count < numberOfMessages;
+            }
 
-        //     var dtoUsers = distinctUsers.Select(user => (DtoUser)user!);
-
-        //     var earliestMessage = dtoMessages[^1];
-        //     var lastMessage = dtoMessages[0];
-        //     var earliest = earliestMessage == dtoMessages[0];
-
-        //     if (numberOfMessages is null)
-        //     {
-        //         earliest = true;
-        //     }
-        //     else
-        //     {
-        //         earliest = dtoMessages.Count < numberOfMessages;
-        //     }
-
-        //     return new DtoMessageSequence(
-        //         earliestMessage.PostedAt,
-        //         lastMessage.PostedAt,
-        //         earliest,
-        //         dtoMessages,
-        //         dtoUsers.ToList()
-        //     );
-        // }
+            return new DtoMessageSequence(
+                earliestMessage.PostedAt,
+                lastMessage.PostedAt,
+                earliest,
+                dtoMessages,
+                dtoUsers.ToList()
+            );
+        }
     }
 }

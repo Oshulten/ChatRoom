@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/api/Authentication/create-user": {
+    "/api/Chatroom/seed": {
         parameters: {
             query?: never;
             header?: never;
@@ -13,14 +13,14 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["Authentication_CreateUser"];
+        post: operations["Chatroom_Seed"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/Authentication/authorize-user": {
+    "/api/Chatroom/clear": {
         parameters: {
             query?: never;
             header?: never;
@@ -29,21 +29,21 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["Authentication_AuthorizeUser"];
-        delete?: never;
+        post?: never;
+        delete: operations["Chatroom_Clear"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/Messages/{spaceGuid}": {
+    "/api/Chatroom/get-users": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["Messages_GetBySpaceAndDate"];
+        get: operations["Chatroom_GetDtoUsers"];
         put?: never;
         post?: never;
         delete?: never;
@@ -52,63 +52,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Messages": {
+    "/api/Chatroom/get-spaces": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["Chatroom_GetDtoSpaces"];
         put?: never;
-        post: operations["Messages_PostMessage"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/SeedDatabase": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["SeedDatabase_SeedData"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/Spaces": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Spaces_GetByUserGuid"];
-        put?: never;
-        post: operations["Spaces_PostSpace"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/Spaces/{spaceGuid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Spaces_GetByGuid"];
-        put: operations["Spaces_AddExistingMemberToSpace"];
         post?: never;
         delete?: never;
         options?: never;
@@ -116,14 +68,142 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/Users/{userGuid}": {
+    "/api/Chatroom/get-messages": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["Users_GetUserByGuid"];
+        get: operations["Chatroom_GetDtoMessages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Chatroom/create-user": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Chatroom_CreateUserByAuth"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Chatroom/get-user-by-auth": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Chatroom_GetUserByAuth"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Chatroom/create-space": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Chatroom_CreateSpace"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Chatroom/add-user-to-space/{spaceGuid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["Chatroom_AddUserToSpace"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Chatroom/get-spaces-by-user-guid/{userGuid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Chatroom_GetSpacesByUserGuid"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Chatroom/create-message": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Chatroom_CreateMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Chatroom/get-messages-in-space/{spaceGuid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Chatroom_GetMessagesInSpace"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/Chatroom/get-messages-in-space-before-date/{spaceGuid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Chatroom_GetBySpaceAndDate"];
         put?: never;
         post?: never;
         delete?: never;
@@ -144,6 +224,21 @@ export interface components {
             joinedAt?: string;
             admin?: boolean;
         };
+        DtoSpace: {
+            alias?: string;
+            /** Format: guid */
+            guid?: string;
+            memberGuids?: string[];
+        };
+        DtoMessage: {
+            content?: string;
+            /** Format: guid */
+            spaceGuid?: string;
+            /** Format: guid */
+            senderGuid?: string;
+            /** Format: date-time */
+            postedAt?: string;
+        };
         ProblemDetails: {
             type?: string | null;
             title?: string | null;
@@ -158,6 +253,9 @@ export interface components {
             alias?: string;
             password?: string;
         };
+        DtoSpacePost: {
+            alias?: string;
+        };
         DtoMessageSequence: {
             /** Format: date-time */
             fromDate?: string;
@@ -166,31 +264,6 @@ export interface components {
             earliest?: boolean;
             messages?: components["schemas"]["DtoMessage"][];
             senders?: components["schemas"]["DtoUser"][];
-        };
-        DtoMessage: {
-            content?: string;
-            /** Format: guid */
-            spaceGuid?: string;
-            /** Format: guid */
-            senderGuid?: string;
-            /** Format: date-time */
-            postedAt?: string;
-        };
-        DtoMessagePost: {
-            content?: string;
-            /** Format: guid */
-            spaceGuid?: string;
-            /** Format: guid */
-            senderGuid?: string;
-        };
-        DtoSpace: {
-            alias?: string;
-            /** Format: guid */
-            guid?: string;
-            memberGuids?: string[];
-        };
-        DtoSpacePost: {
-            alias?: string;
         };
     };
     responses: never;
@@ -201,7 +274,98 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    Authentication_CreateUser: {
+    Chatroom_Seed: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Chatroom_Clear: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Chatroom_GetDtoUsers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoUser"][];
+                };
+            };
+        };
+    };
+    Chatroom_GetDtoSpaces: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoSpace"][];
+                };
+            };
+        };
+    };
+    Chatroom_GetDtoMessages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoMessage"][];
+                };
+            };
+        };
+    };
+    Chatroom_CreateUserByAuth: {
         parameters: {
             query?: never;
             header?: never;
@@ -232,7 +396,7 @@ export interface operations {
             };
         };
     };
-    Authentication_AuthorizeUser: {
+    Chatroom_GetUserByAuth: {
         parameters: {
             query?: never;
             header?: never;
@@ -253,6 +417,97 @@ export interface operations {
                     "application/json": components["schemas"]["DtoUser"];
                 };
             };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    Chatroom_CreateSpace: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoSpacePost"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoSpace"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    Chatroom_AddUserToSpace: {
+        parameters: {
+            query?: {
+                userGuid?: string;
+            };
+            header?: never;
+            path: {
+                spaceGuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoSpace"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    Chatroom_GetSpacesByUserGuid: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                userGuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoSpace"][];
+                };
+            };
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -263,7 +518,67 @@ export interface operations {
             };
         };
     };
-    Messages_GetBySpaceAndDate: {
+    Chatroom_CreateMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DtoMessage"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoMessage"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    Chatroom_GetMessagesInSpace: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                spaceGuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoMessage"][];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    Chatroom_GetBySpaceAndDate: {
         parameters: {
             query?: {
                 messagesBefore?: string | null;
@@ -283,171 +598,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DtoMessageSequence"];
-                };
-            };
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProblemDetails"];
-                };
-            };
-        };
-    };
-    Messages_PostMessage: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoMessagePost"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoMessage"];
-                };
-            };
-        };
-    };
-    SeedDatabase_SeedData: {
-        parameters: {
-            query?: {
-                numberOfUsers?: number;
-                numberOfSpaces?: number;
-                numberOfMessages?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/octet-stream": string;
-                };
-            };
-        };
-    };
-    Spaces_GetByUserGuid: {
-        parameters: {
-            query?: {
-                userGuid?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoSpace"][];
-                };
-            };
-        };
-    };
-    Spaces_PostSpace: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoSpacePost"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoSpace"];
-                };
-            };
-        };
-    };
-    Spaces_GetByGuid: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                spaceGuid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoSpace"];
-                };
-            };
-        };
-    };
-    Spaces_AddExistingMemberToSpace: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                spaceGuid: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DtoUser"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/octet-stream": string;
-                };
-            };
-        };
-    };
-    Users_GetUserByGuid: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userGuid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoUser"];
                 };
             };
             404: {
