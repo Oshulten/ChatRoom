@@ -161,11 +161,6 @@ namespace Backend.Controllers
             return Ok(memberSpaces);
         }
 
-        //GetMessagesInSpaceBeforeDate (Get)
-        //Guid spaceGuid, DateTime? beforeDate, int? numberOfMessages => DtoMessageSequence
-
-        //CreateMessage (Post)
-        //Guid userGuid, Guid spaceGuid, DtoMessagePost => DtoMessage
         [HttpPost("create-message")]
         [ProducesResponseType(400)]
         [ProducesResponseType(201, Type = typeof(DtoMessage))]
@@ -186,6 +181,21 @@ namespace Backend.Controllers
             context.SaveChanges();
 
             return CreatedAtAction(null, ToDtoMessage(message));
+        }
+
+        //GetMessagesInSpaceBeforeDate (Get)
+        //Guid spaceGuid, DateTime? beforeDate, int? numberOfMessages => DtoMessageSequence
+        [HttpGet("get-messages-in-space/{spaceGuid:guid}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200, Type = typeof(List<DtoMessage>))]
+        public ActionResult<List<DtoMessage>> GetMessagesInSpace(Guid spaceGuid)
+        {
+            var existingSpace = context.Spaces.FirstOrDefault(s => s.Guid == spaceGuid);
+
+            if (existingSpace is null)
+                return BadRequest("Space doesn't exist");
+
+            return Ok(existingSpace.Messages.Select(m => ToDtoMessage(m)).ToList());
         }
     }
 }

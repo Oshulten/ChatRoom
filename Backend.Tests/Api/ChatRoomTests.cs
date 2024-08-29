@@ -33,6 +33,13 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         return (await response.Content.ReadFromJsonAsync<DtoSpace>())!;
     }
 
+    private async Task<DtoMessage> PostMessage(DtoSpace space, DtoUser sender)
+    {
+        var dtoMessagePost = new DtoMessagePost("Message content", space.Guid, sender.Guid);
+        var response = await _client.PostAsJsonAsync("api/Chatroom/create-message", dtoMessagePost);
+        return (await response.Content.ReadFromJsonAsync<DtoMessage>())!;
+    }
+
     [Fact]
     [Trait("Endpoint", "api/Chatroom/clear")]
     [Trait("Outcome", "Happy")]
@@ -395,6 +402,53 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         var response = await _client.PostAsJsonAsync("api/Chatroom/create-message", dtoMessagePost);
         var dtoMessage = await response.Content.ReadFromJsonAsync<DtoMessage>();
 
-        dtoMessage.Content.Should().Be("Message content");
+        dtoMessage!.Content.Should().Be("Message content");
+    }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/get-messages-in-space")]
+    [Trait("Outcome", "Sad")]
+    public async Task Get_Messages_In_Non_Existing_Space_Should_Return_400_Bad_Request()
+    {
+        await _client.PostAsync("api/Chatroom/clear", null);
+
+        var response = await _client.GetAsync($"api/Chatroom/get-messages-in-space/{Guid.NewGuid()}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/get-messages-in-space")]
+    [Trait("Outcome", "Happy")]
+    public async Task Get_Messages_In_Existing_Space_Should_Return_200_OK()
+    {
+        await _client.PostAsync("api/Chatroom/clear", null);
+
+        var space = await PostSpace();
+        var user = await PostUser();
+        await PostMessage(space, user);
+
+        var response = await _client.GetAsync($"api/Chatroom/get-messages-in-space/{space.Guid}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+    
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/get-messages-in-space")]
+    [Trait("Outcome", "Happy")]
+    public async Task Posting_Messages_In_Space_Should_Return_List_Of_Messages()
+    {
+        await _client.PostAsync("api/Chatroom/clear", null);
+
+        var space = await PostSpace();
+        var user = await PostUser();
+        await PostMessage(space, user);
+        await PostMessage(space, user);
+        await PostMessage(space, user);
+
+        var response = await _client.GetAsync($"api/Chatroom/get-messages-in-space/{space.Guid}");
+        var messages = await response.Content.ReadFromJsonAsync<List<DtoMessage>>();
+
+        messages.Should().NotBeEmpty();
     }
 }
