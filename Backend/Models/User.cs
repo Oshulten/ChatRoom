@@ -4,6 +4,7 @@ namespace Backend.Models;
 
 public class User(string alias, string password, bool admin, DateTime joinedAt)
 {
+    public int Id { get; set; }
     public Guid Guid { get; init; } = Guid.NewGuid();
     public string Alias { get; set; } = alias;
     public string Password { get; set; } = password;

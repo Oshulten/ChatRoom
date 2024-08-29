@@ -5,6 +5,7 @@ namespace Backend.Models;
 
 public class Message(User sender, DateTime postedAt, string content, Space space)
 {
+    public int Id { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
     public User Sender { get; set; } = sender;
     public DateTime PostedAt { get; set; } = postedAt;

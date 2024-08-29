@@ -5,6 +5,7 @@ namespace Backend.Models;
 
 public class Space(string alias, List<User> members)
 {
+    public int Id { get; set; }
     public Guid Guid { get; init; } = Guid.NewGuid();
     public string Alias { get; set; } = alias;
     public List<User> Members { get; set; } = members;

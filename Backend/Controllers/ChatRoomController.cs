@@ -109,8 +109,6 @@ namespace Backend.Controllers
             return CreatedAtAction(null, dtoSpace);
         }
 
-        //AddUserToSpace (Put)
-        //DtoUser user, Guid spaceGuid => DtoSpace (side effect)
         [HttpPut("add-user-to-space/{spaceGuid}")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DtoSpace))]
@@ -145,6 +143,29 @@ namespace Backend.Controllers
 
         //GetSpacesByUserGuid (Get)
         //Guid userGuid => List<DtoSpace>
+        [HttpGet("get-spaces-by-user-guid/{userGuid}")]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(List<DtoSpace>))]
+        public ActionResult<List<DtoSpace>> GetSpacesByUserGuid(Guid userGuid)
+        {
+            var existingUser = context.Users.FirstOrDefault(user => user.Guid == userGuid);
+
+            if (existingUser is null)
+            {
+                return NotFound($"A user with guid {userGuid} does not exist");
+            }
+
+            var memberSpaces = context.Spaces
+                .Where(space => space.Members.Contains(existingUser))
+                .Select(space =>
+                    new DtoSpace(
+                        space.Alias,
+                        space.Guid,
+                        space.Members.Select(member => member.Guid).ToList()))
+                .ToList();
+
+            return Ok(memberSpaces);
+        }
 
         //GetMessagesInSpaceBeforeDate (Get)
         //Guid spaceGuid, DateTime? beforeDate, int? numberOfMessages => DtoMessageSequence

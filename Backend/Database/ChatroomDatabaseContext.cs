@@ -11,24 +11,6 @@ public class ChatroomDatabaseContext(DbContextOptions options) : DbContext(optio
     public DbSet<Message> Messages { get; set; }
     public DbSet<Space> Spaces { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<User>()
-            .Property<int>("Id");
-        modelBuilder.Entity<User>()
-            .HasKey("Id");
-
-        modelBuilder.Entity<Space>()
-            .Property<int>("Id");
-        modelBuilder.Entity<Space>()
-            .HasKey("Id");
-
-        modelBuilder.Entity<Message>()
-            .Property<int>("Id");
-        modelBuilder.Entity<Message>()
-            .HasKey("Id");
-    }
-
     public void SeedData(int numberOfUsers, int numberOfSpaces, int numberOfMessages)
     {
         Messages.RemoveRange(Messages);

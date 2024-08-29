@@ -264,5 +264,30 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         responseB.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/get-spaces-by-user-guid")]
+    [Trait("Outcome", "Sad")]
+    public async Task GetSpaceByUserGuidForNonExistingUserShouldReturn404NotFound()
+    {
+        var response = await _client.GetAsync($"api/Chatroom/get-spaces-by-user-guid/{Guid.NewGuid()}");
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
 
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/get-spaces-by-user-guid")]
+    [Trait("Outcome", "Happy")]
+    public async Task GetSpaceByUserGuidShouldReturnEmptyListForUserNotBelongingToAnySpace()
+    {
+        var user = await PostUser();
+        var space = await PostSpace();
+        await AddUserToSpace(user, space);
+
+        var response = await _client.GetAsync($"api/Chatroom/get-spaces-by-user-guid/{user.Guid}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var spaces = await response.Content.ReadFromJsonAsync<List<DtoSpace>>();
+
+        spaces.Should().NotBeEmpty();
+    }
 }
