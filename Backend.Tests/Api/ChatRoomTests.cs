@@ -20,6 +20,13 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         return (await response.Content.ReadFromJsonAsync<DtoUser>())!;
     }
 
+    private async Task<DtoSpace> PostSpace()
+    {
+        var dtoSpacePost = GenerateDtoSpacePost();
+        var response = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
+        return (await response.Content.ReadFromJsonAsync<DtoSpace>())!;
+    }
+
     [Fact]
     [Trait("Endpoint", "api/Chatroom/clear")]
     [Trait("Outcome", "Happy")]
@@ -173,9 +180,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var auth = GenerateDtoAuthentication();
-        var responseA = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
-        var dtoUser = await responseA.Content.ReadFromJsonAsync<DtoUser>();
+        var dtoUser = await PostUser();
 
         var nonExistingSpaceGuid = Guid.NewGuid();
 
@@ -191,17 +196,12 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var auth = GenerateDtoAuthentication();
-        var responseA = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
-        var dtoUser = await responseA.Content.ReadFromJsonAsync<DtoUser>();
+        var dtoUser = await PostUser();
+        var dtoSpace = await PostSpace();
 
-        var dtoSpacePost = GenerateDtoSpacePost();
-        var responseB = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
-        var dtoSpace = await responseB.Content.ReadFromJsonAsync<DtoSpace>();
+        var response = await _client.PutAsJsonAsync($"api/Chatroom/add-user-to-space/{dtoSpace!.Guid}", dtoUser);
 
-        var responseC = await _client.PutAsJsonAsync($"api/Chatroom/add-user-to-space/{dtoSpace!.Guid}", dtoUser);
-
-        responseC.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
     // [Fact]
