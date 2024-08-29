@@ -119,17 +119,17 @@ namespace Backend.Controllers
         [HttpPut("add-user-to-space/{spaceGuid}")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DtoSpace))]
-        public ActionResult<DtoSpace> AddUserToSpace([FromRoute] Guid spaceGuid, DtoUser user)
+        public ActionResult<DtoSpace> AddUserToSpace([FromRoute] Guid spaceGuid, [FromQuery] Guid userGuid)
         {
             var existingSpace = context.Spaces.FirstOrDefault(space => space.Guid == spaceGuid);
 
             if (existingSpace is null)
                 return NotFound($"A space with guid {spaceGuid} does not exist");
 
-            var existingUser = context.Users.FirstOrDefault(user => user.Guid == user.Guid);
+            var existingUser = context.Users.FirstOrDefault(user => user.Guid == userGuid);
 
             if (existingUser is null)
-                return NotFound($"A user with guid {user.Guid} does not exist");
+                return NotFound($"A user with guid {userGuid} does not exist");
 
             var existingMemberInSpace = existingSpace.Members.FirstOrDefault(member => member.Guid == existingUser.Guid);
 

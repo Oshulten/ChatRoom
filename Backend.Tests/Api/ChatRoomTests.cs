@@ -29,7 +29,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
 
     private async Task<DtoSpace> AddUserToSpace(DtoUser user, DtoSpace space)
     {
-        var response = await _client.PutAsJsonAsync($"api/Chatroom/add-user-to-space/{space!.Guid}", user);
+        var response = await _client.PutAsync($"api/Chatroom/add-user-to-space/{space!.Guid}?userGuid={user.Guid}", null);
         return (await response.Content.ReadFromJsonAsync<DtoSpace>())!;
     }
 
@@ -197,7 +197,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
 
         var nonExistingSpaceGuid = Guid.NewGuid();
 
-        var responseB = await _client.PutAsJsonAsync($"api/Chatroom/add-user-to-space/{nonExistingSpaceGuid}", dtoUser);
+        var responseB = await _client.PutAsync($"api/Chatroom/add-user-to-space/{nonExistingSpaceGuid}?userGuid={dtoUser.Guid}", null);
 
         responseB.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -212,7 +212,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         var dtoUser = await PostUser();
         var dtoSpace = await PostSpace();
 
-        var response = await _client.PutAsJsonAsync($"api/Chatroom/add-user-to-space/{dtoSpace!.Guid}", dtoUser);
+        var response = await _client.PutAsync($"api/Chatroom/add-user-to-space/{dtoSpace!.Guid}?userGuid={dtoUser.Guid}", null);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -228,7 +228,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         var dtoSpace = await PostSpace();
         var dtoSpace2 = await AddUserToSpace(dtoUser, dtoSpace);
 
-        var countDifference = (dtoSpace2!.MemberGuids.Count() - dtoSpace!.MemberGuids.Count());
+        var countDifference = dtoSpace2!.MemberGuids.Count - dtoSpace!.MemberGuids.Count;
 
         dtoSpace2.Should().NotBeNull();
         dtoSpace2!.Alias.Should().Be(dtoSpace.Alias);
