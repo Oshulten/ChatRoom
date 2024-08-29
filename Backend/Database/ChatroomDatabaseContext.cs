@@ -11,6 +11,109 @@ public class ChatroomDatabaseContext(DbContextOptions options) : DbContext(optio
     public DbSet<Message> Messages { get; set; }
     public DbSet<Space> Spaces { get; set; }
 
+    public Space? SpaceByGuid(Guid guid) =>
+        Spaces.FirstOrDefault(s => s.Guid == guid);
+
+    public Message? MessageByGuid(Guid guid) =>
+        Messages.FirstOrDefault(m => m.Guid == guid);
+
+    public User? UserByGuid(Guid guid) =>
+        Users.FirstOrDefault(u => u.Guid == guid);
+
+    public User? UserByAuth(DtoAuthentication auth) =>
+        Users.FirstOrDefault(user =>
+            user.Alias == auth.Alias &&
+            user.Password == auth.Password);
+
+    public bool CreateUser(User user)
+    {
+        if (!Users.Contains(user))
+        {
+            Users.Add(user);
+            SaveChanges();
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool CreateSpace(Space space)
+    {
+        if (!Spaces.Contains(space))
+        {
+            Spaces.Add(space);
+            SaveChanges();
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool AddUserToSpace(Guid userGuid, Guid spaceGuid)
+    {
+        var user = UserByGuid(userGuid);
+        var space = SpaceByGuid(spaceGuid);
+
+        if (user == null || space == null)
+            return false;
+
+        space.Members.Add(user);
+        user.Spaces.Add(space);
+        SaveChanges();
+
+        return true;
+    }
+
+    public bool AddUserToSpace(User user, Space space) =>
+        AddUserToSpace(user.Guid, space.Guid);
+
+    public Message? CreateMessage(Message message)
+    {
+        var user = UserByGuid(message.Sender.Guid);
+        var space = SpaceByGuid(message.Space.Guid);
+
+        if (user == null || space == null)
+            return null;
+
+        Messages.Add(message);
+        space.Messages.Add(message);
+        user.Messages.Add(message);
+
+        SaveChanges();
+
+        return message;
+    }
+
+    public void Clear()
+    {
+        Users.RemoveRange(Users);
+        Spaces.RemoveRange(Spaces);
+        Messages.RemoveRange(Messages);
+
+        SaveChanges();
+    }
+
+    public List<Space>? SpacesByUserGuid(Guid userGuid)
+    {
+        if (UserByGuid(userGuid) == null)
+            return null;
+
+        return Spaces
+            .Where(space => space.Members.Select(m => m.Guid).Contains(userGuid))
+            .ToList();
+    }
+
+    public List<Message>? MessagesBySpaceGuid(Guid spaceGuid)
+    {
+        var space = SpaceByGuid(spaceGuid);
+
+        if (space == null)
+            return null;
+
+        return space.Messages;
+    }
+
+
     public void SeedData(int numberOfUsers, int numberOfSpaces, int numberOfMessages)
     {
         Messages.RemoveRange(Messages);

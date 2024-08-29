@@ -28,40 +28,36 @@ namespace Backend.Controllers
         private static Space ToSpace(DtoSpacePost space) =>
             new(space.Alias);
 
-        private Message ToMessage(DtoMessage post)
+        private Message ToMessage(DtoMessage message)
         {
-            var existingUser = context.Users.FirstOrDefault(u => u.Guid == post.SenderGuid);
-            var existingSpace = context.Spaces.FirstOrDefault(s => s.Guid == post.SpaceGuid);
+            var user = context.UserByGuid(message.SenderGuid);
+            var space = context.SpaceByGuid(message.SpaceGuid);
 
-            if (existingUser is null || existingSpace is null)
+            if (user is null || space is null)
                 throw new Exception("User or space doesn't exist");
 
-            return new Message(existingUser, post.PostedAt, post.Content, existingSpace);
+            return new Message(user, message.PostedAt, message.Content, space);
         }
 
-        [HttpPost("clear")]
+        [HttpDelete("clear")]
         [ProducesResponseType(200)]
         public IActionResult Clear()
         {
-            context.Users.RemoveRange(context.Users);
-            context.Spaces.RemoveRange(context.Spaces);
-            context.Messages.RemoveRange(context.Messages);
-
-            context.SaveChanges();
+            context.Clear();
 
             return Ok();
         }
 
         [HttpGet("get-users")]
-        public List<DtoUser> GetUsers() =>
+        public List<DtoUser> GetDtoUsers() =>
             [.. context.Users.Select(user => ToDtoUser(user))];
 
         [HttpGet("get-spaces")]
-        public List<DtoSpace> GetSpaces() =>
+        public List<DtoSpace> GetDtoSpaces() =>
             [.. context.Spaces.Select(space => ToDtoSpace(space))];
 
         [HttpGet("get-messages")]
-        public List<DtoMessage> GetMessages() =>
+        public List<DtoMessage> GetDtoMessages() =>
             [.. context.Messages.Select(message => ToDtoMessage(message))];
 
         //Tested (3)
@@ -70,19 +66,11 @@ namespace Backend.Controllers
         [ProducesResponseType(400)]
         public ActionResult<DtoUser> CreateUserByAuth(DtoAuthentication auth)
         {
-            var existingUser = context.Users.FirstOrDefault(user => user.Alias == auth.Alias);
-
-            if (existingUser is null)
-            {
-                var user = ToUser(auth);
-
-                context.Users.Add(user);
-                context.SaveChanges();
-
-                return CreatedAtAction(null, ToDtoUser(user));
-            }
-
-            return BadRequest($"A user with alias {auth.Alias} already exists.");
+            var user = ToUser(auth);
+            return
+                context.CreateUser(user)
+                ? CreatedAtAction(null, ToDtoUser(user))
+                : BadRequest($"A user with alias {auth.Alias} already exists.");
         }
 
         //Tested (3)
@@ -91,56 +79,34 @@ namespace Backend.Controllers
         [ProducesResponseType(400)]
         public ActionResult<DtoUser> GetUserByAuth(DtoAuthentication auth)
         {
-            var matchingUser = context.Users.FirstOrDefault(user =>
-                user.Alias == auth.Alias &&
-                user.Password == auth.Password);
+            var user = context.UserByAuth(auth);
 
-            if (matchingUser is null)
-            {
-                return BadRequest($"A user with that alias and password does not exist");
-            }
-
-            return Ok(ToDtoUser(matchingUser));
+            return user == null
+                ? BadRequest($"A user with that alias and password does not exist")
+                : Ok(ToDtoUser(user));
         }
 
         //Tested (2)
         [HttpPost("create-space")]
         [ProducesResponseType(201, Type = typeof(DtoSpace))]
-        public ActionResult<DtoUser> CreateSpace(DtoSpacePost post)
+        [ProducesResponseType(400)]
+        public ActionResult<DtoSpace> CreateSpace(DtoSpacePost dto)
         {
-            var space = ToSpace(post);
+            var space = ToSpace(dto);
 
-            context.Spaces.Add(space);
-            context.SaveChanges();
-
-            return CreatedAtAction(null, ToDtoSpace(space));
+            return context.CreateSpace(space)
+                ? CreatedAtAction(null, ToDtoSpace(space))
+                : BadRequest("A space with that guid already exists");
         }
 
         [HttpPut("add-user-to-space/{spaceGuid}")]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(200, Type = typeof(DtoSpace))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(200)]
         public ActionResult<DtoSpace> AddUserToSpace([FromRoute] Guid spaceGuid, [FromQuery] Guid userGuid)
         {
-            var existingSpace = context.Spaces.FirstOrDefault(space => space.Guid == spaceGuid);
-
-            if (existingSpace is null)
-                return NotFound($"A space with guid {spaceGuid} does not exist");
-
-            var existingUser = context.Users.FirstOrDefault(user => user.Guid == userGuid);
-
-            if (existingUser is null)
-                return NotFound($"A user with guid {userGuid} does not exist");
-
-            var existingMemberInSpace = existingSpace.Members.FirstOrDefault(member => member.Guid == existingUser.Guid);
-
-            if (existingMemberInSpace is null)
-            {
-                existingSpace.Members.Add(existingUser);
-                existingUser.Spaces.Add(existingSpace);
-                context.SaveChanges();
-            }
-
-            return Ok(ToDtoSpace(existingSpace));
+            return context.AddUserToSpace(userGuid, spaceGuid)
+                ? Ok(ToDtoSpace(context.SpaceByGuid(spaceGuid)!))
+                : BadRequest();
         }
 
         [HttpGet("get-spaces-by-user-guid/{userGuid}")]
@@ -148,17 +114,12 @@ namespace Backend.Controllers
         [ProducesResponseType(200, Type = typeof(List<DtoSpace>))]
         public ActionResult<List<DtoSpace>> GetSpacesByUserGuid([FromRoute] Guid userGuid)
         {
-            var existingUser = context.Users.FirstOrDefault(user => user.Guid == userGuid);
 
-            if (existingUser is null)
-                return NotFound($"A user with guid {userGuid} does not exist");
+            var spaces = context.SpacesByUserGuid(userGuid);
 
-            var memberSpaces = context.Spaces
-                .Where(space => space.Members.Contains(existingUser))
-                .Select(space => ToDtoSpace(space))
-                .ToList();
-
-            return Ok(memberSpaces);
+            return spaces != null
+                ? Ok(spaces.Select(ToDtoSpace))
+                : NotFound($"A user with guid {userGuid} does not exist");
         }
 
         [HttpPost("create-message")]
@@ -166,21 +127,11 @@ namespace Backend.Controllers
         [ProducesResponseType(201, Type = typeof(DtoMessage))]
         public ActionResult<DtoMessage> CreateMessage(DtoMessage post)
         {
-            var existingSpace = context.Spaces.FirstOrDefault(s => s.Guid == post.SpaceGuid);
-            var existingUser = context.Users.FirstOrDefault(u => u.Guid == post.SenderGuid);
+            var message = context.CreateMessage(ToMessage(post));
 
-            if (existingSpace is null || existingUser is null)
-                return BadRequest("Space or user doesn't exist");
-
-            var message = ToMessage(post);
-
-            existingSpace.Messages.Add(message);
-            existingUser.Messages.Add(message);
-
-            context.Messages.Add(message);
-            context.SaveChanges();
-
-            return CreatedAtAction(null, ToDtoMessage(message));
+            return message != null
+                ? CreatedAtAction(null, ToDtoMessage(message))
+                : BadRequest("User or space does not exist");
         }
 
         //GetMessagesInSpaceBeforeDate (Get)
@@ -190,12 +141,11 @@ namespace Backend.Controllers
         [ProducesResponseType(200, Type = typeof(List<DtoMessage>))]
         public ActionResult<List<DtoMessage>> GetMessagesInSpace(Guid spaceGuid)
         {
-            var existingSpace = context.Spaces.FirstOrDefault(s => s.Guid == spaceGuid);
+            var messages = context.MessagesBySpaceGuid(spaceGuid);
 
-            if (existingSpace is null)
-                return BadRequest("Space doesn't exist");
-
-            return Ok(existingSpace.Messages.Select(m => ToDtoMessage(m)).ToList());
+            return messages != null
+                ? Ok(messages.Select(ToDtoMessage))
+                : BadRequest("Space doesn't exist");
         }
 
         // [HttpGet("{spaceGuid}")]
