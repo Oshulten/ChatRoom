@@ -35,7 +35,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
 
     private async Task<DtoMessage> PostMessage(DtoSpace space, DtoUser sender)
     {
-        var dtoMessagePost = new DtoMessagePost("Message content", space.Guid, sender.Guid);
+        var dtoMessagePost = new DtoMessage("Message content", space.Guid, sender.Guid, DateTime.Now);
         var response = await _client.PostAsJsonAsync("api/Chatroom/create-message", dtoMessagePost);
         return (await response.Content.ReadFromJsonAsync<DtoMessage>())!;
     }
@@ -353,7 +353,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var dtoMessagePost = new DtoMessagePost("Message content", Guid.NewGuid(), Guid.NewGuid());
+        var dtoMessagePost = new DtoMessage("Message content", Guid.NewGuid(), Guid.NewGuid(), DateTime.Now);
         var response = await _client.PostAsJsonAsync("api/Chatroom/create-message", dtoMessagePost);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -366,7 +366,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var dtoMessagePost = new DtoMessagePost("Message content", Guid.NewGuid(), Guid.NewGuid());
+        var dtoMessagePost = new DtoMessage("Message content", Guid.NewGuid(), Guid.NewGuid(), DateTime.Now);
         var response = await _client.PostAsJsonAsync("api/Chatroom/create-message", dtoMessagePost);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -382,7 +382,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         var dtoSpace = await PostSpace();
         var dtoUser = await PostUser();
 
-        var dtoMessagePost = new DtoMessagePost("Message content", dtoSpace.Guid, dtoUser.Guid);
+        var dtoMessagePost = new DtoMessage("Message content", dtoSpace.Guid, dtoUser.Guid, DateTime.Now);
         var response = await _client.PostAsJsonAsync("api/Chatroom/create-message", dtoMessagePost);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -398,7 +398,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         var dtoSpace = await PostSpace();
         var dtoUser = await PostUser();
 
-        var dtoMessagePost = new DtoMessagePost("Message content", dtoSpace.Guid, dtoUser.Guid);
+        var dtoMessagePost = new DtoMessage("Message content", dtoSpace.Guid, dtoUser.Guid, DateTime.Now);
         var response = await _client.PostAsJsonAsync("api/Chatroom/create-message", dtoMessagePost);
         var dtoMessage = await response.Content.ReadFromJsonAsync<DtoMessage>();
 
@@ -432,7 +432,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
-    
+
     [Fact]
     [Trait("Endpoint", "api/Chatroom/get-messages-in-space")]
     [Trait("Outcome", "Happy")]
