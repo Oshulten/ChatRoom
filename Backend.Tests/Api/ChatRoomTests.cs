@@ -351,4 +351,50 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/create-message")]
+    [Trait("Outcome", "Sad")]
+    public async Task Create_Message_In_Non_Existing_Space_Should_Return_400_Bad_Request()
+    {
+        await _client.PostAsync("api/Chatroom/clear", null);
+
+        var dtoMessagePost = new DtoMessagePost("Message content", Guid.NewGuid(), Guid.NewGuid());
+        var response = await _client.PostAsJsonAsync("api/Chatroom/create-message", dtoMessagePost);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/create-message")]
+    [Trait("Outcome", "Happy")]
+    public async Task Create_Valid_Message_Should_Return_201_Created()
+    {
+        await _client.PostAsync("api/Chatroom/clear", null);
+
+        var dtoSpace = await PostSpace();
+        var dtoUser = await PostUser();
+
+        var dtoMessagePost = new DtoMessagePost("Message content", dtoSpace.Guid, dtoUser.Guid);
+        var response = await _client.PostAsJsonAsync("api/Chatroom/create-message", dtoMessagePost);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/create-message")]
+    [Trait("Outcome", "Happy")]
+    public async Task Create_Valid_Message_Should_Return_Dto_Message()
+    {
+        await _client.PostAsync("api/Chatroom/clear", null);
+
+        var dtoSpace = await PostSpace();
+        var dtoUser = await PostUser();
+
+        var dtoMessagePost = new DtoMessagePost("Message content", dtoSpace.Guid, dtoUser.Guid);
+        var response = await _client.PostAsJsonAsync("api/Chatroom/create-message", dtoMessagePost);
+        var dtoMessage = await response.Content.ReadFromJsonAsync<DtoMessage>();
+
+        dtoMessage.Content.Should().Be("Message content");
+    }
 }
