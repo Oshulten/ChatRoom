@@ -130,9 +130,13 @@ namespace Backend.Controllers
                 return NotFound($"A user with guid {dtoUser.Guid} does not exist");
             }
 
-            existingSpace.Members.Add(existingUser);
+            var existingMemberInSpace = existingSpace.Members.FirstOrDefault(member => member.Guid == existingUser.Guid);
 
-            context.SaveChanges();
+            if (existingMemberInSpace is null)
+            {
+                existingSpace.Members.Add(existingUser);
+                context.SaveChanges();
+            }
 
             var dtoSpace = new DtoSpace(existingSpace.Alias, existingSpace.Guid, [.. existingSpace.Members.Select(member => member.Guid)]);
 
