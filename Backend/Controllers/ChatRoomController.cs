@@ -13,6 +13,37 @@ namespace Backend.Controllers
     [Route("api/[controller]")]
     public class ChatroomController(ChatroomDatabaseContext context) : ControllerBase
     {
+        [HttpPost("clear")]
+        [ProducesResponseType(200)]
+        public IActionResult Clear()
+        {
+            context.Users.RemoveRange(context.Users);
+            context.Spaces.RemoveRange(context.Spaces);
+            context.Messages.RemoveRange(context.Messages);
+
+            context.SaveChanges();
+
+            return Ok();
+        }
+
+        [HttpGet("get-spaces")]
+        public IEnumerable<DtoSpace> GetSpaces() =>
+            context.Spaces.Select(space =>
+                new DtoSpace(
+                    space.Alias,
+                    space.Guid,
+                    space.Members.Select(member => member.Guid).ToList()));
+
+        [HttpGet("get-users")]
+        public IEnumerable<DtoUser> GetUsers() =>
+            context.Users.Select(user =>
+                new DtoUser(user.Guid, user.Alias, user.JoinedAt, user.Admin));
+
+        [HttpGet("get-messages")]
+        public IEnumerable<DtoMessage> GetMessages() =>
+            context.Messages.Select(message =>
+                new DtoMessage(message.Content, message.Space.Guid, message.Sender.Guid, message.PostedAt));
+
         //Tested (3)
         [HttpPost("create-user")]
         [ProducesResponseType(201, Type = typeof(DtoUser))]
@@ -24,7 +55,7 @@ namespace Backend.Controllers
             if (existingUser is null)
             {
                 var user = new User(auth.Alias, auth.Password, false, DateTime.Now);
-                
+
                 context.Users.Add(user);
                 context.SaveChanges();
 
@@ -60,11 +91,11 @@ namespace Backend.Controllers
         public ActionResult<DtoUser> CreateSpace(DtoSpacePost post)
         {
             var space = new Space(post.Alias, []);
-            var dtoSpace = new DtoSpace(space.Alias, space.Guid, [.. space.Members.Select(member => member.Guid)]);
 
             context.Spaces.Add(space);
             context.SaveChanges();
 
+            var dtoSpace = new DtoSpace(space.Alias, space.Guid, []);
             return CreatedAtAction(null, dtoSpace);
         }
 

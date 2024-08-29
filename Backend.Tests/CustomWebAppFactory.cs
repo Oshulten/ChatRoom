@@ -32,7 +32,8 @@ public class CustomWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetim
     {
         await _sqlContainer.StartAsync();
         using var serviceScope = this.Services.CreateAsyncScope();
-        (serviceScope.ServiceProvider.GetService<ChatroomDatabaseContext>()!).Database.EnsureCreated();
+        var service = (serviceScope.ServiceProvider.GetService<ChatroomDatabaseContext>()!);
+        service.Database.EnsureCreated();
     }
 
     public new Task DisposeAsync() => _sqlContainer.DisposeAsync().AsTask();

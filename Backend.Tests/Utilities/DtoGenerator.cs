@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Backend.Dto;
-using Bogus;
 
 namespace Backend.Tests.Utilities;
 
 public static class DtoGenerator
 {
+    private static readonly Random _random = new(123);
+
     public static DtoAuthentication GenerateDtoAuthentication() =>
-        new(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
+        new(_random.NextDouble().ToString(), _random.NextDouble().ToString());
 
     public static DtoSpacePost GenerateDtoSpacePost() =>
-        new(Guid.NewGuid().ToString());
+        new(_random.NextDouble().ToString());
 }
