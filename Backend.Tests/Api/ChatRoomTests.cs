@@ -13,6 +13,13 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
 {
     private readonly HttpClient _client = factory.CreateClient();
 
+    private async Task<DtoUser> PostUser()
+    {
+        var auth = GenerateDtoAuthentication();
+        var response = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
+        return (await response.Content.ReadFromJsonAsync<DtoUser>())!;
+    }
+
     [Fact]
     [Trait("Endpoint", "api/Chatroom/clear")]
     [Trait("Outcome", "Happy")]
