@@ -18,7 +18,23 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Trait("Outcome", "Happy")]
     public async Task ClearShouldRemoveUsersSpacesMessages()
     {
-        await _client.PostAsync("api/Chatroom/clear", null);
+        var responseClear = await _client.PostAsync("api/Chatroom/clear", null);
+        responseClear.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var responseUsers = await _client.GetAsync("api/Chatroom/get-users");
+        responseUsers.StatusCode.Should().Be(HttpStatusCode.OK);
+        var users = await responseUsers.Content.ReadFromJsonAsync<IEnumerable<DtoUser>>();
+        users!.Count().Should().Be(0);
+
+        var responseSpaces = await _client.GetAsync("api/Chatroom/get-spaces");
+        responseSpaces.StatusCode.Should().Be(HttpStatusCode.OK);
+        var spaces = await responseSpaces.Content.ReadFromJsonAsync<IEnumerable<DtoSpace>>();
+        spaces!.Count().Should().Be(0);
+
+        var responseMessages = await _client.GetAsync("api/Chatroom/get-messages");
+        responseMessages.StatusCode.Should().Be(HttpStatusCode.OK);
+        var messages = await responseMessages.Content.ReadFromJsonAsync<IEnumerable<DtoMessage>>();
+        messages!.Count().Should().Be(0);
     }
 
     [Fact]
@@ -213,7 +229,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         dtoSpace2.Should().NotBeNull();
         dtoSpace2!.Alias.Should().Be(dtoSpacePost.Alias);
         dtoSpace2!.Guid.Should().NotBeEmpty();
-        // countDifference.Should().Be(1);
+        countDifference.Should().Be(1);
     }
 
     // [Fact]

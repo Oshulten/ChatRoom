@@ -26,23 +26,33 @@ namespace Backend.Controllers
             return Ok();
         }
 
+        [HttpGet("get-users")]
+        public List<DtoUser> GetUsers()
+        {
+            var dtoUsers = context.Users.Select(user =>
+                new DtoUser(user.Guid, user.Alias, user.JoinedAt, user.Admin));
+            return dtoUsers.ToList();
+        }
+
         [HttpGet("get-spaces")]
-        public IEnumerable<DtoSpace> GetSpaces() =>
-            context.Spaces.Select(space =>
+        public List<DtoSpace> GetSpaces()
+        {
+
+            var dtoSpaces = context.Spaces.Select(space =>
                 new DtoSpace(
                     space.Alias,
                     space.Guid,
                     space.Members.Select(member => member.Guid).ToList()));
-
-        [HttpGet("get-users")]
-        public IEnumerable<DtoUser> GetUsers() =>
-            context.Users.Select(user =>
-                new DtoUser(user.Guid, user.Alias, user.JoinedAt, user.Admin));
+            return dtoSpaces.ToList();
+        }
 
         [HttpGet("get-messages")]
-        public IEnumerable<DtoMessage> GetMessages() =>
-            context.Messages.Select(message =>
+        public List<DtoMessage> GetMessages()
+        {
+            var dtoMessages = context.Messages.Select(message =>
                 new DtoMessage(message.Content, message.Space.Guid, message.Sender.Guid, message.PostedAt));
+            return dtoMessages.ToList();
+        }
 
         //Tested (3)
         [HttpPost("create-user")]
