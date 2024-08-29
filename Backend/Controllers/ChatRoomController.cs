@@ -24,6 +24,7 @@ namespace Backend.Controllers
             if (existingUser is null)
             {
                 var user = new User(auth.Alias, auth.Password, false, DateTime.Now);
+                
                 context.Users.Add(user);
                 context.SaveChanges();
 
@@ -60,6 +61,10 @@ namespace Backend.Controllers
         {
             var space = new Space(post.Alias, []);
             var dtoSpace = new DtoSpace(space.Alias, space.Guid, [.. space.Members.Select(member => member.Guid)]);
+
+            context.Spaces.Add(space);
+            context.SaveChanges();
+
             return CreatedAtAction(null, dtoSpace);
         }
 
