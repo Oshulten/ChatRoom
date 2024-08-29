@@ -13,6 +13,32 @@ namespace Backend.Controllers
     [Route("api/[controller]")]
     public class ChatroomController(ChatroomDatabaseContext context) : ControllerBase
     {
+        private static DtoUser ToDtoUser(User user) =>
+            new(user.Guid, user.Alias, user.JoinedAt, user.Admin);
+
+        private static DtoSpace ToDtoSpace(Space space) =>
+            new(space.Alias, space.Guid, space.Members.Select(m => m.Guid).ToList());
+
+        private static DtoMessage ToDtoMessage(Message message) =>
+            new(message.Content, message.Space.Guid, message.Sender.Guid, message.PostedAt);
+
+        private static User ToUser(DtoAuthentication auth) =>
+            new(auth.Alias, auth.Password);
+
+        private static Space ToSpace(DtoSpacePost space) =>
+            new(space.Alias);
+
+        private Message ToMessage(DtoMessagePost post)
+        {
+            var existingUser = context.Users.FirstOrDefault(u => u.Guid == post.SenderGuid);
+            var existingSpace = context.Spaces.FirstOrDefault(s => s.Guid == post.SpaceGuid);
+
+            if (existingUser is null || existingSpace is null)
+                throw new Exception("User or space doesn't exist");
+
+            return new Message(existingUser, DateTime.Now, post.Content, existingSpace);
+        }
+
         [HttpPost("clear")]
         [ProducesResponseType(200)]
         public IActionResult Clear()
@@ -27,32 +53,16 @@ namespace Backend.Controllers
         }
 
         [HttpGet("get-users")]
-        public List<DtoUser> GetUsers()
-        {
-            var dtoUsers = context.Users.Select(user =>
-                new DtoUser(user.Guid, user.Alias, user.JoinedAt, user.Admin));
-            return dtoUsers.ToList();
-        }
+        public List<DtoUser> GetUsers() =>
+            [.. context.Users.Select(user => ToDtoUser(user))];
 
         [HttpGet("get-spaces")]
-        public List<DtoSpace> GetSpaces()
-        {
-
-            var dtoSpaces = context.Spaces.Select(space =>
-                new DtoSpace(
-                    space.Alias,
-                    space.Guid,
-                    space.Members.Select(member => member.Guid).ToList()));
-            return dtoSpaces.ToList();
-        }
+        public List<DtoSpace> GetSpaces() =>
+            [.. context.Spaces.Select(space => ToDtoSpace(space))];
 
         [HttpGet("get-messages")]
-        public List<DtoMessage> GetMessages()
-        {
-            var dtoMessages = context.Messages.Select(message =>
-                new DtoMessage(message.Content, message.Space.Guid, message.Sender.Guid, message.PostedAt));
-            return dtoMessages.ToList();
-        }
+        public List<DtoMessage> GetMessages() =>
+            [.. context.Messages.Select(message => ToDtoMessage(message))];
 
         //Tested (3)
         [HttpPost("create-user")]
@@ -64,13 +74,12 @@ namespace Backend.Controllers
 
             if (existingUser is null)
             {
-                var user = new User(auth.Alias, auth.Password, false, DateTime.Now);
+                var user = ToUser(auth);
 
                 context.Users.Add(user);
                 context.SaveChanges();
 
-                var dtoUser = new DtoUser(user.Guid, user.Alias, user.JoinedAt, user.Admin);
-                return CreatedAtAction(null, dtoUser);
+                return CreatedAtAction(null, ToDtoUser(user));
             }
 
             return BadRequest($"A user with alias {auth.Alias} already exists.");
@@ -91,8 +100,7 @@ namespace Backend.Controllers
                 return BadRequest($"A user with that alias and password does not exist");
             }
 
-            var dtoUser = new DtoUser(matchingUser.Guid, matchingUser.Alias, matchingUser.JoinedAt, matchingUser.Admin);
-            return Ok(dtoUser);
+            return Ok(ToDtoUser(matchingUser));
         }
 
         //Tested (2)
@@ -100,68 +108,54 @@ namespace Backend.Controllers
         [ProducesResponseType(201, Type = typeof(DtoSpace))]
         public ActionResult<DtoUser> CreateSpace(DtoSpacePost post)
         {
-            var space = new Space(post.Alias, []);
+            var space = ToSpace(post);
 
             context.Spaces.Add(space);
             context.SaveChanges();
 
-            var dtoSpace = new DtoSpace(space.Alias, space.Guid, []);
-            return CreatedAtAction(null, dtoSpace);
+            return CreatedAtAction(null, ToDtoSpace(space));
         }
 
         [HttpPut("add-user-to-space/{spaceGuid}")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(DtoSpace))]
-        public ActionResult<DtoSpace> AddUserToSpace(Guid spaceGuid, DtoUser dtoUser)
+        public ActionResult<DtoSpace> AddUserToSpace([FromRoute] Guid spaceGuid, DtoUser user)
         {
             var existingSpace = context.Spaces.FirstOrDefault(space => space.Guid == spaceGuid);
 
             if (existingSpace is null)
-            {
                 return NotFound($"A space with guid {spaceGuid} does not exist");
-            }
 
-            var existingUser = context.Users.FirstOrDefault(user => user.Guid == dtoUser.Guid);
+            var existingUser = context.Users.FirstOrDefault(user => user.Guid == user.Guid);
 
             if (existingUser is null)
-            {
-                return NotFound($"A user with guid {dtoUser.Guid} does not exist");
-            }
+                return NotFound($"A user with guid {user.Guid} does not exist");
 
             var existingMemberInSpace = existingSpace.Members.FirstOrDefault(member => member.Guid == existingUser.Guid);
 
             if (existingMemberInSpace is null)
             {
                 existingSpace.Members.Add(existingUser);
+                existingUser.Spaces.Add(existingSpace);
                 context.SaveChanges();
             }
 
-            var dtoSpace = new DtoSpace(existingSpace.Alias, existingSpace.Guid, [.. existingSpace.Members.Select(member => member.Guid)]);
-
-            return Ok(dtoSpace);
+            return Ok(ToDtoSpace(existingSpace));
         }
 
-        //GetSpacesByUserGuid (Get)
-        //Guid userGuid => List<DtoSpace>
         [HttpGet("get-spaces-by-user-guid/{userGuid}")]
         [ProducesResponseType(404)]
         [ProducesResponseType(200, Type = typeof(List<DtoSpace>))]
-        public ActionResult<List<DtoSpace>> GetSpacesByUserGuid(Guid userGuid)
+        public ActionResult<List<DtoSpace>> GetSpacesByUserGuid([FromRoute] Guid userGuid)
         {
             var existingUser = context.Users.FirstOrDefault(user => user.Guid == userGuid);
 
             if (existingUser is null)
-            {
                 return NotFound($"A user with guid {userGuid} does not exist");
-            }
 
             var memberSpaces = context.Spaces
                 .Where(space => space.Members.Contains(existingUser))
-                .Select(space =>
-                    new DtoSpace(
-                        space.Alias,
-                        space.Guid,
-                        space.Members.Select(member => member.Guid).ToList()))
+                .Select(space => ToDtoSpace(space))
                 .ToList();
 
             return Ok(memberSpaces);
@@ -172,7 +166,26 @@ namespace Backend.Controllers
 
         //CreateMessage (Post)
         //Guid userGuid, Guid spaceGuid, DtoMessagePost => DtoMessage
+        [HttpPost("create-message")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(201, Type = typeof(DtoMessage))]
+        public ActionResult<DtoMessage> CreateMessage(DtoMessagePost post)
+        {
+            var existingSpace = context.Spaces.FirstOrDefault(s => s.Guid == post.SpaceGuid);
+            var existingUser = context.Users.FirstOrDefault(u => u.Guid == post.SenderGuid);
 
+            if (existingSpace is null || existingUser is null)
+                return BadRequest("Space or user doesn't exist");
 
+            var message = ToMessage(post);
+
+            existingSpace.Messages.Add(message);
+            existingUser.Messages.Add(message);
+
+            context.Messages.Add(message);
+            context.SaveChanges();
+
+            return CreatedAtAction(null, ToDtoMessage(message));
+        }
     }
 }

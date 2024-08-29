@@ -2,20 +2,19 @@ using Backend.Dto;
 
 namespace Backend.Models;
 
-public class User(string alias, string password, bool admin, DateTime joinedAt)
+public class User(string alias, string password)
 {
     public int Id { get; set; }
     public Guid Guid { get; init; } = Guid.NewGuid();
     public string Alias { get; set; } = alias;
     public string Password { get; set; } = password;
-    public DateTime JoinedAt { get; set; } = joinedAt;
-    public bool Admin { get; set; } = admin;
+    public DateTime JoinedAt { get; set; } = DateTime.Now;
 
-    public static readonly User Null = new("Null", "Null", false, DateTime.Now);
+    public List<Space> Spaces { get; set; } = [];
+    public List<Message> Messages { get; set; } = [];
+    public bool Admin { get; set; } = false;
 
-    public User() : this(Null.Alias, Null.Password, Null.Admin, Null.JoinedAt) { }
+    public static readonly User Null = new("Null", "Null");
 
-    public static explicit operator DtoUser(User user) => new(user.Guid, user.Alias, user.JoinedAt, user.Admin);
-
-    public static explicit operator User(DtoAuthentication request) => new(request.Alias, request.Password, false, DateTime.Now);
+    public User() : this(Null.Alias, Null.Password) { }
 }

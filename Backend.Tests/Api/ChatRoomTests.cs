@@ -36,7 +36,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/clear")]
     [Trait("Outcome", "Happy")]
-    public async Task ClearShouldRemoveUsersSpacesMessages()
+    public async Task Clear_Should_Remove_Users_Spaces_Messages()
     {
         var responseClear = await _client.PostAsync("api/Chatroom/clear", null);
         responseClear.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -60,7 +60,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/create-user")]
     [Trait("Outcome", "Happy")]
-    public async Task CreateNewUserByAuthShouldReturn201Created()
+    public async Task Create_New_User_By_Auth_Should_Return_201_Created()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
@@ -73,7 +73,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/create-user")]
     [Trait("Outcome", "Sad")]
-    public async Task CreateUserWithExistingAliasByAuthShouldReturn400BadRequest()
+    public async Task Create_User_With_Existing_Alias_By_Auth_Should_Return_400_Bad_Request()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
@@ -87,7 +87,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/create-user")]
     [Trait("Outcome", "Happy")]
-    public async Task CreateNewUserByAuthShouldReturnDtoUser()
+    public async Task Create_New_User_By_Auth_Should_Return_Dto_User()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
@@ -105,7 +105,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/get-user-by-auth")]
     [Trait("Outcome", "Sad")]
-    public async Task GetNotExistingUserByAuthShouldReturn400BadRequest()
+    public async Task Get_Not_Existing_User_By_Auth_Should_Return_400_Bad_Request()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
@@ -118,7 +118,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/get-user-by-auth")]
     [Trait("Outcome", "Happy")]
-    public async Task GetExistingUserByAuthShouldReturn200Ok()
+    public async Task Get_Existing_User_By_Auth_Should_Return_200_OK()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
@@ -132,7 +132,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/get-user-by-auth")]
     [Trait("Outcome", "Happy")]
-    public async Task GetExistingUserByAuthShouldReturnDtoUser()
+    public async Task Get_Existing_User_By_Auth_Should_Return_Dto_User()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
@@ -152,7 +152,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/create-space")]
     [Trait("Outcome", "Happy")]
-    public async Task CreateSpaceShouldReturn201Created()
+    public async Task Create_Space_Should_Return_201_Created()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
@@ -165,7 +165,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/create-space")]
     [Trait("Outcome", "Happy")]
-    public async Task CreateSpaceShouldReturnDtoSpace()
+    public async Task Create_Space_Should_Return_Dto_Space()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
@@ -182,7 +182,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
     [Trait("Outcome", "Sad")]
-    public async Task AddExistingUserToNonExistingSpaceShouldReturn404NotFound()
+    public async Task Add_Existing_User_To_Non_Existing_Space_Should_Return_404_Not_Found()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
@@ -198,7 +198,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
     [Trait("Outcome", "Happy")]
-    public async Task AddExistingUserToExistingSpaceShouldReturn200Ok()
+    public async Task Add_Existing_User_To_Existing_Space_Should_Return_200_OK()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
@@ -210,10 +210,10 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
-    [Fact(Skip = "Unknown issue")]
+    [Fact]
     [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
     [Trait("Outcome", "Happy")]
-    public async Task AddExistingUserToExistingSpaceShouldReturnDtoSpace()
+    public async Task Add_Existing_User_To_Existing_Space_Should_Return_Dto_Space()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
@@ -232,24 +232,26 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact(Skip = "Unknown issue")]
     [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
     [Trait("Outcome", "Happy")]
-    public async Task AddTwoExistingUsersToExistingSpaceShouldReturnDtoSpaceWithTwoMembers()
+    public async Task Add_Two_Existing_Users_To_Existing_Space_Should_Return_Dto_Space_With_Two_Members()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
         var dtoUser1 = await PostUser();
         var dtoUser2 = await PostUser();
         var dtoSpace = await PostSpace();
+
         dtoSpace = await AddUserToSpace(dtoUser1, dtoSpace);
         dtoSpace = await AddUserToSpace(dtoUser2, dtoSpace);
 
         dtoSpace.Should().NotBeNull();
-        dtoSpace!.MemberGuids.Count.Should().Be(2);
+        dtoSpace.MemberGuids.Where(guid => guid == dtoUser1.Guid).Should().NotBeEmpty();
+        dtoSpace.MemberGuids.Where(guid => guid == dtoUser2.Guid).Should().NotBeEmpty();
     }
 
     [Fact]
     [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
     [Trait("Outcome", "Sad")]
-    public async Task AddNonExistingUserToExistingSpaceShouldReturn404NotFound()
+    public async Task Add_Non_Existing_User_To_Existing_Space_Should_Return_404_Not_Found()
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
@@ -267,8 +269,10 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/get-spaces-by-user-guid")]
     [Trait("Outcome", "Sad")]
-    public async Task GetSpaceByUserGuidForNonExistingUserShouldReturn404NotFound()
+    public async Task Get_Space_By_User_Guid_For_Non_Existing_User_Should_Return_404_Not_Found()
     {
+        await _client.PostAsync("api/Chatroom/clear", null);
+
         var response = await _client.GetAsync($"api/Chatroom/get-spaces-by-user-guid/{Guid.NewGuid()}");
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -276,8 +280,28 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Fact]
     [Trait("Endpoint", "api/Chatroom/get-spaces-by-user-guid")]
     [Trait("Outcome", "Happy")]
-    public async Task GetSpaceByUserGuidShouldReturnEmptyListForUserNotBelongingToAnySpace()
+    public async Task Get_Space_By_User_Guid_Should_Return_Empty_List_For_User_Not_Belonging_To_Any_Space()
     {
+        await _client.PostAsync("api/Chatroom/clear", null);
+
+        var user = await PostUser();
+
+        var response = await _client.GetAsync($"api/Chatroom/get-spaces-by-user-guid/{user.Guid}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var spaces = await response.Content.ReadFromJsonAsync<List<DtoSpace>>();
+
+        spaces!.Count.Should().Be(0);
+    }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/get-spaces-by-user-guid")]
+    [Trait("Outcome", "Happy")]
+    public async Task Get_Space_By_User_Guid_Should_Return_List_Of_One_For_User_Added_To_One_Space()
+    {
+        await _client.PostAsync("api/Chatroom/clear", null);
+
         var user = await PostUser();
         var space = await PostSpace();
         await AddUserToSpace(user, space);
@@ -288,6 +312,43 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
 
         var spaces = await response.Content.ReadFromJsonAsync<List<DtoSpace>>();
 
-        spaces.Should().NotBeEmpty();
+        spaces!.FirstOrDefault(s => s.Guid == space.Guid).Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/get-spaces-by-user-guid")]
+    [Trait("Outcome", "Happy")]
+    public async Task Get_Space_By_User_Guid_Should_Return_List_Of_Two_For_User_Added_To_Two_Spaces()
+    {
+        await _client.PostAsync("api/Chatroom/clear", null);
+
+        var user = await PostUser();
+        var space1 = await PostSpace();
+        var space2 = await PostSpace();
+
+        await AddUserToSpace(user, space1);
+        await AddUserToSpace(user, space2);
+
+        var response = await _client.GetAsync($"api/Chatroom/get-spaces-by-user-guid/{user.Guid}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var spaces = await response.Content.ReadFromJsonAsync<List<DtoSpace>>();
+
+        spaces!.FirstOrDefault(s => s.Guid == space1.Guid).Should().NotBeNull();
+        spaces!.FirstOrDefault(s => s.Guid == space2.Guid).Should().NotBeNull();
+    }
+
+    [Fact]
+    [Trait("Endpoint", "api/Chatroom/create-message")]
+    [Trait("Outcome", "Sad")]
+    public async Task Create_Message_From_Non_Existing_Sender_Should_Return_400_Bad_Request()
+    {
+        await _client.PostAsync("api/Chatroom/clear", null);
+
+        var dtoMessagePost = new DtoMessagePost("Message content", Guid.NewGuid(), Guid.NewGuid());
+        var response = await _client.PostAsJsonAsync("api/Chatroom/create-message", dtoMessagePost);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }

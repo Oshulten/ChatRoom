@@ -4,6 +4,7 @@ using Backend.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(ChatroomDatabaseContext))]
-    partial class ChatroomDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240829115406_BidirectionalRelations")]
+    partial class BidirectionalRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,7 +126,7 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.Message", b =>
                 {
                     b.HasOne("Backend.Models.User", "Sender")
-                        .WithMany("Messages")
+                        .WithMany()
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -155,11 +158,6 @@ namespace Backend.Migrations
                 });
 
             modelBuilder.Entity("Backend.Models.Space", b =>
-                {
-                    b.Navigation("Messages");
-                });
-
-            modelBuilder.Entity("Backend.Models.User", b =>
                 {
                     b.Navigation("Messages");
                 });
