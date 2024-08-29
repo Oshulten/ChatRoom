@@ -44,7 +44,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var auth = new DtoAuthentication("user1", "password1");
+        var auth = GenerateDtoAuthentication();
         var response = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -57,7 +57,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var auth = new DtoAuthentication("user2", "password2");
+        var auth = GenerateDtoAuthentication();
         await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
         var response = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
 
@@ -71,7 +71,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var auth = new DtoAuthentication("user3", "password3");
+        var auth = GenerateDtoAuthentication();
         var response = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
         var dtoUser = await response.Content.ReadFromJsonAsync<DtoUser>();
 
@@ -89,7 +89,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var auth = new DtoAuthentication("user4", "password4");
+        var auth = GenerateDtoAuthentication();
         var response = await _client.PostAsJsonAsync($"api/Chatroom/get-user-by-auth", auth);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -102,7 +102,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var auth = new DtoAuthentication("user5", "password5");
+        var auth = GenerateDtoAuthentication();
         await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
 
         var response = await _client.PostAsJsonAsync($"api/Chatroom/get-user-by-auth", auth);
@@ -116,7 +116,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var auth = new DtoAuthentication("user6", "password6");
+        var auth = GenerateDtoAuthentication();
         await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
 
         var response = await _client.PostAsJsonAsync($"api/Chatroom/get-user-by-auth", auth);
@@ -136,7 +136,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var dtoSpacePost = new DtoSpacePost("space1");
+        var dtoSpacePost = GenerateDtoSpacePost();
         var response = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -149,7 +149,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var dtoSpacePost = new DtoSpacePost("space2");
+        var dtoSpacePost = GenerateDtoSpacePost();
         var response = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
         var dtoSpace = await response.Content.ReadFromJsonAsync<DtoSpace>();
 
@@ -166,7 +166,7 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var auth = new DtoAuthentication("user7", "password7");
+        var auth = GenerateDtoAuthentication();
         var responseA = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
         var dtoUser = await responseA.Content.ReadFromJsonAsync<DtoUser>();
 
@@ -184,11 +184,11 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     {
         await _client.PostAsync("api/Chatroom/clear", null);
 
-        var auth = new DtoAuthentication("user8", "password8");
+        var auth = GenerateDtoAuthentication();
         var responseA = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
         var dtoUser = await responseA.Content.ReadFromJsonAsync<DtoUser>();
 
-        var dtoSpacePost = new DtoSpacePost("space2");
+        var dtoSpacePost = GenerateDtoSpacePost();
         var responseB = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
         var dtoSpace = await responseB.Content.ReadFromJsonAsync<DtoSpace>();
 
@@ -255,6 +255,8 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
     [Trait("Outcome", "Sad")]
     public async Task AddNonExistingUserToExistingSpaceShouldReturn404NotFound()
     {
+        await _client.PostAsync("api/Chatroom/clear", null);
+
         var nonExistingDtoUser = new DtoUser(Guid.NewGuid(), Guid.NewGuid().ToString(), DateTime.Now, false);
 
         var dtoSpacePost = new DtoSpacePost(Guid.NewGuid().ToString());
