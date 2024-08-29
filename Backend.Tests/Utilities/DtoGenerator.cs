@@ -9,13 +9,9 @@ namespace Backend.Tests.Utilities;
 
 public static class DtoGenerator
 {
-    public static Faker<DtoAuthentication> DtoAuthenticationFaker =
-        new Faker<DtoAuthentication>()
-            .RuleFor(o => o.Alias, f => Guid.NewGuid().ToString())
-            .RuleFor(o => o.Password, f => Guid.NewGuid().ToString());
+    public static DtoAuthentication GenerateDtoAuthentication() =>
+        new(Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
 
-    public static Faker<DtoSpacePost> DtoSpacePostFaker =
-        new Faker<DtoSpacePost>()
-            .RuleFor(o => o.Alias, f => Guid.NewGuid().ToString());
-
+    public static DtoSpacePost GenerateDtoSpacePost() =>
+        new(Guid.NewGuid().ToString());
 }
