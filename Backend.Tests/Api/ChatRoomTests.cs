@@ -210,58 +210,41 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
-    // [Fact]
-    // [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
-    // [Trait("Outcome", "Happy")]
-    // public async Task AddExistingUserToExistingSpaceShouldReturnDtoSpace()
-    // {
-    //     await _client.PostAsync("api/Chatroom/clear", null);
+    [Fact(Skip = "Unknown issue")]
+    [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
+    [Trait("Outcome", "Happy")]
+    public async Task AddExistingUserToExistingSpaceShouldReturnDtoSpace()
+    {
+        await _client.PostAsync("api/Chatroom/clear", null);
 
-    //     var auth = new DtoAuthentication("user8", "password8");
-    //     var responseA = await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
+        var dtoUser = await PostUser();
+        var dtoSpace = await PostSpace();
+        var dtoSpace2 = await AddUserToSpace(dtoUser, dtoSpace);
 
-    //     responseA.StatusCode.Should().Be(HttpStatusCode.Created);
+        var countDifference = (dtoSpace2!.MemberGuids.Count() - dtoSpace!.MemberGuids.Count());
 
-    //     var dtoUser = await responseA.Content.ReadFromJsonAsync<DtoUser>();
+        dtoSpace2.Should().NotBeNull();
+        dtoSpace2!.Alias.Should().Be(dtoSpace.Alias);
+        dtoSpace2!.Guid.Should().NotBeEmpty();
+        countDifference.Should().Be(1);
+    }
 
-    //     var dtoSpacePost = new DtoSpacePost("space2");
-    //     var responseB = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
+    [Fact(Skip = "Unknown issue")]
+    [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
+    [Trait("Outcome", "Happy")]
+    public async Task AddTwoExistingUsersToExistingSpaceShouldReturnDtoSpaceWithTwoMembers()
+    {
+        await _client.PostAsync("api/Chatroom/clear", null);
 
-    // responseB.StatusCode.Should().Be(HttpStatusCode.Created);
+        var dtoUser1 = await PostUser();
+        var dtoUser2 = await PostUser();
+        var dtoSpace = await PostSpace();
+        dtoSpace = await AddUserToSpace(dtoUser1, dtoSpace);
+        dtoSpace = await AddUserToSpace(dtoUser2, dtoSpace);
 
-    // var dtoSpace = await responseB.Content.ReadFromJsonAsync<DtoSpace>();
-
-    // var responseC = await _client.PutAsJsonAsync($"api/Chatroom/add-user-to-space/{dtoSpace!.Guid}", dtoUser);
-
-    // responseC.StatusCode.Should().Be(HttpStatusCode.OK);
-
-    // var dtoSpace2 = await responseC.Content.ReadFromJsonAsync<DtoSpace>();
-
-    //     var countDifference = (dtoSpace2!.MemberGuids.Count() - dtoSpace!.MemberGuids.Count());
-
-    //     dtoSpace2.Should().NotBeNull();
-    //     dtoSpace2!.Alias.Should().Be(dtoSpacePost.Alias);
-    //     dtoSpace2!.Guid.Should().NotBeEmpty();
-    //     countDifference.Should().Be(1);
-    // }
-
-    // [Fact]
-    // [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
-    // [Trait("Outcome", "Happy")]
-    // public async Task AddTwoExistingUsersToExistingSpaceShouldReturnDtoSpaceWithTwoMembers()
-    // {
-    //     var auth = DtoAuthenticationFaker.Generate(1)[0];
-    //     await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth);
-    //     var auth2 = DtoAuthenticationFaker.Generate(1)[0];
-    //     await _client.PostAsJsonAsync($"api/Chatroom/create-user", auth2);
-
-    //     var dtoSpacePost = new DtoSpacePost(Guid.NewGuid().ToString());
-    //     var responseB = await _client.PostAsJsonAsync($"api/Chatroom/create-space", dtoSpacePost);
-    //     var dtoSpace = await responseB.Content.ReadFromJsonAsync<DtoSpace>();
-
-    //     dtoSpace.Should().NotBeNull();
-    //     dtoSpace!.MemberGuids.Count.Should().Be(2);
-    // }
+        dtoSpace.Should().NotBeNull();
+        dtoSpace!.MemberGuids.Count.Should().Be(2);
+    }
 
     [Fact]
     [Trait("Endpoint", "api/Chatroom/add-user-to-space")]
@@ -281,5 +264,5 @@ public class ChatRoomTests(CustomWebAppFactory factory) : IClassFixture<CustomWe
         responseB.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    
+
 }

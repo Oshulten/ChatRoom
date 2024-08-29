@@ -143,10 +143,6 @@ namespace Backend.Controllers
             return Ok(dtoSpace);
         }
 
-        //RemoveUserFromSpace (Put)
-        //Guid userGuid, Guid spaceGuid => DtoSpace  (side effect)
-
-
         //GetSpacesByUserGuid (Get)
         //Guid userGuid => List<DtoSpace>
 
